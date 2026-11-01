@@ -1,0 +1,3 @@
+# Overlay: serve the merged fine-tuned model (Step 7) from the local disk. Same server settings as the base.
+model:
+  id: /content/fvs_local/models/qwen3-vl-2b-foveated-search

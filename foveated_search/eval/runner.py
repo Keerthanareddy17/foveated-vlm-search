@@ -55,8 +55,8 @@ def apply_overrides(cfg: Config, overrides: dict) -> None:
         node[leaf] = value
 
 
-def eval_config(overrides: dict | None = None) -> Config:
-    cfg = search_config(overlays=["configs/eval.yaml"])
+def eval_config(overrides: dict | None = None, overlays: list[str] | None = None) -> Config:
+    cfg = search_config(overlays=["configs/eval.yaml", *(overlays or [])])
     apply_overrides(cfg, overrides or {})
     return cfg
 
@@ -77,8 +77,8 @@ def snapshot(cfg: Config) -> dict:
 
 
 async def run_eval(name: str, strategy: str, split: str, overrides: dict | None = None,
-                   concurrency: int | None = None, limit: int | None = None) -> Path:
-    cfg = eval_config(overrides)
+                   concurrency: int | None = None, limit: int | None = None, overlays: list[str] | None = None) -> Path:
+    cfg = eval_config(overrides, overlays)
     get_strategy(strategy)  # fail fast on unknown names
     h = cfg["harness"]
     mode = "latency" if split == "latency" else "accuracy"
@@ -101,7 +101,7 @@ async def run_eval(name: str, strategy: str, split: str, overrides: dict | None 
     s = cfg["server"]
     meta = {
         "run": name, "strategy": strategy, "split": split, "mode": mode, "concurrency": conc,
-        "n_queries": len(rows), "overrides": overrides or {}, "prompts_version": cfg["prompts"]["version"],
+        "n_queries": len(rows), "overrides": overrides or {}, "overlays": overlays or [], "prompts_version": cfg["prompts"]["version"],
         "model": cfg.get_key("model.id"), "precision": s["quantization"] or s["dtype"],
         "prefix_caching": s["enable_prefix_caching"], "git_commit": git_commit(),
         "started_utc": json.loads(meta_path.read_text())["started_utc"] if meta_path.exists() else
@@ -174,7 +174,7 @@ def main() -> None:
     split = a.split or spec.get("split")
     if not strategy or not split:
         sys.exit(f"run {a.run!r} is not in configs/runs.yaml: pass --strategy and --split")
-    asyncio.run(run_eval(a.run, strategy, split, overrides, a.concurrency, a.limit))
+    asyncio.run(run_eval(a.run, strategy, split, overrides, a.concurrency, a.limit, spec.get("overlays")))
 
 
 if __name__ == "__main__":

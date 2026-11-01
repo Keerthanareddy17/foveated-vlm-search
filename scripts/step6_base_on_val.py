@@ -29,6 +29,11 @@ def inside(px: float, py: float, boxes: list[list[float]]) -> bool:
 
 
 async def main() -> None:
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default="results/step6_base_on_val.json")
+    a = ap.parse_args()
     cfg = data_config()
     n = int(cfg.get_key("train_data.base_check_per_type"))
     lmax = int(cfg.get_key("search.confirm.label_max_chars"))
@@ -103,7 +108,7 @@ async def main() -> None:
         summary[t] = d
     out = {"model": cfg.get_key("model.id"), "precision": cfg["server"]["quantization"] or cfg["server"]["dtype"],
            "split": "val", "per_type": n, "prompts_version": cfg["prompts"]["version"], "summary": summary, "rows": rows}
-    (REPO_ROOT / "results/step6_base_on_val.json").write_text(json.dumps(out, indent=1) + "\n")
+    (REPO_ROOT / a.out).write_text(json.dumps(out, indent=1) + "\n")
     print(json.dumps(summary, indent=1))
 
 

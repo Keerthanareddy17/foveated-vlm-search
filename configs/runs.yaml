@@ -1,6 +1,7 @@
 # Named eval runs (Step 5). `make eval RUN=<name>` runs one; `make baselines` runs the R1-R4 set.
 # split: dev (50) | test (450 = all minus dev) | all (500) | latency (100 seeded from test, concurrency 1)
 # set:   dotted config overrides applied on top of configs/{base,search,prompts,eval}.yaml
+# overlays: extra config files (e.g. configs/serve_finetuned.yaml); the server must be serving that model
 # Accuracy runs use split "all"; test numbers are the same traces with dev queries filtered out.
 runs:
   # ---- Part A: choices made on dev only
@@ -31,6 +32,10 @@ runs:
   sweep_crop288:   {strategy: eye_search, split: test, set: {search.fixation_size: 288}}
   # ---- refined point on vs off (test)
   R4_refine_off:   {strategy: eye_search, split: all, set: {search.confirm.refine_point: false}}
+
+  # ---- Step 7 sanity checks with the merged fine-tuned model (dev only; R5 on test is Step 8)
+  dev_eye_finetuned:        {strategy: eye_search, split: dev, overlays: [configs/serve_finetuned.yaml]}
+  dev_full_frame_finetuned: {strategy: full_frame, split: dev, overlays: [configs/serve_finetuned.yaml]}
 
 # R-row -> run names for results/table.md. R5-R7 are filled in Step 8.
 table:
