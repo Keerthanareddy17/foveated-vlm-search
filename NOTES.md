@@ -2,6 +2,25 @@
 
 Findings and gotchas discovered while building. Measured, not assumed.
 
+## Resuming in a new session (state after Step 8b, 2026-11-01)
+
+Everything needed for Steps 9-10 is in git (code, configs, results), on Drive (eval images, LoRA adapter, logs) or on the HF Hub (models). The Colab local disk can be wiped at any time.
+
+**Order of commands in a fresh Colab runtime:**
+
+1. Notebook setup cell: mount Google Drive at `/content/drive` and log in to Hugging Face (token at `~/.cache/huggingface/token`; it must be able to read the private repos below). Then clone the repo into `/content/foveated-vlm-search`.
+2. `make setup`: recreates `.venv-serve`, `.venv-train`, `.venv-quant` from the lock files and writes `scripts/env.sh`. Measured cold: **~1.5-2 min** (98 s in Step 1).
+3. `make check`: GPU, venvs, Drive, HF token, disk: expect all PASS.
+4. `make serve-demo`: serves the fine-tuned FP8 model straight from the private Hub repo `honey613/qwen3-vl-2b-foveated-search-fp8` with native-resolution frames (`configs/serve_hires.yaml`) and the demo search settings (`configs/demo.yaml`: 288 px thumbnail, look-again mask on). First start downloads the model (2.86 GB) into `/content/fvs_local/hf_hub_cache`: measured **178 s from empty cache to READY**, download included. Then `make demo-smoke` runs one eye-search query with the demo settings (measured: correct, found on the 3rd fixation of a 1280x960 frame, 1.9 s), and `make serve-stop` stops it.
+
+**Re-downloaded or recreated automatically:** the venvs (from `requirements/*.lock`, ~1.5 min), the FP8 demo model (2.86 GB, on first `make serve-demo`), the local copies of the 500 eval images (`make eval-manifest` restores them from Drive in ~1 s; the eval code also reads the Drive copies directly). The COCO annotation zip (253 MB, ~15 s) is only fetched if `make eval-manifest` or `make gen-data` runs.
+
+**NOT needed for Steps 9-10** (regenerable, so don't recreate unless an earlier step is re-run): COCO train2017 images (1.2 GB, `make gen-data` refetches them), the generated training data (2.0 GB, seeded, `make gen-data`), the 2x2 / 3x3 mosaics (2.1 GB, `make mosaics` in ~30 s), the base model cache (4.3 GB; only for re-running base-model rows), the local merged BF16 model (also on the Hub: `honey613/qwen3-vl-2b-foveated-search`), LoRA training checkpoints (the final adapter is on Drive: `adapters/lora_r16_e1/`), and the local FP8 copy (on the Hub).
+
+**Where things live:** results/runs/tables/figures in git; Drive `MyDrive/foveated-vlm-search/` = eval images (79 MB) + LoRA adapter and training log (67 MB) + this session's logs (`logs/2026-11-01/`, 4 MB) = 150 MB of the 500 MB budget; HF Hub (private) = merged BF16 model and its FP8 version.
+
+**Demo defaults to remember (from Step 8b):** large frames (720p and up) are where eye search pays off; use the 288 px thumbnail and `search.look_again_mask: true` (both in `configs/demo.yaml`). R1-R7 keep the frozen Step 5 settings (96 px, mask off).
+
 ## Environment
 
 Measured 2026-11-01 on Colab Pro (Step 1). Full machine-readable report: `results/env_report.json`.
