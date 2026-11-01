@@ -43,3 +43,12 @@ outputs:
   stats: results/step3_manifest_stats.md
   contact_sheet: results/step3_manifest_examples.png
   contact_sheet_n: 16
+
+harness:
+  runs_dir: results/runs
+  concurrency: 8               # accuracy runs (vLLM batches concurrent requests: latency inflated)
+  latency_concurrency: 1       # latency runs: one request at a time, after warmup
+  latency_subset_size: 100     # seeded sample of the test split
+  latency_warmup_queries: 3    # run first, not recorded (grammar compile, CUDA graphs warm)
+  bootstrap_resamples: 2000
+  ci_level: 0.95

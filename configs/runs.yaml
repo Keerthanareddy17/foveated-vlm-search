@@ -1,0 +1,46 @@
+# Named eval runs (Step 5). `make eval RUN=<name>` runs one; `make baselines` runs the R1-R4 set.
+# split: dev (50) | test (450 = all minus dev) | all (500) | latency (100 seeded from test, concurrency 1)
+# set:   dotted config overrides applied on top of configs/{base,search,prompts,eval}.yaml
+# Accuracy runs use split "all"; test numbers are the same traces with dev queries filtered out.
+runs:
+  # ---- Part A: choices made on dev only
+  dev_sw_point:        {strategy: sliding_window, split: dev, set: {search.sliding_window.tile_mode: point}}
+  dev_sw_confirm:      {strategy: sliding_window, split: dev, set: {search.sliding_window.tile_mode: confirm}}
+  dev_eye_plain:       {strategy: eye_search, split: dev, set: {search.retry_prompt: plain}}
+  dev_eye_encourage:   {strategy: eye_search, split: dev, set: {search.retry_prompt: encourage}}
+  dev_eye_refine_on:   {strategy: eye_search, split: dev, set: {search.confirm.refine_point: true}}
+  dev_eye_refine_off:  {strategy: eye_search, split: dev, set: {search.confirm.refine_point: false}}
+
+  # ---- R1-R4 accuracy (concurrency from harness.concurrency)
+  R1_full_frame:       {strategy: full_frame, split: all}
+  R2_sliding_window:   {strategy: sliding_window, split: all}
+  R3_downscale:        {strategy: downscale, split: all}
+  R4_eye_search:       {strategy: eye_search, split: all}
+  # ---- R1-R4 latency (concurrency 1, 100-query subset of test)
+  R1_full_frame_lat:     {strategy: full_frame, split: latency}
+  R2_sliding_window_lat: {strategy: sliding_window, split: latency}
+  R3_downscale_lat:      {strategy: downscale, split: latency}
+  R4_eye_search_lat:     {strategy: eye_search, split: latency}
+
+  # ---- eye-search sweeps (test split, base model)
+  sweep_thumb64:   {strategy: eye_search, split: test, set: {search.thumbnail_long_side: 64}}
+  # (thumbnail 96 / crop 224 = R4_eye_search, filtered to test)
+  sweep_thumb128:  {strategy: eye_search, split: test, set: {search.thumbnail_long_side: 128}}
+  sweep_thumb192:  {strategy: eye_search, split: test, set: {search.thumbnail_long_side: 192}}
+  sweep_crop160:   {strategy: eye_search, split: test, set: {search.fixation_size: 160}}
+  sweep_crop288:   {strategy: eye_search, split: test, set: {search.fixation_size: 288}}
+  # ---- refined point on vs off (test)
+  R4_refine_off:   {strategy: eye_search, split: all, set: {search.confirm.refine_point: false}}
+
+# R-row -> run names for results/table.md. R5-R7 are filled in Step 8.
+table:
+  R1: {label: "base 2B | BF16 | full frame", acc: R1_full_frame, lat: R1_full_frame_lat}
+  R2: {label: "base 2B | BF16 | sliding window", acc: R2_sliding_window, lat: R2_sliding_window_lat}
+  R3: {label: "base 2B | BF16 | uniform downscale", acc: R3_downscale, lat: R3_downscale_lat}
+  R4: {label: "base 2B | BF16 | eye search", acc: R4_eye_search, lat: R4_eye_search_lat}
+  R5: {label: "fine-tuned 2B | BF16 | eye search", pending: Step 8}
+  R6: {label: "fine-tuned 2B | FP8 | eye search", pending: Step 8}
+  R7: {label: "fine-tuned 2B | FP8 + prefix caching | eye search", pending: Step 8}
+
+baselines: [R1_full_frame, R2_sliding_window, R3_downscale, R4_eye_search,
+            R1_full_frame_lat, R2_sliding_window_lat, R3_downscale_lat, R4_eye_search_lat]
