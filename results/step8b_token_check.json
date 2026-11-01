@@ -1,0 +1,31 @@
+{
+ "image_max_pixels": 2764800,
+ "max_model_len": 6144,
+ "frames": [
+  {
+   "grid": 1,
+   "sent": "640x480",
+   "processor_resized": "640x480",
+   "processor_vision_tokens": 300,
+   "server_image_tokens": 300,
+   "native": true
+  },
+  {
+   "grid": 2,
+   "sent": "1280x960",
+   "processor_resized": "1280x960",
+   "processor_vision_tokens": 1200,
+   "server_image_tokens": 1200,
+   "native": true
+  },
+  {
+   "grid": 3,
+   "sent": "1920x1440",
+   "processor_resized": "1920x1440",
+   "processor_vision_tokens": 2700,
+   "server_image_tokens": 2700,
+   "native": true
+  }
+ ],
+ "all_native_and_agree": true
+}
