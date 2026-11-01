@@ -64,8 +64,17 @@ def test_downscale_size_fits_budget_and_grid():
 
 
 def test_downscale_default_budget_is_thumb_plus_fixation():
-    assert downscale_budget(640, 480, CFG) == 96 * 64 + 224 * 224
-    assert downscale_budget(640, 169, CFG) == 96 * 32 + 224 * 169  # crop clamped to frame height
+    cfg = cfg_with(downscale__pixel_budget=None)
+    assert downscale_budget(640, 480, cfg) == 96 * 64 + 224 * 224
+    assert downscale_budget(640, 169, cfg) == 96 * 32 + 224 * 169  # crop clamped to frame height
+
+
+def test_downscale_configured_budget_is_used():
+    budget = CFG["search"]["downscale"]["pixel_budget"]
+    assert budget == 52966                                        # Step 5: R4's measured mean pixels (test)
+    assert downscale_budget(640, 480, CFG) == budget
+    w, h = downscale_size(640, 480, budget)
+    assert w * h <= budget and (w, h) == (256, 192)
 
 
 @pytest.mark.parametrize("cx,cy,exp", [
@@ -159,7 +168,7 @@ def test_full_frame_and_downscale():
     t = run("full_frame", img, "cup", MockClient(['{"point_2d":[500,250]}']))
     assert t.found and t.final_point == [320.0, 120.0] and t.totals()["pixels_sampled_frac"] == 1.0
     m = MockClient(['{"absent":true}'])
-    t = run("downscale", img, "cup", m)
+    t = run("downscale", img, "cup", m, cfg_with(downscale__pixel_budget=None))
     assert not t.found and t.final_point is None
     assert m.requests[0]["images"][0].width == 288 and m.requests[0]["images"][0].height == 192
     assert t.totals()["pixels_sampled_frac"] == pytest.approx(288 * 192 / (640 * 480))

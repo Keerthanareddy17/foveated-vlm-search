@@ -34,13 +34,13 @@ runs:
 
 # R-row -> run names for results/table.md. R5-R7 are filled in Step 8.
 table:
-  R1: {label: "base 2B | BF16 | full frame", acc: R1_full_frame, lat: R1_full_frame_lat}
-  R2: {label: "base 2B | BF16 | sliding window", acc: R2_sliding_window, lat: R2_sliding_window_lat}
-  R3: {label: "base 2B | BF16 | uniform downscale", acc: R3_downscale, lat: R3_downscale_lat}
-  R4: {label: "base 2B | BF16 | eye search", acc: R4_eye_search, lat: R4_eye_search_lat}
-  R5: {label: "fine-tuned 2B | BF16 | eye search", pending: Step 8}
-  R6: {label: "fine-tuned 2B | FP8 | eye search", pending: Step 8}
-  R7: {label: "fine-tuned 2B | FP8 + prefix caching | eye search", pending: Step 8}
+  R1: {label: "base 2B, BF16, full frame", acc: R1_full_frame, lat: R1_full_frame_lat}
+  R2: {label: "base 2B, BF16, sliding window", acc: R2_sliding_window, lat: R2_sliding_window_lat}
+  R3: {label: "base 2B, BF16, uniform downscale", acc: R3_downscale, lat: R3_downscale_lat}
+  R4: {label: "base 2B, BF16, eye search", acc: R4_eye_search, lat: R4_eye_search_lat}
+  R5: {label: "fine-tuned 2B, BF16, eye search", pending: Step 8}
+  R6: {label: "fine-tuned 2B, FP8, eye search", pending: Step 8}
+  R7: {label: "fine-tuned 2B, FP8 + prefix caching, eye search", pending: Step 8}
 
 baselines: [R1_full_frame, R2_sliding_window, R3_downscale, R4_eye_search,
             R1_full_frame_lat, R2_sliding_window_lat, R3_downscale_lat, R4_eye_search_lat]
