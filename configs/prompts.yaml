@@ -3,7 +3,7 @@
 # Every call puts the image(s) first and this text after them (image = prompt prefix, for R7).
 # The JSON form is enforced by vLLM structured outputs; the text tells the model what the keys mean.
 prompts:
-  version: 2   # v2: native point_2d key + {"absent":true} (v1 used {"p":...}; Step 4 format experiment)
+  version: 3   # v3: adds point_retry_encourage (Step 5); v2: native point_2d key + {"absent":true}
   # {query}: query text; coordinates are relative 0..1000 on the image (Qwen3-VL convention).
   # Qwen3-VL's own grounding phrasing ("locate ... point coordinates in JSON format") + abstain option.
   point: >-
@@ -12,6 +12,11 @@ prompts:
   # Appended to `point` on fixations 2+ ({checked}: "(x,y), (x,y)" in the same 0..1000 coordinates).
   point_checked_suffix: >-
     Already checked, no {query} there: {checked}. Locate a different {query}, or report {{"absent": true}}.
+  # Alternative for fixations 2+ (search.retry_prompt: encourage). Step 5: the base model answered
+  # "absent" after every rejected crop with the plain suffix above.
+  point_retry_encourage: >-
+    The {query} was not at {checked}. It may still be elsewhere in the image. Locate the next most
+    likely {query} with a point, or report {{"absent": true}} only if you are confident there is none.
   # Confirm on a sharp crop. {fields}: built from the enabled schema fields (see search.yaml).
   confirm: >-
     Is there a {query} in this image? Reply as JSON: {{"y": false}} if not, else {{"y": true{fields}}}.

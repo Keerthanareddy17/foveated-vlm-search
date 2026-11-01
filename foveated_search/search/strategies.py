@@ -17,7 +17,7 @@ from foveated_search.search.base import CallRecord, Trace, call, new_trace, prom
 from foveated_search.search.coords import model_to_frame
 from foveated_search.search.geometry import crop_box, downscale_size, in_box, thumbnail_size, tiles
 from foveated_search.search.parsing import ParseError
-from foveated_search.search.schemas import confirm_schema, parse_confirm, parse_p, point_schema
+from foveated_search.search.schemas import confirm_schema, parse_confirm, parse_p, point_schema, trim_label
 
 
 def _scfg(cfg: Config) -> dict:
@@ -87,34 +87,73 @@ async def sliding_window(frame: Image.Image, query: str, client, cfg: Config) ->
     s = _scfg(cfg)
     w = s["sliding_window"]
     tile = int(w["tile_size"] or s["fixation_size"])
+    mode = str(w.get("tile_mode", "point"))
+    if mode not in ("point", "confirm"):
+        raise ValueError(f"unknown sliding_window.tile_mode {mode!r}")
     boxes = tiles(frame.width, frame.height, tile, float(w["overlap"]), str(w["order"]))
     tr = new_trace("sliding_window", frame, query, cfg,
                    {"tile": tile, "overlap": w["overlap"], "order": w["order"], "parallel": bool(w["parallel"]),
-                    "n_tiles": len(boxes)})
-    text = prompt(cfg, "point", query=query)
+                    "n_tiles": len(boxes), "tile_mode": mode})
+    point_text = prompt(cfg, "point", query=query)
+    confirm_text = prompt(cfg, "confirm", query=query, fields="")
     scale = float(cfg.get_key("client.coord_scale"))
+    yes_no = confirm_schema(False, False, int(s["confirm"]["label_max_chars"]))
 
-    async def one(i: int, box) -> CallRecord:
-        return await call(client, cfg, role="tile", fixation=i + 1, image=client.encode(frame.crop(box)), region=box,
-                          text=text, schema=point_schema(), max_tokens=int(s["max_tokens_point"]))
+    async def ask(i: int, box) -> CallRecord:
+        img = client.encode(frame.crop(box))
+        if mode == "point":
+            return await call(client, cfg, role="tile", fixation=i + 1, image=img, region=box, text=point_text,
+                              schema=point_schema(), max_tokens=int(s["max_tokens_point"]))
+        return await call(client, cfg, role="tile", fixation=i + 1, image=img, region=box, text=confirm_text,
+                          schema=yes_no, max_tokens=int(s["max_tokens_confirm"]))
+
+    def tile_hit(rec: CallRecord) -> tuple[float, float] | bool | None:
+        """point mode: the point (or None); confirm mode: True/False."""
+        if mode == "point":
+            return _parse_point_into(rec)
+        try:
+            ans = parse_confirm(rec.raw_answer)
+            rec.parsed = {"y": ans.yes}
+            return ans.yes
+        except ParseError as e:
+            rec.parse_error = str(e)
+            return False
+
+    async def localize(rec: CallRecord) -> list[float]:
+        """confirm mode, on a "yes" tile: point call on the same tile; tile centre if it says absent."""
+        box = tuple(rec.region)
+        prec = await call(client, cfg, role="point", fixation=rec.fixation, image=client.encode(frame.crop(box)),
+                          region=box, text=point_text, schema=point_schema(), max_tokens=int(s["max_tokens_point"]))
+        tr.calls.append(prec)
+        p = _parse_point_into(prec)
+        if p is None:
+            return [round((box[0] + box[2]) / 2, 2), round((box[1] + box[3]) / 2, 2)]
+        return _frame_point(p, prec, scale)
+
+    async def accept(rec: CallRecord, hit) -> None:
+        tr.found = True
+        tr.final_point = _frame_point(hit, rec, scale) if mode == "point" else await localize(rec)
 
     if w["parallel"]:
-        recs = await asyncio.gather(*(one(i, b) for i, b in enumerate(boxes)))
+        recs = await asyncio.gather(*(ask(i, b) for i, b in enumerate(boxes)))
+        first = None
         for rec in recs:  # all tiles were sent; decision = first hit in tile order
             tr.calls.append(rec)
             tr.crops.append(rec.region)
-            p = _parse_point_into(rec)
-            if p is not None and not tr.found:
-                tr.found, tr.final_point = True, _frame_point(p, rec, scale)
+            hit = tile_hit(rec)
+            if hit and first is None:
+                first = (rec, hit)
+        if first:
+            await accept(*first)
         return tr
 
     for i, box in enumerate(boxes):
-        rec = await one(i, box)
+        rec = await ask(i, box)
         tr.calls.append(rec)
         tr.crops.append(rec.region)
-        p = _parse_point_into(rec)
-        if p is not None:
-            tr.found, tr.final_point = True, _frame_point(p, rec, scale)
+        hit = tile_hit(rec)
+        if hit:
+            await accept(rec, hit)
             break
     return tr
 
@@ -132,7 +171,8 @@ async def eye_search(frame: Image.Image, query: str, client, cfg: Config) -> Tra
     tsize = thumbnail_size(frame.width, frame.height, int(s["thumbnail_long_side"]))
     tr = new_trace("eye_search", frame, query, cfg,
                    {"thumbnail": list(tsize), "fixation_size": F, "max_fixations": int(s["max_fixations"]),
-                    "refine_point": bool(c["refine_point"]), "label": bool(c["label"])})
+                    "refine_point": bool(c["refine_point"]), "label": bool(c["label"]),
+                    "retry_prompt": str(s["retry_prompt"])})
     thumb = client.encode(_resize(frame, tsize))  # encoded ONCE: byte-identical across fixations
     tr.thumbnail_sha256 = thumb_hash = None
     full = (0, 0, frame.width, frame.height)
@@ -144,7 +184,13 @@ async def eye_search(frame: Image.Image, query: str, client, cfg: Config) -> Tra
     for k in range(1, int(s["max_fixations"]) + 1):
         text = prompt(cfg, "point", query=query)
         if checked_model:
-            text += " " + prompt(cfg, "point_checked_suffix", query=query, checked=_checked_text(checked_model))
+            checked = _checked_text(checked_model)
+            if s["retry_prompt"] == "encourage":
+                text = prompt(cfg, "point_retry_encourage", query=query, checked=checked)
+            elif s["retry_prompt"] == "plain":
+                text += " " + prompt(cfg, "point_checked_suffix", query=query, checked=checked)
+            else:
+                raise ValueError(f"unknown search.retry_prompt {s['retry_prompt']!r}")
         rec = await call(client, cfg, role="point", fixation=k, image=thumb, region=full, text=text,
                          schema=point_schema(), max_tokens=int(s["max_tokens_point"]))
         tr.calls.append(rec)
@@ -175,6 +221,6 @@ async def eye_search(frame: Image.Image, query: str, client, cfg: Config) -> Tra
         if ans.yes:
             tr.found = True
             tr.final_point = _frame_point(ans.point, crec, scale) if ans.point else [fx, fy]
-            tr.evidence = ans.label
+            tr.evidence = trim_label(ans.label, int(c["label_max_chars"]))
             break
     return tr

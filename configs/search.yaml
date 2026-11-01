@@ -6,10 +6,12 @@ search:
   max_tokens_point: 24         # caps for runaway generations; real answers are much shorter
   max_tokens_confirm: 40
 
+  retry_prompt: plain         # fixations 2+: plain (point + point_checked_suffix) | encourage (point_retry_encourage)
+
   confirm:
     refine_point: true         # ask for a refined point inside the crop on "yes"
-    label: true                # ask for a short evidence label on "yes" (demo text)
-    label_max_chars: 24
+    label: false               # short evidence label on "yes": demo only, off for all evals (Step 5)
+    label_max_chars: 48        # schema cap; labels hitting the cap are cut back to a word boundary
 
   downscale:
     # Pixel budget for the single downscaled frame (sides multiples of 32, aspect kept).
@@ -22,3 +24,7 @@ search:
     overlap: 0.25              # fraction of tile size shared by neighbouring tiles
     order: raster              # raster (row by row, top-left first) | center_out
     parallel: false            # true = send all tiles at once (wall-clock), decision still raster-first
+    # confirm: yes/no per tile (same call as eye search's confirm, point+label off); point call only on a
+    #          "yes" tile, to localize. point: Step 4 behaviour (point call per tile, stop at first point);
+    #          the base model points at something on every tile, so it stops at tile 1 (Step 4/5).
+    tile_mode: confirm

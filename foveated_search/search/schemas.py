@@ -78,3 +78,13 @@ def parse_confirm(text: str) -> ConfirmAnswer:
     if label is not None and not isinstance(label, str):
         raise ParseError(f"bad label {label!r}")
     return ConfirmAnswer(True, point, label)
+
+
+def trim_label(label: str | None, max_chars: int) -> str | None:
+    """Labels that hit the schema cap were cut mid-word by the grammar: cut back to a word boundary."""
+    if label is None:
+        return None
+    label = label.strip()
+    if len(label) >= max_chars and " " in label:
+        label = label[: label.rfind(" ")].rstrip(" ,;:-/")
+    return label or None
