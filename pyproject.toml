@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "foveated-search"
+version = "0.1.0"
+description = "Foveated VLM search: find things in live camera frames while barely looking."
+requires-python = ">=3.11,<3.13"
+# Keep minimal: heavy deps live in requirements/{serve,train}.in so each venv pins its own torch.
+dependencies = ["pyyaml"]
+
+[tool.setuptools.packages.find]
+include = ["foveated_search*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
