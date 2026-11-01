@@ -3,7 +3,7 @@ SHELL := /bin/bash
 SERVE_PY := .venv-serve/bin/python
 TRAIN_PY := .venv-train/bin/python
 
-.PHONY: help setup check storage gpu eval table gen-data base-on-val test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo
+.PHONY: help setup check storage gpu eval table gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo
 
 help: ## List all targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -65,8 +65,21 @@ gen-data: ## Step 6 end to end: plan -> fetch train2017 subset -> generate -> st
 base-on-val: ## Step 6: score the base model on val samples per type (server must be up)
 	source scripts/env.sh && $(SERVE_PY) scripts/step6_base_on_val.py
 
-train: ## LoRA fine-tune + merge (Step 7)
-	@echo "not implemented yet (Step 7)"
+train-bench: ## Step 7: short training benchmark (BENCH=40 steps): speed + memory, then cleaned up. vLLM must be stopped
+	@curl -sf http://127.0.0.1:8000/health >/dev/null && { echo "vLLM is running: make serve-stop first"; exit 1; } || true
+	source scripts/env.sh && PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True $(TRAIN_PY) -m foveated_search.train.train_lora --bench $(or $(BENCH),40)
+
+train: ## Step 7: full LoRA run in the background (nohup; resumes from the latest checkpoint). vLLM must be stopped
+	@curl -sf http://127.0.0.1:8000/health >/dev/null && { echo "vLLM is running: make serve-stop first"; exit 1; } || true
+	@mkdir -p logs; source scripts/env.sh && PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True nohup $(TRAIN_PY) -m foveated_search.train.train_lora > logs/train.log 2>&1 & \
+	  echo $$! > logs/train.pid; echo "command: $(TRAIN_PY) -m foveated_search.train.train_lora"; \
+	  echo "log: logs/train.log   pid: $$(cat logs/train.pid)"
+
+merge: ## Step 7: merge the LoRA adapter into the BF16 base, save locally, diff configs vs base
+	source scripts/env.sh && $(TRAIN_PY) -m foveated_search.train.merge
+
+push-hub: ## Step 7: push the merged model to a PRIVATE HF repo (checks write access first)
+	source scripts/env.sh && $(TRAIN_PY) -m foveated_search.train.push_hub
 
 quantize: ## FP8 quantization (Step 8)
 	@echo "not implemented yet (Step 8)"

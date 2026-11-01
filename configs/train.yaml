@@ -1,0 +1,35 @@
+# Step 7: LoRA fine-tuning (.venv-train). Overlay on base + search + prompts + eval + train_data.
+train:
+  run_name: lora_r16_e1
+  base_model: Qwen/Qwen3-VL-2B-Instruct
+  dtype: bfloat16
+  attn_implementation: sdpa
+
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    # all linear projections in the decoder layers; vision tower + mergers stay frozen
+    target_modules_regex: 'model\.language_model\.layers\.\d+\.(self_attn\.(q|k|v|o)_proj|mlp\.(gate|up|down)_proj)'
+
+  epochs: 1
+  learning_rate: 2.0e-4
+  lr_scheduler: cosine
+  warmup_ratio: 0.03
+  weight_decay: 0.0
+  max_grad_norm: 1.0
+  per_device_batch_size: 16       # set from the benchmark: 32 OOMs (20.5 GB allocated, logits over a 151k vocab)
+  grad_accum: 4                   # effective batch = 64
+  gradient_checkpointing: false   # only if memory needs it
+  dataloader_workers: 8
+
+  eval_every_frac: 0.1            # val loss on the full val split every ~10% of the epoch
+  save_every_frac: 0.1
+  save_total_limit: 2
+  log_every_steps: 5
+  eval_batch_size: 16             # 64 would add ~6 GB of logits (151k vocab); training peaks at 19.9 GB
+
+  out_subdir: lora                # checkpoints + final adapter under <paths.checkpoints_dir>/<run_name>
+  merged_name: qwen3-vl-2b-foveated-search   # merged model under <paths.models_dir>/<merged_name>
+  hub_repo_name: qwen3-vl-2b-foveated-search  # <hf user>/<hub_repo_name>, private
+  github_url: "https://github.com/<user>/foveated-vlm-search"   # placeholder for the model card

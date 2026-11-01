@@ -39,7 +39,7 @@ def to_chat(sample: dict, root: Path) -> tuple[list[dict], list[Image.Image]]:
 
 
 def encode(sample: dict, root: Path, proc) -> dict:
-    """input_ids, attention_mask, pixel_values, image_grid_thw, labels (assistant-only)."""
+    """input_ids, attention_mask, (mm_token_type_ids), pixel_values, image_grid_thw, labels (assistant-only)."""
     msgs, images = to_chat(sample, root)
     full = proc.apply_chat_template(msgs, tokenize=False, add_generation_prompt=False)
     prompt = proc.apply_chat_template(msgs[:1], tokenize=False, add_generation_prompt=True)
@@ -54,5 +54,8 @@ def encode(sample: dict, root: Path, proc) -> dict:
     im_end = proc.tokenizer.convert_tokens_to_ids("<|im_end|>")
     last = int((ids == im_end).nonzero()[-1])
     labels[last + 1:] = IGNORE
-    return {"input_ids": ids, "attention_mask": enc["attention_mask"][0], "pixel_values": enc["pixel_values"],
-            "image_grid_thw": enc["image_grid_thw"], "labels": labels, "n_prompt": n_prompt}
+    out = {"input_ids": ids, "attention_mask": enc["attention_mask"][0], "pixel_values": enc["pixel_values"],
+           "image_grid_thw": enc["image_grid_thw"], "labels": labels, "n_prompt": n_prompt}
+    if "mm_token_type_ids" in enc:  # transformers 5.x Qwen3-VL needs it for multimodal RoPE
+        out["mm_token_type_ids"] = enc["mm_token_type_ids"][0]
+    return out
