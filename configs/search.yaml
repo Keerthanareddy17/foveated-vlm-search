@@ -16,8 +16,9 @@ search:
   downscale:
     # Pixel budget for the single downscaled frame (sides multiples of 32, aspect kept).
     # null = nominal eye-search cost of one thumbnail + one fixation for this frame.
-    # Step 5 sets it to the measured mean pixels of eye search.
-    pixel_budget: null
+    # Set in Step 5 to R4's (eye search, base BF16) measured mean pixels sampled per query on the
+    # test split: 52965.8 -> 52966 px (results/runs/R4_eye_search.jsonl, test ids only).
+    pixel_budget: 52966
 
   sliding_window:
     tile_size: null            # null = fixation_size
