@@ -142,6 +142,35 @@ All prompt-mode failures were the model echoing both template options: `{"point"
   - Coordinate test: hit rate 72.7%, median error 24 px. But 3/36 prompt-JSON answers did not parse: one duplicate key and two runaway repetitions (`{"point": [...], "points": [{"point": ...`). Structured outputs would prevent both. **Step 8: rerun the format test on FP8.**
   - Which FP8 to use is decided in Step 8. Offline is faster (217 vs 244 ms per call) and keeps the vision tower in BF16, as CLAUDE.md specifies.
 
+### Step 3: frozen evaluation set
+
+**Frozen manifest: do not edit by hand.** Regenerate with `make eval-manifest` (seed 42, `configs/eval.yaml`, COCO `instances_val2017.json` from the zip with md5 `f4bbac642086de4f52a3fdda2de5fa2c`):
+
+| file | sha256 |
+|---|---|
+| `results/eval_manifest.jsonl` (500 queries) | `c5aa81644b1268b34f59f691ce494159d26c0feca2be6258160580724b3f7489` |
+| `results/eval_manifest_dev.jsonl` (50 queries) | `ceeecb5e01f2829a272b6eb6abf651a04a665a1a42d85e7870a1b1848673481b` |
+| `results/eval_image_ids.txt` (500 ids, for the Step 6 no-overlap check) | `226aeb89660796bea8b65e6bb006371b7b667ee06422d16d3678c1c63fb5a9b9` |
+| `results/eval_images_sha256.txt` (sha256 of each eval JPEG) | `49291a5ef0bd3ca2c5ed74a74cf287f68039ed4cc65655cedab17391c5e9bba3` |
+
+Reproducibility, measured: 4 more runs of `make eval-manifest` in fresh processes (different `PYTHONHASHSEED`s) gave byte-identical manifest, dev, id and image-hash files. `test_regenerate_same_bytes` checks this on every `make test`, whenever the annotations are on local disk.
+
+**Query design** (all values in `configs/eval.yaml`):
+- 500 queries, one per image (500 distinct val2017 images). 400 positives / 100 negatives (20%).
+- `food` (supercategory, 10 classes) makes up 22.5% of positives (90) and 22% of negatives (22). Single-category queries cover all 80 categories, drawn round-robin. Every category gets 3-4 positives (cap 6, never reached), and 78 categories get 1 negative.
+- **Minimum size:** the target's largest non-crowd box must be ≥ 0.5% of the image. On a 640x480 frame that's ~39x39 px, which still leaves ~6x6 px in the 96x72 thumbnail; anything smaller is invisible at glance resolution and could only be found by a lucky fixation. Actual range: min 0.51%, median 7.3%, p90 50.6%.
+- **Size buckets** (COCO definition, on the largest instance's segmentation area): small 18 (4.5%), medium 169 (42.2%), large 213 (53.2%). Some targets above the box-area floor are still COCO-"small" because their segmentation covers much less of the box than the box itself.
+- **Ground truth** = all non-crowd boxes of the target ([x, y, w, h] in pixels, 2 decimals). For `food`, that's all boxes of all food classes. Instances per positive: mean 2.28, median 1, max 14.
+- **Crowd rule (my addition, flagged to the user):** a positive is skipped if the target also has an `iscrowd` annotation in that image. Crowd regions are excluded from ground truth, so a correct point on one would score as a miss.
+- **Negatives:** no annotation at all, crowd included, of any category in the target's supercategory (for `food`, no food at all). This guards against COCO's incomplete labels, e.g. a "cup" negative also contains no bowl, fork, bottle, etc.
+- The dev subset (50) is stratified by (query_type, is_negative) with largest-remainder allocation: 40 pos / 10 neg, 11 `food`.
+
+**Data handling** (storage policy):
+- The annotations zip (252,907,541 B) is checked against the server's Content-Length and md5. `instances_val2017.json` (20 MB) and `instances_train2017.json` (470 MB, for Step 6) are extracted to `/content/fvs_local/data/coco/`, and the zip is then deleted from the local disk.
+- The 500 eval images are fetched by URL with 8 workers and retries. Each is verified with a PIL decode and its size checked against the annotated width/height. They're written to Drive `data/coco_val_eval/` (**82.5 MB**) plus a local copy.
+- Timings: first `make eval-manifest` took 66 s end to end (image fetch 45.6 s). Second run 8 s (all 500 skipped). A new session with Drive copies but no local ones: local copies restored from Drive in 1.1 s, no re-download.
+- Project Drive usage after Step 3: **79 MB** (budget 500 MB).
+
 ## Gotchas
 
 - Colab sets `UV_SYSTEM_PYTHON=true` globally. That makes `uv venv` print a `--system has no effect` warning. `setup_colab.sh` unsets it, since we always target explicit venvs.
@@ -153,4 +182,5 @@ All prompt-mode failures were the model echoing both template options: `{"point"
 - vLLM rejects per-request `mm_processor_kwargs` unless started with `--trust-request-mm-kwargs`. We keep that off and restart the server to change pixel limits.
 - The model's `generation_config.json` sets temperature 0.7 / top_p 0.8 / top_k 20. The server runs with `--generation-config vllm` so only our request parameters (temperature 0, seed 42) apply.
 - vLLM prefix caching is on by default in V1, and so is the mm-processor cache. Both are turned off in `configs/base.yaml` because repeating an identical benchmark image would otherwise skip work. R7 re-enables prefix caching on purpose.
+- `collections.Counter.most_common()` breaks ties in insertion order, which here came from iterating a `set` of strings. Python randomizes string hashes per process, so the stats file changed between runs while the manifest didn't. Any ordering that feeds a committed file must be fully sorted (fixed: ties sorted by name).
 
