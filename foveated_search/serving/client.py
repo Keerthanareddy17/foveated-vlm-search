@@ -7,6 +7,7 @@ TTFT = time until the first streamed chunk that carries content.
 
 from __future__ import annotations
 
+import asyncio
 import time
 from dataclasses import asdict, dataclass, field
 from typing import Any
@@ -41,6 +42,7 @@ class CallResult:
     total_s: float
     finish_reason: str | None
     images: list[SentImage] = field(default_factory=list)
+    cached_tokens: int | None = None  # prefix-cache hits (server flag --enable-prompt-tokens-details)
 
     @property
     def pixels_sent(self) -> int:
@@ -63,6 +65,15 @@ def build_messages(images: list[EncodedImage], text: str, system: str | None = N
     msgs: list[dict] = [{"role": "system", "content": system}] if system else []
     msgs.append({"role": "user", "content": content})
     return msgs
+
+
+def parse_cached(usage: Any) -> int | None:
+    if usage is None:
+        return None
+    det = usage.get("prompt_tokens_details") if isinstance(usage, dict) else getattr(usage, "prompt_tokens_details", None)
+    if det is None:
+        return None
+    return det.get("cached_tokens") if isinstance(det, dict) else getattr(det, "cached_tokens", None)
 
 
 def parse_usage(usage: Any) -> tuple[int | None, int | None]:
@@ -93,6 +104,11 @@ class VLMClient:
     def encode(self, img: Image.Image) -> EncodedImage:
         return encode_png(img, self.png_level)
 
+    async def aencode(self, img: Image.Image) -> EncodedImage:
+        """encode() off the event loop: PNG encoding of a full frame costs ~90 ms of CPU (PIL releases the GIL),
+        which would otherwise serialize concurrent searches (Step 8)."""
+        return await asyncio.to_thread(self.encode, img)
+
     async def chat(
         self,
         images: list[Image.Image | EncodedImage],
@@ -103,7 +119,7 @@ class VLMClient:
         response_format: dict | None = None,
         extra_body: dict | None = None,
     ) -> CallResult:
-        enc = [im if isinstance(im, EncodedImage) else self.encode(im) for im in images]
+        enc = [im if isinstance(im, EncodedImage) else await self.aencode(im) for im in images]
         sent = [SentImage(e.width, e.height, e.pixels, e.num_bytes) for e in enc]
         if self.counter is not None:
             for s, e in zip(sent, enc):
@@ -142,7 +158,7 @@ class VLMClient:
         total = time.perf_counter() - t0
         pt, ct = parse_usage(usage)
         vt = sum(s.vision_tokens for s in sent) if sent and all(s.vision_tokens is not None for s in sent) else (0 if not sent else None)
-        return CallResult("".join(parts), pt, ct, vt, ttft, total, finish, sent)
+        return CallResult("".join(parts), pt, ct, vt, ttft, total, finish, sent, parse_cached(usage))
 
     async def close(self) -> None:
         await self.oa.close()

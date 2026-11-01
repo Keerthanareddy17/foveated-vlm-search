@@ -46,7 +46,7 @@ async def _single_point(name: str, frame: Image.Image, size: tuple[int, int], qu
                         params: dict) -> Trace:
     s = _scfg(cfg)
     tr = new_trace(name, frame, query, cfg, params)
-    img = client.encode(resize(frame, size))
+    img = await client.aencode(resize(frame, size))
     rec = await call(client, cfg, role="point", fixation=None, image=img, region=(0, 0, frame.width, frame.height),
                      text=prompt(cfg, "point", query=query), schema=point_schema(),
                      max_tokens=int(s["max_tokens_point"]))
@@ -98,7 +98,7 @@ async def sliding_window(frame: Image.Image, query: str, client, cfg: Config) ->
     yes_no = confirm_schema(False, False, int(s["confirm"]["label_max_chars"]))
 
     async def ask(i: int, box) -> CallRecord:
-        img = client.encode(frame.crop(box))
+        img = await client.aencode(frame.crop(box))
         if mode == "point":
             return await call(client, cfg, role="tile", fixation=i + 1, image=img, region=box, text=point_text,
                               schema=point_schema(), max_tokens=int(s["max_tokens_point"]))
@@ -120,7 +120,7 @@ async def sliding_window(frame: Image.Image, query: str, client, cfg: Config) ->
     async def localize(rec: CallRecord) -> list[float]:
         """confirm mode, on a "yes" tile: point call on the same tile; tile centre if it says absent."""
         box = tuple(rec.region)
-        prec = await call(client, cfg, role="point", fixation=rec.fixation, image=client.encode(frame.crop(box)),
+        prec = await call(client, cfg, role="point", fixation=rec.fixation, image=await client.aencode(frame.crop(box)),
                           region=box, text=point_text, schema=point_schema(), max_tokens=int(s["max_tokens_point"]))
         tr.calls.append(prec)
         p = _parse_point_into(prec)
@@ -167,7 +167,7 @@ async def eye_search(frame: Image.Image, query: str, client, cfg: Config) -> Tra
                    {"thumbnail": list(tsize), "fixation_size": F, "max_fixations": int(s["max_fixations"]),
                     "refine_point": bool(c["refine_point"]), "label": bool(c["label"]),
                     "retry_prompt": str(s["retry_prompt"])})
-    thumb = client.encode(make_thumbnail(frame, int(s["thumbnail_long_side"])))  # encoded ONCE: byte-identical
+    thumb = await client.aencode(make_thumbnail(frame, int(s["thumbnail_long_side"])))  # encoded ONCE: byte-identical
     assert (thumb.width, thumb.height) == tsize
     tr.thumbnail_sha256 = thumb_hash = None
     full = (0, 0, frame.width, frame.height)
@@ -194,7 +194,7 @@ async def eye_search(frame: Image.Image, query: str, client, cfg: Config) -> Tra
         tr.fixations.append([fx, fy])
         crop, box = make_crop(frame, fx, fy, F)
         tr.crops.append(list(box))
-        crec = await call(client, cfg, role="confirm", fixation=k, image=client.encode(crop), region=box,
+        crec = await call(client, cfg, role="confirm", fixation=k, image=await client.aencode(crop), region=box,
                           text=confirm_text, schema=c_schema,
                           max_tokens=int(s["max_tokens_confirm"]))
         tr.calls.append(crec)

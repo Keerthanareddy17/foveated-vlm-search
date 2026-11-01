@@ -89,6 +89,7 @@ class CallRecord:
     parsed: Any = None
     parse_error: str | None = None
     finish_reason: str | None = None
+    cached_tokens: int | None = None   # prefix-cache hits for this call (R7; None when not reported)
 
 
 @dataclass
@@ -150,7 +151,7 @@ async def call(client, cfg: Config, *, role: str, fixation: int | None, image: E
         resized_w=im.resized_w, resized_h=im.resized_h, pixels=im.pixels, png_bytes=im.png_bytes,
         image_sha256=sha256(image.png), vision_tokens=im.vision_tokens, prompt_tokens=r.prompt_tokens,
         completion_tokens=r.completion_tokens, ttft_s=r.ttft_s, total_s=r.total_s, prompt=text,
-        raw_answer=r.answer, finish_reason=r.finish_reason,
+        raw_answer=r.answer, finish_reason=r.finish_reason, cached_tokens=r.cached_tokens,
     )
 
 

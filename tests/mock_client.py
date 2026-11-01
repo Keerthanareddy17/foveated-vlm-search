@@ -17,6 +17,9 @@ class MockClient:
     def encode(self, img) -> EncodedImage:
         return encode_png(img)
 
+    async def aencode(self, img) -> EncodedImage:
+        return encode_png(img)
+
     async def chat(self, images, text, *, max_tokens=None, extra_body=None, **kw) -> CallResult:
         enc = [im if isinstance(im, EncodedImage) else self.encode(im) for im in images]
         self.requests.append({"images": enc, "text": text, "extra_body": extra_body})
