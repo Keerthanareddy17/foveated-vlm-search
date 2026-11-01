@@ -30,6 +30,7 @@ So a new Colab session costs ~1.5-2 min of setup. Most of the "skip" and "verify
 - **Step 4:** strategies behind one registry (`search/base.py`); all text in `configs/prompts.yaml` (versioned, stored in every trace), all numbers in `configs/search.yaml`. Images always precede text. Eye search encodes the thumbnail once and asserts its hash is unchanged across fixations.
 - **Step 5:** sliding window uses yes/no per tile (`tile_mode: confirm`); eye search keeps `retry_prompt: plain` and `refine_point: true`; the evidence label is off for evals. Downscale budget = R4's measured mean, 52,966 px. All chosen on dev (see Step 5 findings).
 - **Step 6:** training data shares code with inference (`search/views.py`, `point_prompt` / `confirm_prompt`, `dump_point` / `dump_confirm`, `encode_png`); confirm labels use mask-based visibility; "food" negatives exclude 13 food-adjacent classes.
+- **Step 7:** LoRA r16 on the decoder only, 1 epoch, effective batch 64 (16 x 4); final adapter used (val loss = best); merged model ships the base config/processor files byte-for-byte; private HF repo `honey613/qwen3-vl-2b-foveated-search`.
 
 ## Storage policy
 
@@ -323,6 +324,42 @@ Harness: `foveated_search/eval/` (splits, resumable runner, metrics, generated t
 
 The confirm skill is already decent, Type 1 is weak on small thumbnails and negatives, and look-again is entirely missing: the "never recovers" failure from Step 5, measured directly.
 
+### Step 7: LoRA fine-tuning, merge, push
+
+Code: `foveated_search/train/{train_lora,merge,push_hub}.py`, config `configs/train.yaml`; `make train-bench`, `make train`, `make merge`, `make push-hub`.
+
+**Setup.** Base Qwen3-VL-2B-Instruct BF16 (sdpa attention). LoRA r=16, alpha=32, dropout 0.05 on all 196 decoder projections (q/k/v/o + gate/up/down x 28 layers); vision tower and mergers frozen (asserted at startup). 17,432,576 trainable / 2,144,964,608 (0.81%). AdamW, lr 2e-4, cosine, 3% warmup, grad clip 1.0, seed 42. Effective batch 64 = 16 x 4, no gradient checkpointing. Plain transformers `Trainer` (no TRL), inputs only from `train/collate.py`. At startup the Trainer's dataloader batch for the first 64 train samples (no shuffle) is checked to equal our collator's output tensor for tensor: True.
+
+**Gotchas found:** transformers 5.17 has no `warmup_ratio` (`warmup_steps` takes a float < 1 as a ratio). Qwen3-VL in transformers 5.x also needs the processor's `mm_token_type_ids` for multimodal RoPE, so it is passed through `encode` and padded with 0. The Trainer evaluates at the final step on its own, so the last val point is the final adapter.
+
+**Memory and speed (measured).** Batch 32 per device ran out of memory (20.5 GB allocated; logits over the 151k vocabulary). The 30-step benchmark at 16 x 4: 17.3 samples/s, 19.9 GB allocated / 21.3 GB reserved (`results/step7_bench.json`). Worst-case check on the 16 longest training samples (288 px confirm crops, 168-170 tokens), one forward + backward + AdamW step: 18.49 GiB allocated / 19.98 GiB reserved + 0.25 GiB CUDA overhead of 22.03 GiB, so **1.81 GiB spare** (`results/step7_worst_batch.json`). Eval batch 16 (64 would add ~6 GB of logits). `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`.
+
+**Run.** 1 epoch = 527 steps, **31.5 min** (17.9 samples/s), peak 20.1 GB allocated / 21.5 GB reserved, no NaN, no OOM, no resume needed. Train loss 1.78 (step 5) -> ~0.55 by step 20 -> ~0.49 at the end (mean over the run 0.526). Val loss on the full val split (1,776 samples) at steps 53/106/159/212/265/318/371/424/477/527: 0.562, 0.575, 0.580, 0.556, 0.550, 0.547, 0.548, 0.546, **0.540, 0.540** (`results/step7_train_log.csv`, `results/step7_loss_curves.png`).
+- Val loss rose twice early (steps 106 and 159) while train loss eased; this was flagged during the run. Likely cause: the model fits the training images (~4.7 samples per image) faster than it generalizes, while the learning rate is still near its peak. It reversed once the cosine decay set in, and val loss improved steadily to the end. The final adapter equals the best val loss (0.5405 vs 0.5403 at step 477), so it is used.
+- Final train/val gap ~0.05. A second epoch looks unnecessary: val loss had flattened (0.546 -> 0.540 over the last 2 evals).
+
+**Artifacts.** Adapter on Drive `adapters/lora_r16_e1/adapter/` (69.8 MB) + `train_log.csv` + `train_meta.json`. Project Drive usage after Step 7: 146 MB. Merged model on the local disk (`/content/fvs_local/models/qwen3-vl-2b-foveated-search`, 4.26 GB) and on the Hub: **private** repo `honey613/qwen3-vl-2b-foveated-search` (token role checked: write; 4.27 GB, `results/step7_hub_push.json`).
+
+**Merge checks** (`results/step7_merge_diff.json`): all 315 vision-tower/merger tensors bit-identical to the base; all 196 decoder projection weights changed; tensor key sets identical. Processor, tokenizer, chat template, preprocessor and generation configs copied byte-for-byte from the base. transformers 5.17 re-serializes `config.json` differently (`rope_scaling` + `rope_theta` -> `rope_parameters` with the same values, added `dtype` fields, `transformers_version` 4.57 -> 5.17, vision `model_type` renamed). The architecture is identical, so **the base `config.json` is shipped byte-for-byte** (zero diff). vLLM 0.31 loads the merged model with the same server config.
+
+**Before / after on the same 900 val samples** (Step 6 scorer, BF16; `results/step7_checks.md`):
+
+| skill | subset | base | fine-tuned |
+|---|---|---|---|
+| where (first glance) | positives | 42.1 | 52.1 |
+| where (first glance) | negatives (absent) | 45.0 | **90.0** |
+| look again | positives | **0.0** | **50.2** |
+| look again | negatives (absent) | 100.0 | 97.8 |
+| confirm | yes crops | 84.4 | 90.5 |
+| confirm | no crops | 95.4 | 96.1 (near miss 85.2 -> 85.2) |
+
+No negative subset dropped by more than 5 pp: fine-tuning did not make the model over-eager.
+
+**Dev sanity runs (50 queries, accuracy mode; `results/runs/dev_*_finetuned.jsonl`):**
+- Eye search: found 72.5% -> **85.0%**, FP 0% -> 0%, accuracy 78% -> 88%, calls/query 2.08 -> 1.82. Only 2 searches (was 11) had a rejected crop, and 1 of the 2 took a second fixation (base: 0 of 11). Too few to judge the look-again skill on dev; Step 8 on test will.
+- Full frame (forgetting check): found 92.5% -> 97.5%, FP 30% -> **0%**. No forgetting; the "absent" answer now transfers to the full frame too.
+- Caveats: dev is small (50 queries) and was used for every Step 5 choice; the test numbers in Step 8 are the real ones.
+
 ## Gotchas
 
 - Colab sets `UV_SYSTEM_PYTHON=true` globally. That makes `uv venv` print a `--system has no effect` warning. `setup_colab.sh` unsets it, since we always target explicit venvs.
@@ -339,3 +376,4 @@ The confirm skill is already decent, Type 1 is weak on small thumbnails and nega
 - Plain `Image.quantize(256)` on a photo with coloured annotations maps the blue/purple markers to grey. `viz.save_png` reserves palette entries for the annotation colours.
 - A bare `runs/` in `.gitignore` (meant for training-run folders) also ignored `results/runs/`. Anchored to `/runs/`, like `/data/` in Step 3.
 - Markdown tables: labels containing `|` break the columns; row labels use commas.
+- transformers 5.17: `TrainingArguments` has no `warmup_ratio` (use a float `warmup_steps`), and Qwen3-VL training needs the processor's `mm_token_type_ids` (multimodal RoPE). See Step 7.
