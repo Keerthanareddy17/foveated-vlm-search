@@ -1,0 +1,50 @@
+{
+ "prompt_json": {
+  "n": 24,
+  "parse_rate": 0.75,
+  "correct_rate_present": 0.5,
+  "correct_rate_negative": 1.0,
+  "median_ttft_s": 0.0747,
+  "median_total_s": 0.3185,
+  "mean_completion_tokens": 16.4,
+  "example_answers": [
+   "```json {\"point\": [135, 275], \"point\": null} ```",
+   "```json {\"point\": [155, 641], \"point\": null} ```",
+   "```json {\"point\": [165, 775]} ```",
+   "```json {\"point\": [174, 675]} ```",
+   "```json {\"point\": [180, 140]} ```",
+   "```json {\"point\": [184, 244]} ```"
+  ],
+  "failures": [
+   "```json\n{\"point\": [264, 544], \"point\": null}\n```",
+   "```json\n{\"point\": [571, 704], \"point\": null}\n```",
+   "```json\n{\"point\": [924, 844], \"point\": null}\n```",
+   "```json\n{\"point\": [474, 344], \"point\": null}\n```",
+   "```json\n{\"point\": [155, 641], \"point\": null}\n```"
+  ]
+ },
+ "structured_json_schema": {
+  "n": 24,
+  "parse_rate": 1.0,
+  "correct_rate_present": 0.812,
+  "correct_rate_negative": 1.0,
+  "median_ttft_s": 0.0765,
+  "median_total_s": 0.2905,
+  "mean_completion_tokens": 12.9,
+  "example_answers": [
+   "{ \"point\": [127, 274] }",
+   "{ \"point\": [134, 754] }",
+   "{ \"point\": [155, 645] }",
+   "{ \"point\": [155, 675] }",
+   "{ \"point\": [170, 148] }",
+   "{ \"point\": [184, 144] }"
+  ],
+  "failures": []
+ },
+ "server": {
+  "quantization": null,
+  "image_min_pixels": 1024,
+  "image_max_pixels": 1228800,
+  "enable_prefix_caching": false
+ }
+}

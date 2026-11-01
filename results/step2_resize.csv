@@ -1,0 +1,23 @@
+setting,image,sent,sent_pixels,resized,resized_pixels,vision_tokens,server_image_tokens,agree,png_bytes
+"default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",thumbnail long side 64,64x48,3072,320x224,71680,70,70,True,7442
+"default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",square crop 64,64x64,4096,256x256,65536,64,64,True,9224
+"default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",thumbnail long side 96,96x72,6912,320x224,71680,70,70,True,15841
+"default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",square crop 96,96x96,9216,256x256,65536,64,64,True,21083
+"default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",thumbnail long side 128,128x96,12288,320x224,71680,70,70,True,27139
+"default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",square crop 128,128x128,16384,256x256,65536,64,64,True,38222
+"default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",thumbnail long side 192,192x144,27648,320x224,71680,70,70,True,58703
+"default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",square crop 192,192x192,36864,256x256,65536,64,64,True,87930
+"default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",thumbnail long side 224,224x168,37632,320x224,71680,70,70,True,79662
+"default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",square crop 224,224x224,50176,256x256,65536,64,64,True,120700
+"default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",full frame,640x480,307200,640x480,307200,300,300,True,694498
+"explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",thumbnail long side 64,64x48,3072,64x64,4096,4,4,True,7442
+"explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",square crop 64,64x64,4096,64x64,4096,4,4,True,9224
+"explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",thumbnail long side 96,96x72,6912,96x64,6144,6,6,True,15841
+"explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",square crop 96,96x96,9216,96x96,9216,9,9,True,21083
+"explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",thumbnail long side 128,128x96,12288,128x96,12288,12,12,True,27139
+"explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",square crop 128,128x128,16384,128x128,16384,16,16,True,38222
+"explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",thumbnail long side 192,192x144,27648,192x128,24576,24,24,True,58703
+"explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",square crop 192,192x192,36864,192x192,36864,36,36,True,87930
+"explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",thumbnail long side 224,224x168,37632,224x160,35840,35,35,True,79662
+"explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",square crop 224,224x224,50176,224x224,50176,49,49,True,120700
+"explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",full frame,640x480,307200,640x480,307200,300,300,True,694498

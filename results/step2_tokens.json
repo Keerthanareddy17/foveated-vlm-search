@@ -1,0 +1,66 @@
+{
+ "size_setting": {
+  "shortest_edge": 1024,
+  "longest_edge": 1228800
+ },
+ "text_only_prompt_tokens": 46,
+ "rows": [
+  {
+   "sent": "96x72",
+   "resized": "96x64",
+   "processor_vision_tokens": 6,
+   "server_prompt_tokens": 54,
+   "processor_prompt_tokens": 54,
+   "server_diff_vs_text_only": 8,
+   "full_prompt_match": true,
+   "diff_equals_vision_plus_2": true
+  },
+  {
+   "sent": "224x224",
+   "resized": "224x224",
+   "processor_vision_tokens": 49,
+   "server_prompt_tokens": 97,
+   "processor_prompt_tokens": 97,
+   "server_diff_vs_text_only": 51,
+   "full_prompt_match": true,
+   "diff_equals_vision_plus_2": true
+  },
+  {
+   "sent": "640x480",
+   "resized": "640x480",
+   "processor_vision_tokens": 300,
+   "server_prompt_tokens": 348,
+   "processor_prompt_tokens": 348,
+   "server_diff_vs_text_only": 302,
+   "full_prompt_match": true,
+   "diff_equals_vision_plus_2": true
+  },
+  {
+   "sent": "333x517",
+   "resized": "320x512",
+   "processor_vision_tokens": 160,
+   "server_prompt_tokens": 208,
+   "processor_prompt_tokens": 208,
+   "server_diff_vs_text_only": 162,
+   "full_prompt_match": true,
+   "diff_equals_vision_plus_2": true
+  },
+  {
+   "sent": "1000x300",
+   "resized": "992x288",
+   "processor_vision_tokens": 279,
+   "server_prompt_tokens": 327,
+   "processor_prompt_tokens": 327,
+   "server_diff_vs_text_only": 281,
+   "full_prompt_match": true,
+   "diff_equals_vision_plus_2": true
+  }
+ ],
+ "all_agree": true,
+ "server": {
+  "quantization": null,
+  "image_min_pixels": 1024,
+  "image_max_pixels": 1228800,
+  "enable_prefix_caching": false
+ }
+}

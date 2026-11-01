@@ -1,0 +1,143 @@
+{
+ "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+ "rows": [
+  {
+   "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+   "image": "thumbnail long side 64",
+   "sent": "64x48",
+   "sent_pixels": 3072,
+   "resized": "64x64",
+   "resized_pixels": 4096,
+   "vision_tokens": 4,
+   "server_image_tokens": 4,
+   "agree": true,
+   "png_bytes": 7442
+  },
+  {
+   "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+   "image": "square crop 64",
+   "sent": "64x64",
+   "sent_pixels": 4096,
+   "resized": "64x64",
+   "resized_pixels": 4096,
+   "vision_tokens": 4,
+   "server_image_tokens": 4,
+   "agree": true,
+   "png_bytes": 9224
+  },
+  {
+   "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+   "image": "thumbnail long side 96",
+   "sent": "96x72",
+   "sent_pixels": 6912,
+   "resized": "96x64",
+   "resized_pixels": 6144,
+   "vision_tokens": 6,
+   "server_image_tokens": 6,
+   "agree": true,
+   "png_bytes": 15841
+  },
+  {
+   "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+   "image": "square crop 96",
+   "sent": "96x96",
+   "sent_pixels": 9216,
+   "resized": "96x96",
+   "resized_pixels": 9216,
+   "vision_tokens": 9,
+   "server_image_tokens": 9,
+   "agree": true,
+   "png_bytes": 21083
+  },
+  {
+   "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+   "image": "thumbnail long side 128",
+   "sent": "128x96",
+   "sent_pixels": 12288,
+   "resized": "128x96",
+   "resized_pixels": 12288,
+   "vision_tokens": 12,
+   "server_image_tokens": 12,
+   "agree": true,
+   "png_bytes": 27139
+  },
+  {
+   "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+   "image": "square crop 128",
+   "sent": "128x128",
+   "sent_pixels": 16384,
+   "resized": "128x128",
+   "resized_pixels": 16384,
+   "vision_tokens": 16,
+   "server_image_tokens": 16,
+   "agree": true,
+   "png_bytes": 38222
+  },
+  {
+   "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+   "image": "thumbnail long side 192",
+   "sent": "192x144",
+   "sent_pixels": 27648,
+   "resized": "192x128",
+   "resized_pixels": 24576,
+   "vision_tokens": 24,
+   "server_image_tokens": 24,
+   "agree": true,
+   "png_bytes": 58703
+  },
+  {
+   "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+   "image": "square crop 192",
+   "sent": "192x192",
+   "sent_pixels": 36864,
+   "resized": "192x192",
+   "resized_pixels": 36864,
+   "vision_tokens": 36,
+   "server_image_tokens": 36,
+   "agree": true,
+   "png_bytes": 87930
+  },
+  {
+   "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+   "image": "thumbnail long side 224",
+   "sent": "224x168",
+   "sent_pixels": 37632,
+   "resized": "224x160",
+   "resized_pixels": 35840,
+   "vision_tokens": 35,
+   "server_image_tokens": 35,
+   "agree": true,
+   "png_bytes": 79662
+  },
+  {
+   "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+   "image": "square crop 224",
+   "sent": "224x224",
+   "sent_pixels": 50176,
+   "resized": "224x224",
+   "resized_pixels": 50176,
+   "vision_tokens": 49,
+   "server_image_tokens": 49,
+   "agree": true,
+   "png_bytes": 120700
+  },
+  {
+   "setting": "explicit min=1024 max=1228800 (size={'shortest_edge': 1024, 'longest_edge': 1228800})",
+   "image": "full frame",
+   "sent": "640x480",
+   "sent_pixels": 307200,
+   "resized": "640x480",
+   "resized_pixels": 307200,
+   "vision_tokens": 300,
+   "server_image_tokens": 300,
+   "agree": true,
+   "png_bytes": 694498
+  }
+ ],
+ "server": {
+  "quantization": null,
+  "image_min_pixels": 1024,
+  "image_max_pixels": 1228800,
+  "enable_prefix_caching": false
+ }
+}

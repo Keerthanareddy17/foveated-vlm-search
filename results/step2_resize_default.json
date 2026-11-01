@@ -1,0 +1,143 @@
+{
+ "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+ "rows": [
+  {
+   "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+   "image": "thumbnail long side 64",
+   "sent": "64x48",
+   "sent_pixels": 3072,
+   "resized": "320x224",
+   "resized_pixels": 71680,
+   "vision_tokens": 70,
+   "server_image_tokens": 70,
+   "agree": true,
+   "png_bytes": 7442
+  },
+  {
+   "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+   "image": "square crop 64",
+   "sent": "64x64",
+   "sent_pixels": 4096,
+   "resized": "256x256",
+   "resized_pixels": 65536,
+   "vision_tokens": 64,
+   "server_image_tokens": 64,
+   "agree": true,
+   "png_bytes": 9224
+  },
+  {
+   "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+   "image": "thumbnail long side 96",
+   "sent": "96x72",
+   "sent_pixels": 6912,
+   "resized": "320x224",
+   "resized_pixels": 71680,
+   "vision_tokens": 70,
+   "server_image_tokens": 70,
+   "agree": true,
+   "png_bytes": 15841
+  },
+  {
+   "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+   "image": "square crop 96",
+   "sent": "96x96",
+   "sent_pixels": 9216,
+   "resized": "256x256",
+   "resized_pixels": 65536,
+   "vision_tokens": 64,
+   "server_image_tokens": 64,
+   "agree": true,
+   "png_bytes": 21083
+  },
+  {
+   "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+   "image": "thumbnail long side 128",
+   "sent": "128x96",
+   "sent_pixels": 12288,
+   "resized": "320x224",
+   "resized_pixels": 71680,
+   "vision_tokens": 70,
+   "server_image_tokens": 70,
+   "agree": true,
+   "png_bytes": 27139
+  },
+  {
+   "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+   "image": "square crop 128",
+   "sent": "128x128",
+   "sent_pixels": 16384,
+   "resized": "256x256",
+   "resized_pixels": 65536,
+   "vision_tokens": 64,
+   "server_image_tokens": 64,
+   "agree": true,
+   "png_bytes": 38222
+  },
+  {
+   "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+   "image": "thumbnail long side 192",
+   "sent": "192x144",
+   "sent_pixels": 27648,
+   "resized": "320x224",
+   "resized_pixels": 71680,
+   "vision_tokens": 70,
+   "server_image_tokens": 70,
+   "agree": true,
+   "png_bytes": 58703
+  },
+  {
+   "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+   "image": "square crop 192",
+   "sent": "192x192",
+   "sent_pixels": 36864,
+   "resized": "256x256",
+   "resized_pixels": 65536,
+   "vision_tokens": 64,
+   "server_image_tokens": 64,
+   "agree": true,
+   "png_bytes": 87930
+  },
+  {
+   "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+   "image": "thumbnail long side 224",
+   "sent": "224x168",
+   "sent_pixels": 37632,
+   "resized": "320x224",
+   "resized_pixels": 71680,
+   "vision_tokens": 70,
+   "server_image_tokens": 70,
+   "agree": true,
+   "png_bytes": 79662
+  },
+  {
+   "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+   "image": "square crop 224",
+   "sent": "224x224",
+   "sent_pixels": 50176,
+   "resized": "256x256",
+   "resized_pixels": 65536,
+   "vision_tokens": 64,
+   "server_image_tokens": 64,
+   "agree": true,
+   "png_bytes": 120700
+  },
+  {
+   "setting": "default (size={'longest_edge': 16777216, 'shortest_edge': 65536})",
+   "image": "full frame",
+   "sent": "640x480",
+   "sent_pixels": 307200,
+   "resized": "640x480",
+   "resized_pixels": 307200,
+   "vision_tokens": 300,
+   "server_image_tokens": 300,
+   "agree": true,
+   "png_bytes": 694498
+  }
+ ],
+ "server": {
+  "quantization": null,
+  "image_min_pixels": null,
+  "image_max_pixels": null,
+  "enable_prefix_caching": false
+ }
+}
