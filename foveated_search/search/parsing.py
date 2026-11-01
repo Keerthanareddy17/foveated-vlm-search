@@ -1,4 +1,4 @@
-"""Parse model answers. Step 2 covers the point answer; Step 4 adds the yes/no confirm answer."""
+"""Strict JSON parsing of model answers (Step 2). Step 4 schemas/parsers live in schemas.py."""
 
 from __future__ import annotations
 
@@ -56,6 +56,17 @@ def _json_candidates(text: str) -> list[str]:
     if 0 <= i < j:
         cands.append(t[i : j + 1])
     return cands
+
+
+def loads_strict(text: str):
+    """Parse the first JSON value found in the answer (fenced, bare, or embedded); duplicate keys
+    raise ParseError (ambiguous). Raises ParseError if nothing parses."""
+    for cand in _json_candidates(text):
+        try:
+            return json.loads(cand, object_pairs_hook=_no_duplicate_keys)
+        except json.JSONDecodeError:
+            continue
+    raise ParseError(f"no JSON in answer: {text[:120]!r}")
 
 
 def parse_point(text: str) -> tuple[float, float] | None:

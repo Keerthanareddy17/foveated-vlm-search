@@ -1,0 +1,19 @@
+# All model prompts (Step 4). Bump `version` whenever any text changes: it is stored in every
+# trace, so results from different prompt versions are never mixed silently.
+# Every call puts the image(s) first and this text after them (image = prompt prefix, for R7).
+# The JSON form is enforced by vLLM structured outputs; the text tells the model what the keys mean.
+prompts:
+  version: 2   # v2: native point_2d key + {"absent":true} (v1 used {"p":...}; Step 4 format experiment)
+  # {query}: query text; coordinates are relative 0..1000 on the image (Qwen3-VL convention).
+  # Qwen3-VL's own grounding phrasing ("locate ... point coordinates in JSON format") + abstain option.
+  point: >-
+    Locate the {query} in the image with a point, report its point coordinates in JSON format.
+    If there is no {query}, report {{"absent": true}}.
+  # Appended to `point` on fixations 2+ ({checked}: "(x,y), (x,y)" in the same 0..1000 coordinates).
+  point_checked_suffix: >-
+    Already checked, no {query} there: {checked}. Locate a different {query}, or report {{"absent": true}}.
+  # Confirm on a sharp crop. {fields}: built from the enabled schema fields (see search.yaml).
+  confirm: >-
+    Is there a {query} in this image? Reply as JSON: {{"y": false}} if not, else {{"y": true{fields}}}.
+  confirm_field_point: ', "point_2d": [x, y]'   # refined point in the crop, 0..1000
+  confirm_field_label: ', "l": "what it is"'    # short evidence label

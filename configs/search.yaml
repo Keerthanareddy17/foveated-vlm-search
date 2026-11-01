@@ -1,0 +1,24 @@
+# Search strategy parameters (Step 4). Frame-relative sizes are in source pixels.
+search:
+  thumbnail_long_side: 96      # snapped to a multiple of 32; short side chosen to best keep aspect
+  fixation_size: 224           # square sharp crop from the original frame (clamped to the frame)
+  max_fixations: 3             # max thumbnail point calls in eye search (repeats count)
+  max_tokens_point: 24         # caps for runaway generations; real answers are much shorter
+  max_tokens_confirm: 40
+
+  confirm:
+    refine_point: true         # ask for a refined point inside the crop on "yes"
+    label: true                # ask for a short evidence label on "yes" (demo text)
+    label_max_chars: 24
+
+  downscale:
+    # Pixel budget for the single downscaled frame (sides multiples of 32, aspect kept).
+    # null = nominal eye-search cost of one thumbnail + one fixation for this frame.
+    # Step 5 sets it to the measured mean pixels of eye search.
+    pixel_budget: null
+
+  sliding_window:
+    tile_size: null            # null = fixation_size
+    overlap: 0.25              # fraction of tile size shared by neighbouring tiles
+    order: raster              # raster (row by row, top-left first) | center_out
+    parallel: false            # true = send all tiles at once (wall-clock), decision still raster-first
