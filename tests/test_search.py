@@ -165,10 +165,13 @@ def test_full_frame_and_downscale():
     assert t.totals()["pixels_sampled_frac"] == pytest.approx(288 * 192 / (640 * 480))
 
 
+PT = cfg_with(sliding_window__tile_mode="point")
+
+
 def test_sliding_window_stops_at_first_hit():
     img = frame()
     m = MockClient(['{"absent":true}'] * 5 + ['{"point_2d":[500,500]}'])
-    t = run("sliding_window", img, "cup", m)
+    t = run("sliding_window", img, "cup", m, PT)
     assert t.found and len(t.calls) == 6 and len(t.crops) == 6
     x0, y0, x1, y1 = t.crops[-1]
     assert t.final_point == pytest.approx([(x0 + x1) / 2, (y0 + y1) / 2])
@@ -177,14 +180,39 @@ def test_sliding_window_stops_at_first_hit():
 
 def test_sliding_window_parallel_sends_all_and_takes_first_in_order():
     m = MockClient(['{"absent":true}', '{"point_2d":[0,0]}', '{"point_2d":[1000,1000]}'] + ['{"absent":true}'] * 9)
-    t = run("sliding_window", frame(), "cup", m, cfg_with(sliding_window__parallel=True))
+    t = run("sliding_window", frame(), "cup", m, cfg_with(sliding_window__parallel=True, sliding_window__tile_mode="point"))
     assert len(t.calls) == 12 and t.found
     assert t.final_point == pytest.approx([168.0, 0.0])        # tile 2 (x0=168), its top-left
 
 
 def test_sliding_window_not_found_sends_every_tile():
-    t = run("sliding_window", frame(), "cup", MockClient())
+    t = run("sliding_window", frame(), "cup", MockClient(), PT)
     assert not t.found and len(t.calls) == 12
+    t = run("sliding_window", frame(), "cup", MockClient(default='{"y":false}'))
+    assert not t.found and len(t.calls) == 12 and all(c.role == "tile" for c in t.calls)
+
+
+def test_sliding_window_confirm_mode_localizes_only_yes_tile():
+    m = MockClient(['{"y":false}'] * 3 + ['{"y":true}', '{"point_2d":[0,0]}'])
+    t = run("sliding_window", frame(), "cup", m)
+    assert t.found and [c.role for c in t.calls] == ["tile"] * 4 + ["point"]
+    assert t.calls[-1].region == t.calls[-2].region == list(t.crops[-1])
+    assert t.final_point == pytest.approx(t.crops[-1][:2])           # tile's top-left = point (0, 0)
+    assert "Is there a cup" in m.requests[0]["text"] and "point_2d" not in m.requests[0]["text"]
+    yes_no = m.requests[0]["extra_body"]["structured_outputs"]["json"]["anyOf"][1]
+    assert yes_no["required"] == ["y"]                                  # point + label off for tile calls
+
+
+def test_sliding_window_confirm_mode_yes_but_absent_uses_tile_centre():
+    m = MockClient(['{"y":true}', '{"absent":true}'])
+    t = run("sliding_window", frame(), "cup", m)
+    assert t.found and t.final_point == pytest.approx([112.0, 112.0])
+
+
+def test_sliding_window_confirm_mode_parallel():
+    m = MockClient(['{"y":false}', '{"y":true}', '{"y":true}'] + ['{"y":false}'] * 9 + ['{"point_2d":[500,500]}'])
+    t = run("sliding_window", frame(), "cup", m, cfg_with(sliding_window__parallel=True))
+    assert len(t.calls) == 13 and t.found and t.calls[-1].region == t.calls[1].region
 
 
 def test_eye_null_first_point_stops_after_one_call():
@@ -200,7 +228,7 @@ def test_eye_confirmed_on_fixation_k(k):
         answers.append(pts[i])
         answers.append('{"y":true,"point_2d":[500,500],"l":"cup"}' if i == k - 1 else '{"y":false}')
     m = MockClient(answers)
-    t = run("eye_search", frame(), "cup", m)
+    t = run("eye_search", frame(), "cup", m, cfg_with(confirm__label=True))
     assert t.found and len(t.calls) == 2 * k and len(t.fixations) == k and t.evidence == "cup"
     x0, y0, x1, y1 = t.crops[-1]
     assert t.final_point == pytest.approx([(x0 + x1) / 2, (y0 + y1) / 2])   # refined point = crop centre
@@ -267,3 +295,27 @@ def test_accounting_adds_up_and_serializes():
 def test_gt_point_check():
     assert in_any_xywh(15, 15, [[10, 10, 5, 5]]) and in_any_xywh(10, 10, [[10, 10, 5, 5]])
     assert not in_any_xywh(16, 15, [[10, 10, 5, 5]]) and not in_any_xywh(1, 1, [])
+
+
+def test_eye_retry_prompt_variants():
+    answers = ['{"point_2d":[100,100]}', '{"y":false}', '{"absent":true}']
+    m = MockClient(list(answers))
+    run("eye_search", frame(), "cup", m, cfg_with(retry_prompt="encourage"))
+    t2 = m.requests[2]["text"]
+    assert "may still be elsewhere" in t2 and "(100,100)" in t2 and "Already checked" not in t2
+    m = MockClient(list(answers))
+    run("eye_search", frame(), "cup", m, cfg_with(retry_prompt="plain"))
+    assert "Already checked" in m.requests[2]["text"]
+    assert "Already checked" not in m.requests[0]["text"] and "may still" not in m.requests[0]["text"]
+
+
+def test_label_off_by_default_and_trimmed_when_on():
+    from foveated_search.search.schemas import trim_label
+
+    m = MockClient(['{"point_2d":[500,500]}', '{"y":true,"point_2d":[500,500]}'])
+    t = run("eye_search", frame(), "cup", m)
+    assert t.found and t.evidence is None and '"l"' not in m.requests[1]["text"]
+    assert trim_label("a banana split with a w", 23) == "a banana split with a"
+    assert trim_label("red mug", 48) == "red mug"
+    assert trim_label("supercalifragilistic", 20) == "supercalifragilistic"   # no space: keep
+    assert trim_label("  ", 48) is None and trim_label(None, 48) is None
