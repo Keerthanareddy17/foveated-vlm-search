@@ -1,0 +1,98 @@
+{
+ "server_metrics": {
+  "test_run_cold_cache": {
+   "prefix_tokens_queried": 66527.0,
+   "prefix_tokens_hit": 3712.0,
+   "prefix_hit_rate": 0.055796894493964855,
+   "mm_items_queried": 923.0,
+   "mm_items_hit": 94.0,
+   "mm_hit_rate": 0.10184182015167931
+  },
+  "latency_run_after_test_run_CONTAMINATED": {
+   "prefix_tokens_queried": 14911.0,
+   "prefix_tokens_hit": 7584.0,
+   "prefix_hit_rate": 0.5086177989403796,
+   "mm_items_queried": 208.0,
+   "mm_items_hit": 150.0,
+   "mm_hit_rate": 0.7211538461538461
+  },
+  "latency_run_cold_cache": {
+   "prefix_tokens_queried": 14854.0,
+   "prefix_tokens_hit": 784.0,
+   "prefix_hit_rate": 0.0527803958529689,
+   "mm_items_queried": 207.0,
+   "mm_items_hit": 20.0,
+   "mm_hit_rate": 0.0966183574879227
+  }
+ },
+ "per_call_R7_test": {
+  "thumbnail point, fixation 1": {
+   "calls": 450,
+   "prompt_tokens": 21944,
+   "cached_tokens": 0,
+   "token_hit_rate": 0.0,
+   "calls_with_any_hit": 0,
+   "mean_call_ms": 359.5
+  },
+  "crop confirm": {
+   "calls": 379,
+   "prompt_tokens": 36845,
+   "cached_tokens": 0,
+   "token_hit_rate": 0.0,
+   "calls_with_any_hit": 0,
+   "mean_call_ms": 428.7
+  },
+  "thumbnail point, fixations 2-3": {
+   "calls": 94,
+   "prompt_tokens": 7738,
+   "cached_tokens": 3712,
+   "token_hit_rate": 0.47971051951408633,
+   "calls_with_any_hit": 94,
+   "mean_call_ms": 362.5
+  }
+ },
+ "per_call_R7_latency_subset": {
+  "thumbnail point, fixation 1": {
+   "calls": 100,
+   "prompt_tokens": 4901,
+   "cached_tokens": 0,
+   "token_hit_rate": 0.0,
+   "calls_with_any_hit": 0,
+   "mean_call_ms": 203.8
+  },
+  "crop confirm": {
+   "calls": 80,
+   "prompt_tokens": 7758,
+   "cached_tokens": 0,
+   "token_hit_rate": 0.0,
+   "calls_with_any_hit": 0,
+   "mean_call_ms": 260.7
+  },
+  "thumbnail point, fixations 2-3": {
+   "calls": 19,
+   "prompt_tokens": 1570,
+   "cached_tokens": 752,
+   "token_hit_rate": 0.4789808917197452,
+   "calls_with_any_hit": 19,
+   "mean_call_ms": 199.0
+  }
+ },
+ "latency_R6_vs_R7_conc1": {
+  "R6": {
+   "n": 100,
+   "tta_p50": 0.50712490099977,
+   "tta_p95": 0.796994773647748,
+   "tta_mean": 0.4539603725198322,
+   "wall_p50": 0.5346127829998295,
+   "wall_p95": 0.8288829280485516
+  },
+  "R7": {
+   "n": 100,
+   "tta_p50": 0.5082446995002101,
+   "tta_p95": 0.7480935009041787,
+   "tta_mean": 0.450252912480064,
+   "wall_p50": 0.5359150790009153,
+   "wall_p95": 0.7802088650012593
+  }
+ }
+}

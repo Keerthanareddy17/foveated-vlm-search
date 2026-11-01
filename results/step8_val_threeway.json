@@ -1,0 +1,47 @@
+{
+ "where/pos": {
+  "base BF16": 0.42083333333333334,
+  "fine-tuned BF16": 0.5208333333333334,
+  "fine-tuned FP8": 0.5083333333333333
+ },
+ "where/neg": {
+  "base BF16": 0.45,
+  "fine-tuned BF16": 0.9,
+  "fine-tuned FP8": 0.9
+ },
+ "look_again/pos": {
+  "base BF16": 0.0,
+  "fine-tuned BF16": 0.5019607843137255,
+  "fine-tuned FP8": 0.4980392156862745
+ },
+ "look_again/neg": {
+  "base BF16": 1.0,
+  "fine-tuned BF16": 0.9777777777777777,
+  "fine-tuned FP8": 0.9111111111111111
+ },
+ "confirm/yes": {
+  "base BF16": 0.8435374149659864,
+  "fine-tuned BF16": 0.9047619047619048,
+  "fine-tuned FP8": 0.9183673469387755
+ },
+ "confirm/no": {
+  "base BF16": 0.954248366013072,
+  "fine-tuned BF16": 0.9607843137254902,
+  "fine-tuned FP8": 0.9607843137254902
+ },
+ "confirm/no_near_miss": {
+  "base BF16": 0.8518518518518519,
+  "fine-tuned BF16": 0.8518518518518519,
+  "fine-tuned FP8": 0.8518518518518519
+ },
+ "confirm/no_distractor": {
+  "base BF16": 0.9743589743589743,
+  "fine-tuned BF16": 0.9871794871794872,
+  "fine-tuned FP8": 0.9871794871794872
+ },
+ "confirm/no_background": {
+  "base BF16": 0.9791666666666666,
+  "fine-tuned BF16": 0.9791666666666666,
+  "fine-tuned FP8": 0.9791666666666666
+ }
+}

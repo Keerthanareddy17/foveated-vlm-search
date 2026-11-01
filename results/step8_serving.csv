@@ -1,0 +1,45 @@
+label,model,precision,cuda_graphs,kind,name,concurrency,n,ttft_p50_ms,ttft_p95_ms,total_p50_ms,total_p95_ms,req_per_s,out_tok_per_s,queries_per_s,mean_prompt_tokens,mean_out_tokens,kv_cache_tokens,model_mem_gib,gpu_mem_used_mib
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,thumb,1,32,60.9,62.4,294.0,295.8,3.68,56.8,,48.6,15.4,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,thumb,4,32,93.3,119.6,358.0,397.3,11.38,175.6,,48.6,15.4,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,thumb,8,32,96.4,140.3,367.4,410.4,21.33,329.2,,48.6,15.4,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,thumb,16,64,152.6,188.5,453.0,478.4,35.95,549.3,,48.8,15.3,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,crop,1,32,67.2,70.1,374.6,377.4,3.4,55.9,,96.8,16.5,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,crop,4,32,96.4,128.6,453.9,491.9,10.26,169.0,,96.8,16.5,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,crop,8,32,125.8,177.4,497.5,566.9,16.62,273.7,,96.8,16.5,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,crop,16,64,168.1,286.5,560.4,729.7,28.8,445.9,,97.0,15.5,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,full,1,32,97.4,110.6,332.4,348.8,3.17,49.8,,319.4,15.7,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,full,4,32,159.1,283.7,492.0,570.1,8.06,126.8,,319.4,15.7,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,full,8,32,288.1,445.5,656.3,891.2,11.28,177.3,,319.4,15.7,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,call,full,16,64,380.6,846.4,1082.5,1344.6,14.35,221.4,,319.8,15.4,131696,4.24,19600
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,e2e,R1ft,1,100,,,331.9,350.7,2.52,37.4,2.52,321.8,14.9,131696,4.24,19766
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,e2e,R1ft,4,100,,,456.5,521.2,7.46,111.1,7.46,321.8,14.9,131696,4.24,19766
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,e2e,R1ft,8,100,,,617.6,700.1,11.21,166.9,11.21,321.8,14.9,131696,4.24,19766
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,e2e,R1ft,16,100,,,968.5,1092.5,14.63,217.7,14.63,321.8,14.9,131696,4.24,19766
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,e2e,R5,1,100,,,668.4,1026.0,3.28,55.1,1.62,145.7,34.1,131696,4.24,19766
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,e2e,R5,4,100,,,850.7,1312.9,10.07,169.2,4.96,145.8,34.1,131696,4.24,19766
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,e2e,R5,8,100,,,945.0,1573.8,17.11,289.3,8.51,144.1,34.0,131696,4.24,19766
+bf16,qwen3-vl-2b-foveated-search,bfloat16,True,e2e,R5,16,100,,,1165.6,1795.0,26.61,446.6,13.24,143.8,33.7,131696,4.24,19766
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,thumb,1,32,64.6,70.7,224.5,227.5,4.76,73.6,,48.6,15.4,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,thumb,4,32,115.8,126.5,333.2,343.8,12.97,200.3,,48.6,15.4,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,thumb,8,32,118.6,149.7,350.2,359.0,23.57,363.9,,48.6,15.4,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,thumb,16,64,161.2,189.2,404.8,442.6,41.07,627.6,,48.8,15.3,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,crop,1,32,69.6,75.6,280.9,287.2,4.41,72.6,,96.8,16.5,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,crop,4,32,103.9,134.3,333.7,426.8,12.78,210.4,,96.8,16.5,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,crop,8,32,130.9,175.1,417.8,521.5,19.7,324.5,,96.8,16.5,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,crop,16,64,163.5,291.1,460.3,655.6,33.55,519.5,,97.0,15.5,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,full,1,32,97.6,111.9,261.1,277.7,4.0,62.9,,319.4,15.7,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,full,4,32,154.8,247.9,395.5,470.9,10.07,158.4,,319.4,15.7,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,full,8,32,207.7,436.9,537.9,763.8,13.54,212.9,,319.4,15.7,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,call,full,16,64,331.3,762.5,932.0,1175.8,16.78,258.8,,319.8,15.4,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,e2e,R6,1,100,,,504.8,792.9,4.22,71.7,2.12,142.3,33.8,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,e2e,R6,4,100,,,717.8,1132.3,11.68,197.7,5.84,143.0,33.9,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,e2e,R6,8,100,,,829.9,1312.0,18.99,320.3,9.4,144.8,34.1,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,e2e,R6,16,100,,,1006.4,1718.4,28.84,485.3,14.35,143.8,33.8,142656,2.93,19160
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,e2e,R1ft-fp8,1,100,,,261.0,274.8,2.99,44.4,2.99,321.8,14.9,142656,2.93,19626
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,e2e,R1ft-fp8,4,100,,,352.5,403.2,8.88,132.2,8.88,321.8,14.9,142656,2.93,19626
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,e2e,R1ft-fp8,8,100,,,503.7,586.6,12.86,191.3,12.86,321.8,14.9,142656,2.93,19626
+fp8,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),True,e2e,R1ft-fp8,16,100,,,784.7,903.8,16.45,244.8,16.45,321.8,14.9,142656,2.93,19626
+fp8_eager,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),False,call,thumb,1,32,120.7,125.6,788.7,796.8,1.38,21.3,,48.6,15.4,144800,2.93,19232
+fp8_eager,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),False,call,thumb,8,32,186.9,219.8,905.7,942.6,8.71,134.4,,48.6,15.4,144800,2.93,19232
+fp8_eager,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),False,call,full,1,32,155.1,166.5,824.7,843.8,1.29,20.2,,319.4,15.7,144800,2.93,19232
+fp8_eager,qwen3-vl-2b-foveated-search-fp8,fp8_dynamic (checkpoint),False,call,full,8,32,272.5,470.7,1007.6,1253.8,7.47,117.4,,319.4,15.7,144800,2.93,19232
