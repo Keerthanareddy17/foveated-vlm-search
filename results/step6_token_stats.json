@@ -1,0 +1,50 @@
+{
+ "processor_size": {
+  "shortest_edge": 1024,
+  "longest_edge": 1228800
+ },
+ "per_type": {
+  "where": {
+   "n": 400,
+   "mean": 69.9075,
+   "p95": 84.0,
+   "vision_mean": 11.52,
+   "assistant_mean": 14.6625,
+   "total_tokens_full_dataset_est": 930678.5475,
+   "samples_in_train": 13313
+  },
+  "look_again": {
+   "n": 400,
+   "mean": 102.605,
+   "p95": 122.0,
+   "vision_mean": 11.72,
+   "assistant_mean": 15.075,
+   "total_tokens_full_dataset_est": 564327.5,
+   "samples_in_train": 5500
+  },
+  "confirm": {
+   "n": 400,
+   "mean": 114.8725,
+   "p95": 152.0,
+   "vision_mean": 49.98,
+   "assistant_mean": 14.9525,
+   "total_tokens_full_dataset_est": 1712519.23,
+   "samples_in_train": 14908
+  }
+ },
+ "thumb96_vision_tokens": [
+  6
+ ],
+ "thumb96_checked": 286,
+ "samples_checked": 1200,
+ "processor_resized_grid_aligned_images": 0,
+ "label_span_mismatches": 0,
+ "example": {
+  "id": "a016797",
+  "type": "look_again",
+  "masked (not trained)": "<|im_start|>user\n<|vision_start|><|image_pad|>x20<|vision_end|>Locate the book in the image with a point, report its point coordinates in JSON format. If there is no book, report {\"absent\": true}. Already checked, no book there: (563,628). Locate a different book, or report {\"absent\": true}.<|im_end|>\n<|im_start|>assistant\n",
+  "trained": "{\"point_2d\": [871, 183]}<|im_end|>",
+  "masked tail": "\n"
+ },
+ "train_tokens_per_epoch_est": 3207525.2775
+}
