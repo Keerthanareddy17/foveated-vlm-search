@@ -1,0 +1,62 @@
+# Step 6: training data for the two search skills. Loaded as an overlay on base + search + prompts + eval.
+# Everything is seeded (base.yaml seed); each sample's randomness comes from its own sample id.
+
+train_data:
+  source_annotations: instances_train2017.json   # under <paths.data_dir>/coco (Step 3)
+  images_per_category: 100        # seeded per-category image sampling (union = the image subset)
+  out_subdir: train_data          # <paths.data_dir>/train_data/{images,train.jsonl,val.jsonl,meta.json}
+  images_subdir: coco_train       # fetched train2017 images (local disk only)
+  val_share: 0.05                 # train/val split BY IMAGE
+  workers: 10                     # generation processes
+  png_compress_level: 6
+
+  counts:                         # target samples per type (total ~36k)
+    where: 14000                  # Type 1: thumbnail + point prompt
+    look_again: 6000              # Type 1b: thumbnail + point prompt + already-checked points
+    confirm: 16000                # Type 2: sharp crop + confirm prompt
+  negative_share:
+    where: 0.25                   # {"absent": true}
+    look_again: 0.15
+  confirm_yes_share: 0.5
+  food_share: 0.18                # share of "food" queries within every type
+  max_share_per_category: 0.03    # cap per single category within a type (balanced round-robin anyway)
+  max_uses_per_image_query: 3     # one (image, query, type) can yield at most this many samples
+
+  thumbnail_long_side:            # Type 1 / 1b; snapped to the 32-px grid like eye search
+    values:  [64, 96, 128, 160, 192]
+    weights: [0.15, 0.40, 0.15, 0.15, 0.15]
+  crop_size:                      # Type 2
+    values:  [160, 224, 288]
+    weights: [0.15, 0.70, 0.15]
+
+  # Target size rules (largest non-crowd instance of the target)
+  min_box_area_frac: 0.001        # floor for the pos_small variant only (eval uses 0.005)
+  small_box_area_frac: 0.005      # below this = "small" (the eval would have skipped it); other variants need >= this
+  small_target_share: 0.2         # share of Type 1 / 1b positives drawn from small targets
+  min_target_thumb_px: 3          # target's longer side in the thumbnail must be >= this
+  hard_distractor_share: 0.4      # share of Type 1 / 1b positives from images with a same-supercategory look-alike
+
+  look_again:
+    n_checked: {values: [1, 2], weights: [0.7, 0.3]}
+    checked_on_distractor_share: 0.7   # else background; same-supercategory look-alikes preferred
+    background_margin_px: 4            # checked points stay this far outside every target box
+
+  confirm:
+    # Visibility is measured on the instance MASK (boxes can't express "the crop is all object").
+    yes_min_visible: 0.5          # yes: >= this share of an instance's mask inside the crop ...
+    yes_min_cover: 0.25           # ... or its visible part covers >= this share of the crop (objects bigger than the crop)
+    no_max_visible: 0.1           # no: every instance has <= this share of its mask inside ...
+    no_max_cover: 0.02            # ... and covers <= this share of the crop; anything in between = excluded
+    yes_edge_margin_frac: 0.08    # yes crops: target point at least this far (x crop size) from the crop edge
+    min_target_crop_px: 6         # yes: target's longer side in the crop >= this
+    no_kinds: {values: [distractor, near_miss, background], weights: [0.4, 0.3, 0.3]}
+    label_share: 0.10             # confirm prompts with the evidence label field on ("l": category name)
+    max_tries: 40
+
+  # "food": COCO only labels 10 food classes (Step 5: 9 of 12 food location misses were unlabeled food).
+  # A "food" negative (Type 1/1b absent, Type 2 "no") must come from an image with no food class AND none of:
+  food_negative_exclude: [dining table, bowl, cup, fork, knife, spoon, wine glass, bottle, oven, microwave,
+                          refrigerator, sink, toaster]
+
+  grid_n: 24
+  base_check_per_type: 300        # Section 7: base model scored on this many val samples per type

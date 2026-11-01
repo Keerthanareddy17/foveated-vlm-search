@@ -3,7 +3,7 @@ SHELL := /bin/bash
 SERVE_PY := .venv-serve/bin/python
 TRAIN_PY := .venv-train/bin/python
 
-.PHONY: help setup check storage gpu eval table test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo
+.PHONY: help setup check storage gpu eval table gen-data base-on-val test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo
 
 help: ## List all targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -57,8 +57,13 @@ baselines: ## All R1-R4 runs from configs/runs.yaml (accuracy on all 500 + concu
 table: ## Regenerate results/table.md from results/runs/ (never hand-edit the table)
 	source scripts/env.sh && $(SERVE_PY) -m foveated_search.eval.table
 
-gen-data: ## Generate training data (Step 6)
-	@echo "not implemented yet (Step 6)"
+gen-data: ## Step 6 end to end: plan -> fetch train2017 subset -> generate -> stats + grid -> processor check (.venv-train)
+	source scripts/env.sh && $(SERVE_PY) -m foveated_search.data.train_data all
+	source scripts/env.sh && $(TRAIN_PY) -m foveated_search.train.check_data
+	source scripts/env.sh && $(SERVE_PY) -m foveated_search.data.train_data report
+
+base-on-val: ## Step 6: score the base model on val samples per type (server must be up)
+	source scripts/env.sh && $(SERVE_PY) scripts/step6_base_on_val.py
 
 train: ## LoRA fine-tune + merge (Step 7)
 	@echo "not implemented yet (Step 7)"
