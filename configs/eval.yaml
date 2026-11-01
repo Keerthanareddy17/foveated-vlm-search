@@ -52,3 +52,10 @@ harness:
   latency_warmup_queries: 3    # run first, not recorded (grammar compile, CUDA graphs warm)
   bootstrap_resamples: 2000
   ci_level: 0.95
+
+failure_analysis:
+  run: R4_eye_search
+  split: test
+  small_in_thumbnail_px: 8       # largest gt box's longer side in thumbnail pixels below this = "too small in thumbnail"
+  crop_contains_frac: 0.5        # a gt box counts as inside a crop if its centre is inside or >= this share of it is
+  n_images: 8
