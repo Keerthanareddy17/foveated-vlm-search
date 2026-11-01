@@ -11,9 +11,6 @@ def test_loads_and_has_required_keys():
     for k in REQUIRED_KEYS:
         cfg.get_key(k)
     assert cfg.get_key("model.id") == "Qwen/Qwen3-VL-2B-Instruct"
-    assert cfg.get_key("search.thumbnail_long_side") == 96
-    assert cfg.get_key("search.fixation_size") == 224
-    assert cfg.get_key("search.max_fixations") == 3
 
 
 def test_seed_is_set_and_applied():
@@ -32,10 +29,10 @@ def test_env_override(monkeypatch):
 
 def test_missing_key_fails_clearly(tmp_path):
     bad = yaml.safe_load(open(load_config.__globals__["DEFAULT_CONFIG"]))
-    del bad["search"]["fixation_size"]
+    del bad["server"]["port"]
     p = tmp_path / "bad.yaml"
     p.write_text(yaml.safe_dump(bad))
-    with pytest.raises(ConfigError, match="search.fixation_size"):
+    with pytest.raises(ConfigError, match="server.port"):
         load_config(p)
 
 
@@ -47,3 +44,11 @@ def test_overlay_merges(tmp_path, monkeypatch):
     assert cfg.get_key("server.port") == 8000  # untouched keys survive
     monkeypatch.setenv("FVS_CONFIG_OVERLAYS", str(ov))
     assert load_config().get_key("server.quantization") == "fp8"
+
+
+def test_server_whitespace_flag_in_launch_args():
+    from foveated_search.serving.launch import vllm_args
+
+    args = vllm_args(load_config())
+    i = args.index("--structured-outputs-config")
+    assert args[i + 1] == '{"backend": "xgrammar", "disable_any_whitespace": true}'

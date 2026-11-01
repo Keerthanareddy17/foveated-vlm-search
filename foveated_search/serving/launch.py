@@ -44,6 +44,9 @@ def vllm_args(cfg: Config) -> list[str]:
         args.append("--enforce-eager")
     if s["quantization"]:
         args += ["--quantization", str(s["quantization"])]
+    if s.get("structured_disable_any_whitespace"):
+        args += ["--structured-outputs-config",
+                 json.dumps({"backend": s["structured_backend"], "disable_any_whitespace": True})]
     mmk = mm_processor_kwargs(cfg)
     if mmk:
         args += ["--mm-processor-kwargs", json.dumps(mmk)]

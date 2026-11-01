@@ -55,9 +55,6 @@ REQUIRED_KEYS = [
     "client.png_compress_level",
     "client.coord_scale",
     "client.output_format",
-    "search.thumbnail_long_side",
-    "search.fixation_size",
-    "search.max_fixations",
 ]
 
 

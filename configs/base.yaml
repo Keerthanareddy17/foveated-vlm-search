@@ -35,6 +35,11 @@ server:
   enable_prefix_caching: false # off for honest per-call latency; R7 turns it on
   mm_processor_cache_gb: 0     # off: identical benchmark images would otherwise skip preprocessing
   health_timeout_s: 600
+  # Structured outputs: forbid free whitespace inside generated JSON (fewer output tokens, and no
+  # runaway newlines). SERVER-level only: vLLM 0.31's xgrammar/guidance backends ignore the
+  # per-request `disable_any_whitespace` field (Step 4, NOTES.md).
+  structured_disable_any_whitespace: true
+  structured_backend: xgrammar   # must be explicit (xgrammar|guidance) when whitespace is disabled
   # FlashInfer's top-k/top-p sampler JIT-compiles on first use (minutes, every fresh Colab VM).
   # We decode greedily (temperature 0), so use vLLM's PyTorch sampler instead. NOTES.md Gotchas.
   flashinfer_sampler: false
@@ -69,9 +74,6 @@ quant:
   ignore: ["lm_head", "re:model.visual.*"]   # language model only; vision tower + lm_head stay BF16
   output_name: qwen3-vl-2b-instruct-fp8-dynamic   # written to <paths.models_dir>/<output_name>
 
-search:
-  thumbnail_long_side: 96   # px, whole frame downscaled
-  fixation_size: 224        # px, square sharp crop from the original frame
-  max_fixations: 3
+# search strategy parameters: configs/search.yaml; prompts: configs/prompts.yaml (Step 4)
 
 # eval set parameters: configs/eval.yaml (Step 3)

@@ -33,7 +33,7 @@ async def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="results/step2_latency.csv")
     a = ap.parse_args()
-    cfg = load_config()
+    cfg = load_config(overlays=["configs/search.yaml"])
     b = cfg["bench"]
     frame = fetch_coco_example(cfg)
     L, F = int(cfg.get_key("search.thumbnail_long_side")), int(cfg.get_key("search.fixation_size"))
