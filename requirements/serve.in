@@ -1,0 +1,17 @@
+# .venv-serve: vLLM serving, quantization, eval and demo.
+# vllm 0.31.0 pins torch==2.13.0 and transformers>=5.10.4,<5.18 (supports Qwen3-VL).
+# Chosen to be >2 weeks old at pin time (2026-11-01).
+# llmcompressor is NOT here: its compressed-tensors pin conflicts with vLLM's -> requirements/quant.in
+# (.venv-quant). See NOTES.md "Decisions".
+vllm==0.31.0
+openai
+httpx
+pillow
+numpy
+pandas
+pyyaml
+matplotlib
+fastapi
+uvicorn
+pycocotools
+pytest

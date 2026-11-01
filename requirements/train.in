@@ -1,0 +1,17 @@
+# .venv-train: LoRA fine-tuning of Qwen3-VL-2B (BF16).
+# torch from PyPI (Linux wheels ship with CUDA). Same torch as serve for consistency.
+# transformers kept in the same range as serve so trained weights load identically in vLLM.
+torch==2.13.0
+torchvision==0.28.0
+transformers>=5.15,<5.18
+peft
+trl
+datasets
+accelerate
+qwen-vl-utils
+pillow
+numpy
+pyyaml
+pycocotools
+matplotlib
+pytest

@@ -1,0 +1,11 @@
+# .venv-quant: llm-compressor only (FP8 / W4A16 quantization, Step 8).
+# Separate venv because llmcompressor 0.14.0 pins compressed-tensors==0.19.0 while
+# vllm 0.31.0 pins compressed-tensors==0.17.0 (uv: unsatisfiable). See NOTES.md.
+# torch / transformers pinned to the same versions as .venv-serve.
+llmcompressor==0.14.0
+torch==2.13.0
+torchvision==0.28.0
+transformers==5.17.0
+pillow
+pyyaml
+pytest
