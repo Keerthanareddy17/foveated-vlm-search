@@ -1,0 +1,45 @@
+# Step 3: frozen evaluation set. Loaded as an overlay on base.yaml (seed comes from base.yaml).
+# Changing anything here changes the benchmark: regenerate, re-hash, and update NOTES.md.
+
+coco:
+  annotations_url: http://images.cocodataset.org/annotations/annotations_trainval2017.zip
+  annotations_bytes: 252907541                 # Content-Length, checked 2026-11-01
+  annotations_md5: f4bbac642086de4f52a3fdda2de5fa2c   # = server ETag = the published md5 of this zip
+  extract: [annotations/instances_val2017.json, annotations/instances_train2017.json]
+  val_split: val2017
+
+eval:
+  num_queries: 500
+  negatives_share: 0.20          # queries whose target is absent from the image
+  food_share: 0.225              # share of "food" queries among positives AND among negatives
+  food_supercategory: food       # COCO supercategory used as the "food" query (10 classes)
+  max_per_category: 6            # cap on single-category positives (and, separately, negatives) per category
+  # Fairness floor: the target's LARGEST non-crowd instance box must cover >= this fraction of the
+  # image. 0.005 of a 640x480 frame = 1536 px^2 ~ 39x39 px. In a 96 px thumbnail (96x72) that is
+  # ~5.9x5.9 px, i.e. at least a few pixels survive the downscale; anything smaller is invisible
+  # in the glance, and only fixation-by-luck could find it. Size buckets are still recorded.
+  min_box_area_frac: 0.005
+  # Positives are skipped if the target category also has an iscrowd annotation in the image:
+  # crowd regions are excluded from ground truth, so a correct point there would score as a miss.
+  skip_positive_if_crowd: true
+  # COCO size buckets on the annotation's segmentation `area` (pixels^2), as in COCO eval.
+  size_small_max: 1024           # 32^2
+  size_medium_max: 9216          # 96^2
+  dev_size: 50                   # stratified subset for fast iteration in Steps 4-5
+  coord_decimals: 2              # rounding of stored boxes (keeps the jsonl byte-stable)
+
+fetch:
+  workers: 8
+  retries: 4
+  backoff_s: 1.0
+  timeout_s: 60
+  local_images_subdir: coco_val_eval    # under paths.data_dir (fast local reads)
+
+outputs:
+  manifest: results/eval_manifest.jsonl
+  dev_manifest: results/eval_manifest_dev.jsonl
+  image_ids: results/eval_image_ids.txt
+  image_sha256: results/eval_images_sha256.txt
+  stats: results/step3_manifest_stats.md
+  contact_sheet: results/step3_manifest_examples.png
+  contact_sheet_n: 16

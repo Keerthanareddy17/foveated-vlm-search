@@ -39,8 +39,8 @@ serve-status: ## Show vLLM pid, /health, served model, GPU memory
 bench-latency: ## Per-call latency: thumbnail vs crop vs full frame (OUT=results/step2_latency.csv)
 	source scripts/env.sh && $(SERVE_PY) scripts/bench_latency.py --out $(or $(OUT),results/step2_latency.csv)
 
-eval-manifest: ## Build frozen eval manifest (Step 3)
-	@echo "not implemented yet (Step 3)"
+eval-manifest: ## Step 3 end to end: COCO annotations -> manifest + dev subset -> fetch/verify images -> stats + contact sheet
+	source scripts/env.sh && $(SERVE_PY) -m foveated_search.data.manifest all
 
 baselines: ## Run R1-R4 baselines + thumbnail sweep (Step 5)
 	@echo "not implemented yet (Step 5)"

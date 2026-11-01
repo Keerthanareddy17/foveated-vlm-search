@@ -58,9 +58,6 @@ REQUIRED_KEYS = [
     "search.thumbnail_long_side",
     "search.fixation_size",
     "search.max_fixations",
-    "eval.num_queries",
-    "eval.negatives_share",
-    "eval.min_box_area",
 ]
 
 

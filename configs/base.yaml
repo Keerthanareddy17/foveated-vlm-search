@@ -74,8 +74,4 @@ search:
   fixation_size: 224        # px, square sharp crop from the original frame
   max_fixations: 3
 
-eval:
-  num_queries: 500
-  negatives_share: 0.2
-  # Step 3 will choose this (minimum gt box area in px^2 to be a fair target).
-  min_box_area: null
+# eval set parameters: configs/eval.yaml (Step 3)
