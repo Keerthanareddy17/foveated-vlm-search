@@ -1,0 +1,15 @@
+{
+ "source": "Qwen/Qwen3-VL-2B-Instruct",
+ "out": "/content/drive/MyDrive/foveated-vlm-search/models/qwen3-vl-2b-instruct-fp8-dynamic",
+ "scheme": "FP8_DYNAMIC",
+ "ignore": [
+  "lm_head",
+  "re:model.visual.*"
+ ],
+ "safetensors_gb": 2.847,
+ "load_s": 6.7,
+ "quantize_s": 3.3,
+ "save_s": 11.3,
+ "quant_method": "compressed-tensors",
+ "format": "float-quantized"
+}

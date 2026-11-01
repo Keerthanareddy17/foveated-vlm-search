@@ -1,0 +1,5 @@
+# Overlay: serve the llm-compressor FP8_DYNAMIC checkpoint (vLLM reads its compressed-tensors config).
+model:
+  id: /content/drive/MyDrive/foveated-vlm-search/models/qwen3-vl-2b-instruct-fp8-dynamic
+server:
+  quantization: null

@@ -1,0 +1,3 @@
+# Overlay on base.yaml: same base model, vLLM online FP8 (weights quantized at load time).
+server:
+  quantization: fp8

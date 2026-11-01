@@ -1,0 +1,93 @@
+{
+ "synthetic_summary": {
+  "n": 36,
+  "parsed": 33,
+  "hit_rate_relative_1000": 0.727,
+  "median_err_relative_px": 24.3,
+  "median_err_relative_frac_diag": 0.0501,
+  "median_err_absolute_px": 354.3,
+  "by_size": {
+   "640x480": {
+    "hit_rate": 1.0,
+    "median_err_rel_px": 32.1,
+    "median_err_abs_px": 232.2
+   },
+   "480x640": {
+    "hit_rate": 1.0,
+    "median_err_rel_px": 22.85,
+    "median_err_abs_px": 308.85
+   },
+   "320x320": {
+    "hit_rate": 0.833,
+    "median_err_rel_px": 24.85,
+    "median_err_abs_px": 460.95
+   },
+   "1024x512": {
+    "hit_rate": 1.0,
+    "median_err_rel_px": 20.0,
+    "median_err_abs_px": 203.2
+   },
+   "96x72": {
+    "hit_rate": 0.5,
+    "median_err_rel_px": 9.85,
+    "median_err_abs_px": 568.8
+   },
+   "224x224": {
+    "hit_rate": 0.167,
+    "median_err_rel_px": 22.35,
+    "median_err_abs_px": 642.45
+   }
+  }
+ },
+ "real": {
+  "url": "http://images.cocodataset.org/val2017/000000039769.jpg",
+  "size": [
+   640,
+   480
+  ],
+  "points": [
+   {
+    "query": "the remote control on the left",
+    "answer": "```json\n{\"point\": [130, 172], \"label\": \"the remote control on the left\"}\n```",
+    "model_point": [
+     130.0,
+     172.0
+    ],
+    "px": [
+     83.2,
+     82.6
+    ]
+   },
+   {
+    "query": "the cat on the right",
+    "answer": "```json\n{\"point\": [688, 298], \"label\": \"the cat on the right\"}\n```",
+    "model_point": [
+     688.0,
+     298.0
+    ],
+    "px": [
+     440.3,
+     143.0
+    ]
+   },
+   {
+    "query": "the cat on the left",
+    "answer": "```json\n{\"point\": [224, 208], \"label\": \"the cat on the left\"}\n```",
+    "model_point": [
+     224.0,
+     208.0
+    ],
+    "px": [
+     143.4,
+     99.8
+    ]
+   }
+  ]
+ },
+ "server": {
+  "quantization": null,
+  "image_min_pixels": 1024,
+  "image_max_pixels": 1228800,
+  "enable_prefix_caching": false
+ }
+}
