@@ -14,7 +14,10 @@ DEFAULT_CONFIG = REPO_ROOT / "configs" / "base.yaml"
 
 # env var -> dotted config key
 ENV_OVERRIDES = {
+    "FVS_LOCAL_DIR": "paths.local_dir",
     "PROJECT_DRIVE_DIR": "paths.drive_project_dir",
+    "FVS_DRIVE_EVAL_IMAGES_DIR": "paths.drive_eval_images_dir",
+    "FVS_DRIVE_ADAPTERS_DIR": "paths.drive_adapters_dir",
     "FVS_DATA_DIR": "paths.data_dir",
     "FVS_CHECKPOINTS_DIR": "paths.checkpoints_dir",
     "HF_HUB_CACHE": "paths.hf_hub_cache",
@@ -24,7 +27,10 @@ ENV_OVERRIDES = {
 
 REQUIRED_KEYS = [
     "seed",
+    "paths.local_dir",
     "paths.drive_project_dir",
+    "paths.drive_eval_images_dir",
+    "paths.drive_adapters_dir",
     "paths.data_dir",
     "paths.checkpoints_dir",
     "paths.hf_hub_cache",

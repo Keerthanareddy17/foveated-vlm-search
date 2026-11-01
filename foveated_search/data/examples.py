@@ -14,7 +14,7 @@ COCO_EXAMPLE_URL = "http://images.cocodataset.org/val2017/000000039769.jpg"
 
 
 def fetch_coco_example(cfg: Config, url: str = COCO_EXAMPLE_URL) -> Image.Image:
-    """Download once into <data_dir>/examples/ on Drive, then reuse."""
+    """Download once into <data_dir>/examples/ (local disk), then reuse."""
     cache = Path(cfg.get_key("paths.data_dir")) / "examples" / Path(url).name
     if not cache.exists():
         cache.parent.mkdir(parents=True, exist_ok=True)

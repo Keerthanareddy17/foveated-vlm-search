@@ -3,7 +3,7 @@ SHELL := /bin/bash
 SERVE_PY := .venv-serve/bin/python
 TRAIN_PY := .venv-train/bin/python
 
-.PHONY: help setup check gpu test clean serve serve-stop serve-status bench-latency eval-manifest baselines gen-data train quantize demo
+.PHONY: help setup check storage gpu test clean serve serve-stop serve-status bench-latency eval-manifest baselines gen-data train quantize demo
 
 help: ## List all targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -13,6 +13,9 @@ setup: ## Create/refresh venvs, env file, Drive folders (idempotent, every sessi
 
 check: ## Verify GPU, venvs, Drive, HF token, disk; writes results/env_report.json
 	python3 scripts/check_env.py
+
+storage: ## Project Drive usage vs 500 MB budget, local cache usage, free disk (read-only)
+	@bash scripts/storage_report.sh
 
 gpu: ## Show nvidia-smi
 	nvidia-smi

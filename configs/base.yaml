@@ -4,11 +4,18 @@
 seed: 42
 
 paths:
+  # Storage policy (CLAUDE.md, NOTES.md "Storage policy"):
+  #   local disk  = everything re-downloadable / regenerable with the seed (wiped each session)
+  #   Drive       = only small irreplaceable files; keep the project under ~500 MB
+  #   HF Hub      = merged fine-tuned model + its FP8 version (private repos)
+  local_dir: /content/fvs_local
+  data_dir: /content/fvs_local/data               # COCO annotations, train images, generated data
+  checkpoints_dir: /content/fvs_local/checkpoints # training checkpoints
+  hf_hub_cache: /content/fvs_local/hf_hub_cache   # model downloads (~4.3 GB per session)
+  models_dir: /content/fvs_local/models           # local quantized / merged models
   drive_project_dir: /content/drive/MyDrive/foveated-vlm-search
-  data_dir: /content/drive/MyDrive/foveated-vlm-search/data
-  checkpoints_dir: /content/drive/MyDrive/foveated-vlm-search/checkpoints
-  hf_hub_cache: /content/drive/MyDrive/foveated-vlm-search/hf_hub_cache
-  models_dir: /content/drive/MyDrive/foveated-vlm-search/models
+  drive_eval_images_dir: /content/drive/MyDrive/foveated-vlm-search/data/coco_val_eval  # frozen eval images
+  drive_adapters_dir: /content/drive/MyDrive/foveated-vlm-search/adapters               # LoRA adapter (Step 7)
   results_dir: results            # relative to repo root; committed
 
 model:
