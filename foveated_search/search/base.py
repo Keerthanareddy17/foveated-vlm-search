@@ -39,6 +39,30 @@ def prompt(cfg: Config, key: str, **kw: Any) -> str:
     return " ".join(str(cfg["prompts"][key]).split()).format(**kw)
 
 
+def checked_text(points: list[tuple[float, float]]) -> str:
+    """Already-checked thumbnail points, as listed after the image: "(x,y), (x,y)" in 0..1000 ints."""
+    return ", ".join(f"({int(round(x))},{int(round(y))})" for x, y in points)
+
+
+def point_prompt(cfg: Config, query: str, checked: list[tuple[float, float]] | None = None) -> str:
+    """Point-call text for fixation 1 (no checked points) and fixations 2+ (checked points listed)."""
+    text = prompt(cfg, "point", query=query)
+    if checked:
+        mode = cfg["search"]["retry_prompt"]
+        if mode == "encourage":
+            return prompt(cfg, "point_retry_encourage", query=query, checked=checked_text(checked))
+        if mode != "plain":
+            raise ValueError(f"unknown search.retry_prompt {mode!r}")
+        text += " " + prompt(cfg, "point_checked_suffix", query=query, checked=checked_text(checked))
+    return text
+
+
+def confirm_prompt(cfg: Config, query: str, refine_point: bool, label: bool) -> str:
+    fields = (prompt(cfg, "confirm_field_point") if refine_point else "") + \
+             (prompt(cfg, "confirm_field_label") if label else "")
+    return prompt(cfg, "confirm", query=query, fields=fields)
+
+
 def sha256(b: bytes) -> str:
     return hashlib.sha256(b).hexdigest()
 

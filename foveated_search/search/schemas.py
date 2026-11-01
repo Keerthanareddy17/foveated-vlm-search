@@ -10,6 +10,7 @@ drops from 92.5% to 42.5% with points biased up-left (Step 4, results/step4_poin
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 
 from foveated_search.search.parsing import ParseError, loads_strict
@@ -88,3 +89,29 @@ def trim_label(label: str | None, max_chars: int) -> str | None:
     if len(label) >= max_chars and " " in label:
         label = label[: label.rfind(" ")].rstrip(" ,;:-/")
     return label or None
+
+
+# ----------------------------------------------------------------------------- target serializers
+# The exact text the model emits under our structured-output settings (xgrammar, no free whitespace):
+# json.dumps' default separators ", " and ": " (Step 4: '{"point_2d": [78, 489]}'). Training targets
+# (Step 6) are written with these and round-trip through parse_p / parse_confirm.
+def _ints(p: tuple[float, float]) -> list[int]:
+    x, y = (int(round(v)) for v in p)
+    if not (0 <= x <= 1000 and 0 <= y <= 1000):
+        raise ValueError(f"point out of 0..1000: {p}")
+    return [x, y]
+
+
+def dump_point(p: tuple[float, float] | None) -> str:
+    return json.dumps({"absent": True}) if p is None else json.dumps({POINT_KEY: _ints(p)})
+
+
+def dump_confirm(yes: bool, point: tuple[float, float] | None = None, label: str | None = None) -> str:
+    if not yes:
+        return json.dumps({"y": False})
+    obj: dict = {"y": True}
+    if point is not None:
+        obj[POINT_KEY] = _ints(point)
+    if label is not None:
+        obj["l"] = label
+    return json.dumps(obj)
