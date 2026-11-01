@@ -12,14 +12,55 @@ paths:
   results_dir: results            # relative to repo root; committed
 
 model:
-  id: Qwen/Qwen3-VL-2B-Instruct
+  id: Qwen/Qwen3-VL-2B-Instruct  # HF id or local path (overlays point this at merged/quantized checkpoints)
+  served_name: qwen3-vl         # stable name clients use, whatever checkpoint is loaded
 
 server:
   host: 127.0.0.1
   port: 8000
-  # Step 2 will measure how the processor resizes images and set these explicitly.
-  image_min_pixels: null
-  image_max_pixels: null
+  dtype: bfloat16
+  max_model_len: 4096          # our prompts are short: <=2 small images + a few lines of text
+  gpu_memory_utilization: 0.85
+  max_images_per_prompt: 2
+  max_num_seqs: 16             # enough for concurrency 1/4/8 in Step 8
+  quantization: null           # null = BF16 checkpoint; "fp8" = vLLM online FP8 (overlay config)
+  enforce_eager: false         # false = CUDA graphs captured
+  enable_prefix_caching: false # off for honest per-call latency; R7 turns it on
+  mm_processor_cache_gb: 0     # off: identical benchmark images would otherwise skip preprocessing
+  health_timeout_s: 600
+  # FlashInfer's top-k/top-p sampler JIT-compiles on first use (minutes, every fresh Colab VM).
+  # We decode greedily (temperature 0), so use vLLM's PyTorch sampler instead. NOTES.md Gotchas.
+  flashinfer_sampler: false
+  # Image resize bounds for the Qwen processor (server --mm-processor-kwargs AND client token counter).
+  # Measured in Step 2 (NOTES.md, results/step2_resize.csv): the model default min_pixels=65536
+  # upscales EVERY thumbnail 64..224 px to 320x224 (70 tokens) and every crop to 256x256 (64 tokens),
+  # so small thumbnails would save no compute at all.
+  # min 1024 = 32x32 = one merged token (patch 16 x merge 2): the true floor, so a 96x72 thumbnail
+  # costs 6 tokens instead of 70. Sides are still snapped to multiples of 32 (96x72 -> 96x64).
+  # max 1228800 = 1280x960: COCO frames (<=640 px) and 720p webcam frames are never downscaled.
+  image_min_pixels: 1024
+  image_max_pixels: 1228800
+
+client:
+  temperature: 0.0           # greedy for all verification / eval calls
+  max_tokens: 64             # point / yes-no answers are short
+  timeout_s: 120
+  png_compress_level: 6      # lossless either way; fixed so byte counts (bandwidth proxy) are reproducible
+  output_format: structured   # "structured" = vLLM json_schema response_format; Step 2: 100% vs 75% parse rate
+  coord_scale: 1000          # Qwen3-VL reports points as relative coords in [0, 1000] (Step 2, NOTES.md)
+
+bench:
+  warmup_calls: 1
+  calls: 25                 # per image type, concurrency 1
+  query: cat                # fixed point-style prompt on the fixed example photo
+  max_tokens: 32            # structured point answer is ~13 tokens
+
+quant:
+  # FP8_DYNAMIC: FP8 weights (per-channel) + FP8 activations (dynamic per-token). No calibration data.
+  scheme: FP8_DYNAMIC
+  targets: [Linear]
+  ignore: ["lm_head", "re:model.visual.*"]   # language model only; vision tower + lm_head stay BF16
+  output_name: qwen3-vl-2b-instruct-fp8-dynamic   # written to <paths.models_dir>/<output_name>
 
 search:
   thumbnail_long_side: 96   # px, whole frame downscaled

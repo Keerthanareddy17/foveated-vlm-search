@@ -37,3 +37,13 @@ def test_missing_key_fails_clearly(tmp_path):
     p.write_text(yaml.safe_dump(bad))
     with pytest.raises(ConfigError, match="search.fixation_size"):
         load_config(p)
+
+
+def test_overlay_merges(tmp_path, monkeypatch):
+    ov = tmp_path / "ov.yaml"
+    ov.write_text("server:\n  quantization: fp8\n")
+    cfg = load_config(overlays=[ov])
+    assert cfg.get_key("server.quantization") == "fp8"
+    assert cfg.get_key("server.port") == 8000  # untouched keys survive
+    monkeypatch.setenv("FVS_CONFIG_OVERLAYS", str(ov))
+    assert load_config().get_key("server.quantization") == "fp8"

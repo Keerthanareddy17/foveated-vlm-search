@@ -3,7 +3,7 @@ SHELL := /bin/bash
 SERVE_PY := .venv-serve/bin/python
 TRAIN_PY := .venv-train/bin/python
 
-.PHONY: help setup check gpu test clean serve eval-manifest baselines gen-data train quantize demo
+.PHONY: help setup check gpu test clean serve serve-stop serve-status bench-latency eval-manifest baselines gen-data train quantize demo
 
 help: ## List all targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -24,8 +24,17 @@ clean: ## Remove caches inside the repo (never touches Drive or venvs)
 	find . -path ./.venv-serve -prune -o -path ./.venv-train -prune -o -path ./.venv-quant -prune -o \
 	  \( -name __pycache__ -o -name .pytest_cache -o -name '*.egg-info' -o -name .ipynb_checkpoints \) -print -exec rm -rf {} +
 
-serve: ## Launch vLLM server (Step 2)
-	@echo "not implemented yet (Step 2)"
+serve: ## Start vLLM in background from configs (FVS_CONFIG_OVERLAYS=... for variants), wait for /health
+	bash scripts/serve.sh start
+
+serve-stop: ## Stop vLLM and confirm GPU memory is freed
+	bash scripts/serve.sh stop
+
+serve-status: ## Show vLLM pid, /health, served model, GPU memory
+	bash scripts/serve.sh status
+
+bench-latency: ## Per-call latency: thumbnail vs crop vs full frame (OUT=results/step2_latency.csv)
+	source scripts/env.sh && $(SERVE_PY) scripts/bench_latency.py --out $(or $(OUT),results/step2_latency.csv)
 
 eval-manifest: ## Build frozen eval manifest (Step 3)
 	@echo "not implemented yet (Step 3)"
