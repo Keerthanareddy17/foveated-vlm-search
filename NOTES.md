@@ -31,6 +31,7 @@ So a new Colab session costs ~1.5-2 min of setup. Most of the "skip" and "verify
 - **Step 5:** sliding window uses yes/no per tile (`tile_mode: confirm`); eye search keeps `retry_prompt: plain` and `refine_point: true`; the evidence label is off for evals. Downscale budget = R4's measured mean, 52,966 px. All chosen on dev (see Step 5 findings).
 - **Step 6:** training data shares code with inference (`search/views.py`, `point_prompt` / `confirm_prompt`, `dump_point` / `dump_confirm`, `encode_png`); confirm labels use mask-based visibility; "food" negatives exclude 13 food-adjacent classes.
 - **Step 7:** LoRA r16 on the decoder only, 1 epoch, effective batch 64 (16 x 4); final adapter used (val loss = best); merged model ships the base config/processor files byte-for-byte; private HF repo `honey613/qwen3-vl-2b-foveated-search`.
+- **Step 8:** prompts and search settings unchanged; R5-R7 differ only in the served model / server flags (overlays). R3-ft budget = R5 mean (50,026 px). Images are encoded off the event loop (`VLMClient.aencode`). W4A16 skipped (reason under Step 8).
 
 ## Storage policy
 
@@ -360,6 +361,59 @@ No negative subset dropped by more than 5 pp: fine-tuning did not make the model
 - Full frame (forgetting check): found 92.5% -> 97.5%, FP 30% -> **0%**. No forgetting; the "absent" answer now transfers to the full frame too.
 - Caveats: dev is small (50 queries) and was used for every Step 5 choice; the test numbers in Step 8 are the real ones.
 
+### Step 8: fine-tuned eval, FP8, prefix caching, serving (R5-R7)
+
+Same harness, splits and frozen Step 5 settings (96 px thumbnail, 224 crop, refined point on, label off, prompts v3); only the served model / server flags change, via overlays (`configs/serve_finetuned*.yaml`, named runs in `configs/runs.yaml`). Full table: `results/table.md`. Accuracy at concurrency 8; latency only from the 100-query latency subset at concurrency 1.
+
+**Test split (450), with 95% bootstrap CIs:**
+
+| row | found % | FP % | accuracy % | pixels % | vision tok | time-to-answer p50 / p95 (ms) |
+|---|---|---|---|---|---|---|
+| R4 base, BF16, eye search | 74.4 [70.0, 79.2] | 2.2 | 79.1 | 19.7 | 52 | 665 / 671 |
+| R5 fine-tuned, BF16, eye search | 82.2 [78.3, 86.1] | 1.1 | 85.6 | 18.5 | 49 | 667 / 1021 |
+| R6 fine-tuned, FP8, eye search | 81.7 [77.5, 85.8] | 1.1 | 85.1 | 18.4 | 49 | 507 / 797 |
+| R7 = R6 + prefix + mm cache | 81.7 [77.5, 85.8] | 1.1 | 85.1 | 18.4 | 49 | 508 / 748 |
+| ref R1-ft fine-tuned, full frame | **93.3** [90.6, 95.8] | 2.2 | **94.2** | 100 | 272 | 332 / 346 |
+| ref R3-ft fine-tuned, downscale (budget = R5 mean, 50,026 px) | 89.7 [86.7, 92.8] | 6.7 | 90.4 | 18.0 | 47 | 301 / 305 |
+| ref R4-192 base, eye search, 192 px thumbnail | 84.2 [80.3, 87.8] | 1.1 | 87.1 | 27.8 | 73 | n/a |
+
+**What fine-tuning bought (paired, same test queries):**
+- Eye search R4 -> R5: found **+7.8 pp [+4.2, +11.7]**, accuracy +6.4 pp [+3.1, +10.0]; 42 queries wrong->right, 13 right->wrong. FP 2.2% -> 1.1%, at slightly fewer pixels (18.5 vs 19.7%) and calls (2.05 vs 2.15).
+- The fine-tuned sweep is above the base at every thumbnail size (`results/step8_sweep_ft.csv`, `results/step8_sweep_base_vs_ft.png`): 64 px 61.1 -> 73.9, 96 px 74.4 -> 82.2, 128 px 78.1 -> 84.7, 192 px 84.2 -> 88.1 (accuracy 90.2). The fine-tuned model at 64 px matches the base at 96 px; FP 0-1.1% throughout.
+- **Fine-tuning helped the single-call strategies even more.** Full frame went from 45.6% to 2.2% FP (accuracy 84.0 -> 94.2), because the "where" training taught it to answer `absent`. Once both use the fine-tuned model, **full frame beats eye search**: R1-ft vs R5 accuracy **-8.7 pp [-11.8, -5.1]** for eye search (found -11.1 pp; 50 right->wrong vs 11 wrong->right). At the same pixel budget, downscale (R3-ft, 90.4%) also beats eye search (85.6%). On 640x480 COCO frames, a 2B model looking once at a moderately downscaled frame is better than two sharp glimpses.
+
+**"Look again" in real searches** (test, `results/table.md` second-fixation section): R4 had 112 searches with a rejected crop and took 0 second fixations. R5 had 49 (41 on positives); 19 took a second fixation (14 on positives), which found the target 5 times with 0 false positives; 3 reached a third fixation. But R5 logged **70 repeats**: after a rejection, the model's next point often falls back inside the 224 px crop it already checked. The training data taught "point somewhere other than the listed checked point", while eye search treats any point inside the checked *crop* as a repeat (train/inference mismatch: the look-again checked points should be crop-sized exclusion zones). The skill exists but delivers little: ~5 extra finds out of 360 positives.
+
+**What FP8 cost and saved** (R5 -> R6, `results/step8_fp8_quantize.json`, `results/step8_val_threeway.md`):
+- Accuracy: **-0.4 pp [-2.0, +1.1]** (found -0.6 pp [-2.5, +1.1]): no measurable cost. Parse failures: **0** over 1,220 R6 calls (all + latency) and 0 over 900 FP8 val-sample calls. Val samples: within 1-2 pp of fine-tuned BF16 everywhere, near-miss "no" unchanged (85.2%). Exception: look-again negatives 97.8 -> 91.1% (3 of 45 samples).
+- Quantization (llm-compressor FP8_DYNAMIC, decoder only; 105 vision/merger/lm_head modules kept in BF16): 11 s (load 2.0, quantize 0.9, save 8.4); checkpoint 2.85 GB vs 4.26 GB; vLLM weights 2.93 vs 4.24 GiB; KV cache 142,656 vs 131,696 tokens (+8%). Private repo `honey613/qwen3-vl-2b-foveated-search-fp8`; model on the local disk only, not on Drive.
+- Latency: time-to-answer p50 667 -> 507 ms (-24%). Per call at concurrency 1: thumbnail 294 -> 224 ms, crop 375 -> 281 ms, full frame 332 -> 261 ms. Decoding at batch 1 is memory-bound, and FP8 halves the weight bytes.
+
+**What prefix caching did** (R7, `results/step8_prefix_cache.json`, `results/step8_r7_metrics.txt`): flags `--enable-prefix-caching --mm-processor-cache-gb 4 --enable-prompt-tokens-details`.
+- Token hit rate **5.6%** on the test run (3,712 / 66,527 prompt tokens; cold cache), 5.3% on the latency subset (cold). Image-preprocessing cache: 10.2% of images.
+- **Every hit is a thumbnail call on fixations 2-3**: all 94 such calls hit, reusing 48% of their prompt tokens (the byte-identical thumbnail + prompt prefix). Fixation-1 thumbnails and crop confirms: 0 hits (the image comes near the start of the prompt, so different requests share less than one 16-token KV block).
+- Latency at concurrency 1: p50 508 vs 507 ms, p95 748 vs 797 ms: no measurable effect, as expected: only 10% of calls benefit and decoding dominates.
+- Accuracy identical on average (85.1%), but 14 queries flipped (7 each way): reused KV blocks give slightly different numerics, the same kind of run-to-run noise as batching.
+- **Measurement trap:** the first R7 latency run came right after the R7 test run on the same server and showed a 50.9% hit rate, because the latency subset is part of test. Its cache was hot with identical requests. That run was discarded and re-run after a server restart (cold cache).
+
+**Serving under load** (`results/step8_serving.csv`, `results/step8_throughput.png`; one L4, 100-query latency subset):
+
+| completed searches / s | c=1 | c=4 | c=8 | c=16 |
+|---|---|---|---|---|
+| R1-ft full frame, BF16 | 2.52 | 7.46 | 11.21 | 14.63 |
+| R5 eye search, BF16 | 1.62 | 4.96 | 8.51 | 13.24 |
+| R6 eye search, FP8 | 2.12 | 5.84 | 9.40 | 14.35 |
+| full frame, FP8 (reference) | 2.99 | 8.88 | 12.86 | 16.45 |
+
+- On 640x480 frames, **full frame serves more searches per GPU at every concurrency**, BF16 vs BF16 and FP8 vs FP8. Eye search's 5.5x fewer vision tokens don't make up for ~2 calls and ~35 output tokens per search (vs 1 call and ~15 tokens); the gap narrows under load (0.64x at c=1, 0.90x at c=16 for BF16).
+- **Measurement trap (fixed before reporting):** the first end-to-end run showed eye search *ahead* under load (R1-ft capped at 7.3 q/s). The cause was the client: PNG-encoding a full 640x480 frame costs ~90 ms of CPU and ran inside the asyncio event loop, serializing all concurrent full-frame searches (thumbnails cost 1.3 ms). Encoding now runs in a worker thread (`VLMClient.aencode`; PIL releases the GIL, 6.3x speed-up with 8 threads), and the end-to-end numbers were re-measured. Accuracy results are unaffected.
+- Per call at concurrency 16 (req/s, BF16 -> FP8): thumbnail 36.0 -> 41.1, crop 28.8 -> 33.6, full frame 14.4 -> 16.8.
+- **CUDA graphs vs `--enforce-eager`** (FP8): eager is 3.2-3.5x slower per call at concurrency 1 (thumbnail 789 vs 224 ms, full frame 825 vs 261 ms) and 2.7x lower thumbnail throughput at concurrency 8 (8.7 vs 23.6 req/s). Kernel-launch overhead dominates a 2B model's decode step. Eager starts faster (48 s vs ~150 s, no compile).
+
+**W4A16: skipped.** It needs a calibration pass (GPTQ) to be trustworthy, and the L4 has no native INT4 matmul (Marlin kernels dequantize). FP8 already showed no measurable accuracy cost, with the decode speed-up limited by the per-call overhead above, so it did not fit the ~15 min stretch budget.
+
+**Headline.** Fine-tuning made eye search significantly better (+6.4 pp accuracy, +7.8 pp found, and false positives at about 1%), and FP8 made it 24% faster at no measurable cost. But on COCO-sized frames the same fine-tuning made plain full-frame inference better still: full frame is more accurate (94.2 vs 85.6%) and serves more searches per L4. Eye search's real advantage is the pixel and vision-token budget (18% of the pixels, 49 vs 272 vision tokens), which matters for bandwidth, and for larger frames where a full frame costs far more tokens. It doesn't win on accuracy or throughput for 640x480 frames on a datacenter GPU.
+
 ## Gotchas
 
 - Colab sets `UV_SYSTEM_PYTHON=true` globally. That makes `uv venv` print a `--system has no effect` warning. `setup_colab.sh` unsets it, since we always target explicit venvs.
@@ -377,3 +431,5 @@ No negative subset dropped by more than 5 pp: fine-tuning did not make the model
 - A bare `runs/` in `.gitignore` (meant for training-run folders) also ignored `results/runs/`. Anchored to `/runs/`, like `/data/` in Step 3.
 - Markdown tables: labels containing `|` break the columns; row labels use commas.
 - transformers 5.17: `TrainingArguments` has no `warmup_ratio` (use a float `warmup_steps`), and Qwen3-VL training needs the processor's `mm_token_type_ids` (multimodal RoPE). See Step 7.
+- Throughput benchmarks: CPU work in the asyncio event loop (PNG-encoding a 640x480 frame, ~90 ms) silently caps concurrency and can flip a comparison. Keep encoding off the loop and sanity-check end-to-end throughput against per-call throughput.
+- Prefix-cache measurements: a run that repeats queries the same server just served measures a hot cache (51% hits vs 5% cold). Restart the server, or use disjoint queries, before measuring.
