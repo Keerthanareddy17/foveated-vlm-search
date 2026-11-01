@@ -3,7 +3,7 @@ SHELL := /bin/bash
 SERVE_PY := .venv-serve/bin/python
 TRAIN_PY := .venv-train/bin/python
 
-.PHONY: help setup check storage gpu test clean serve serve-stop serve-status bench-latency eval-manifest baselines gen-data train quantize demo
+.PHONY: help setup check storage gpu test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo
 
 help: ## List all targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -41,6 +41,9 @@ bench-latency: ## Per-call latency: thumbnail vs crop vs full frame (OUT=results
 
 eval-manifest: ## Step 3 end to end: COCO annotations -> manifest + dev subset -> fetch/verify images -> stats + contact sheet
 	source scripts/env.sh && $(SERVE_PY) -m foveated_search.data.manifest all
+
+step4-check: ## Step 4 live check: 4 strategies on 5 dev queries -> traces, summary, trace images (server must be up)
+	source scripts/env.sh && $(SERVE_PY) scripts/step4_check.py
 
 baselines: ## Run R1-R4 baselines + thumbnail sweep (Step 5)
 	@echo "not implemented yet (Step 5)"

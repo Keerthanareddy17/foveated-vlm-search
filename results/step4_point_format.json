@@ -1,0 +1,164 @@
+{
+ "p": {
+  "positives": 40,
+  "hit_rate": 0.425,
+  "pos_said_absent": 0,
+  "unparsed": 0,
+  "negatives": 10,
+  "neg_correct_null": 9,
+  "median_offset_x": -165,
+  "median_offset_y": -111,
+  "fit_slope_intercept": {
+   "x": [
+    0.74,
+    -60.94
+   ],
+   "y": [
+    0.64,
+    38.48
+   ]
+  },
+  "mean_out_tokens_pos": 13.9,
+  "mean_out_tokens_neg": 6.8,
+  "examples": [
+   "{\"p\": [78, 489]}",
+   "{\"p\": [641, 307]}",
+   "{\"p\": null}"
+  ]
+ },
+ "point_2d object": {
+  "positives": 40,
+  "hit_rate": 0.925,
+  "pos_said_absent": 0,
+  "unparsed": 0,
+  "negatives": 10,
+  "neg_correct_null": 0,
+  "median_offset_x": -7,
+  "median_offset_y": 0,
+  "fit_slope_intercept": {
+   "x": [
+    0.97,
+    4.84
+   ],
+   "y": [
+    0.95,
+    39.38
+   ]
+  },
+  "mean_out_tokens_pos": 18.7,
+  "mean_out_tokens_neg": 17.9,
+  "examples": [
+   "{\"point_2d\": [101, 525]}",
+   "{\"point_2d\": [652, 345]}",
+   "{\"point_2d\": [48, 500]}"
+  ]
+ },
+ "native list, no label": {
+  "positives": 40,
+  "hit_rate": 0.425,
+  "pos_said_absent": 21,
+  "unparsed": 0,
+  "negatives": 10,
+  "neg_correct_null": 10,
+  "median_offset_x": -19,
+  "median_offset_y": 9,
+  "fit_slope_intercept": {
+   "x": [
+    0.83,
+    68.45
+   ],
+   "y": [
+    0.84,
+    134.48
+   ]
+  },
+  "mean_out_tokens_pos": 10.6,
+  "mean_out_tokens_neg": 2,
+  "examples": [
+   "[]",
+   "[]",
+   "[]"
+  ]
+ },
+ "native list + label": {
+  "positives": 40,
+  "hit_rate": 0.425,
+  "pos_said_absent": 21,
+  "unparsed": 0,
+  "negatives": 10,
+  "neg_correct_null": 10,
+  "median_offset_x": -19,
+  "median_offset_y": 9,
+  "fit_slope_intercept": {
+   "x": [
+    0.83,
+    68.45
+   ],
+   "y": [
+    0.84,
+    134.48
+   ]
+  },
+  "mean_out_tokens_pos": 13.68,
+  "mean_out_tokens_neg": 2,
+  "examples": [
+   "[]",
+   "[]",
+   "[]"
+  ]
+ },
+ "visible first": {
+  "positives": 40,
+  "hit_rate": 0.9,
+  "pos_said_absent": 1,
+  "unparsed": 0,
+  "negatives": 10,
+  "neg_correct_null": 10,
+  "median_offset_x": -7,
+  "median_offset_y": -20,
+  "fit_slope_intercept": {
+   "x": [
+    1.03,
+    -14.08
+   ],
+   "y": [
+    0.97,
+    0.1
+   ]
+  },
+  "mean_out_tokens_pos": 22.15,
+  "mean_out_tokens_neg": 21.1,
+  "examples": [
+   "{\"visible\": true, \"point_2d\": [101, 525]}",
+   "{\"visible\": true, \"point_2d\": [652, 345]}",
+   "{\"visible\": false, \"point_2d\": [601, 556]}"
+  ]
+ },
+ "point_2d | absent": {
+  "positives": 40,
+  "hit_rate": 0.925,
+  "pos_said_absent": 0,
+  "unparsed": 0,
+  "negatives": 10,
+  "neg_correct_null": 8,
+  "median_offset_x": -6,
+  "median_offset_y": -3,
+  "fit_slope_intercept": {
+   "x": [
+    0.98,
+    4.55
+   ],
+   "y": [
+    0.96,
+    32.42
+   ]
+  },
+  "mean_out_tokens_pos": 17.05,
+  "mean_out_tokens_neg": 8.9,
+  "examples": [
+   "{\"point_2d\": [107, 525]}",
+   "{\"point_2d\": [652, 345]}",
+   "{\"absent\": true}"
+  ]
+ }
+}

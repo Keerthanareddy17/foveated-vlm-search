@@ -1,0 +1,89 @@
+{
+ "queries": [
+  "q0003",
+  "q0015",
+  "q0031",
+  "q0062",
+  "q0093"
+ ],
+ "table_md": "| query_id | query | neg | strategy | calls | decision | correct | pixels % | uniq px % | vis tok | out tok | time-to-answer ms |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n| q0003 | microwave |  | full_frame | 1 | found | yes | 100.0 | 100.0 | 300 | 17 | 391 |\n| q0003 | microwave |  | downscale | 1 | found | yes | 18.0 | 18.0 | 54 | 17 | 304 |\n| q0003 | microwave |  | sliding_window | 1 | found | NO | 16.3 | 16.3 | 49 | 17 | 299 |\n| q0003 | microwave |  | eye_search | 3 | not found | NO | 20.3 | 18.3 | 61 | 30 | 578 |\n| q0015 | bottle |  | full_frame | 1 | found | yes | 100.0 | 100.0 | 300 | 17 | 331 |\n| q0015 | bottle |  | downscale | 1 | found | NO | 16.0 | 16.0 | 48 | 17 | 301 |\n| q0015 | bottle |  | sliding_window | 1 | found | NO | 16.3 | 16.3 | 49 | 17 | 301 |\n| q0015 | bottle |  | eye_search | 2 | found | yes | 18.3 | 18.3 | 55 | 46 | 766 |\n| q0031 | food |  | full_frame | 1 | found | yes | 100.0 | 100.0 | 192 | 17 | 321 |\n| q0031 | food |  | downscale | 1 | found | yes | 26.2 | 26.2 | 48 | 17 | 298 |\n| q0031 | food |  | sliding_window | 1 | found | NO | 26.8 | 26.8 | 49 | 17 | 298 |\n| q0031 | food |  | eye_search | 2 | found | yes | 30.0 | 30.0 | 55 | 45 | 755 |\n| q0062 | food |  | full_frame | 1 | found | yes | 100.0 | 100.0 | 240 | 17 | 325 |\n| q0062 | food |  | downscale | 1 | found | yes | 22.3 | 22.3 | 54 | 17 | 300 |\n| q0062 | food |  | sliding_window | 1 | found | yes | 20.2 | 20.2 | 49 | 17 | 299 |\n| q0062 | food |  | eye_search | 2 | found | yes | 22.7 | 22.7 | 55 | 51 | 857 |\n| q0093 | wine glass | Y | full_frame | 1 | not found | yes | 100.0 | 100.0 | 300 | 7 | 195 |\n| q0093 | wine glass | Y | downscale | 1 | not found | yes | 18.0 | 18.0 | 54 | 7 | 153 |\n| q0093 | wine glass | Y | sliding_window | 1 | found | NO | 16.3 | 16.3 | 49 | 17 | 299 |\n| q0093 | wine glass | Y | eye_search | 1 | not found | yes | 2.0 | 2.0 | 6 | 7 | 146 |",
+ "per_call_type_md": "| strategy:call | n | mean completion tokens | mean total ms |\n|---|---|---|---|\n| downscale:point | 5 | 15.00 | 271 |\n| eye_search:confirm | 4 | 24.25 | 409 |\n| eye_search:point | 6 | 13.67 | 244 |\n| full_frame:point | 5 | 15.00 | 313 |\n| sliding_window:tile | 5 | 17.00 | 299 |",
+ "field_costs": {
+  "confirm_completion_tokens": {
+   "y only (no)": {
+    "n": 1,
+    "mean": 6
+   },
+   "y only (yes)": {
+    "n": 3,
+    "mean": 6
+   },
+   "y+l (no)": {
+    "n": 1,
+    "mean": 6
+   },
+   "y+l (yes)": {
+    "n": 3,
+    "mean": 12.67
+   },
+   "y+p (no)": {
+    "n": 1,
+    "mean": 6
+   },
+   "y+p (yes)": {
+    "n": 3,
+    "mean": 22
+   },
+   "y+p+l (no)": {
+    "n": 1,
+    "mean": 6
+   },
+   "y+p+l (yes)": {
+    "n": 3,
+    "mean": 30.33
+   }
+  }
+ },
+ "token_check": [
+  {
+   "role": "point",
+   "fixation": 1,
+   "sent": "96x64",
+   "resized": "96x64",
+   "processor_vision_tokens": 6,
+   "server_diff": 8,
+   "agree": true
+  },
+  {
+   "role": "confirm",
+   "fixation": 1,
+   "sent": "224x224",
+   "resized": "224x224",
+   "processor_vision_tokens": 49,
+   "server_diff": 51,
+   "agree": true
+  },
+  {
+   "role": "point",
+   "fixation": 2,
+   "sent": "96x64",
+   "resized": "96x64",
+   "processor_vision_tokens": 6,
+   "server_diff": 8,
+   "agree": true
+  }
+ ],
+ "thumbnail_identity_multi_fixation_searches": 1,
+ "eye_repeats": 0,
+ "byte_identity_dev_sweep": {
+  "queries": 50,
+  "multi_fixation": 12,
+  "repeats": 0,
+  "max_point_calls": 2
+ },
+ "prompts_version": 2,
+ "thumbnail_size_example": [
+  96,
+  64
+ ]
+}
