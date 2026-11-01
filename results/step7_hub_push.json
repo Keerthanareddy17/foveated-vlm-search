@@ -1,0 +1,20 @@
+{
+ "repo_id": "honey613/qwen3-vl-2b-foveated-search",
+ "private": true,
+ "commit": "75ae0d4da71eeedf40e96acddac109029f5a5e57",
+ "files": {
+  ".gitattributes": 1519,
+  "README.md": 2612,
+  "chat_template.json": 5502,
+  "config.json": 1505,
+  "generation_config.json": 269,
+  "merges.txt": 1671839,
+  "model.safetensors": 4255140312,
+  "preprocessor_config.json": 390,
+  "tokenizer.json": 7032403,
+  "tokenizer_config.json": 10868,
+  "video_preprocessor_config.json": 385,
+  "vocab.json": 2776833
+ },
+ "total_gb": 4.267
+}

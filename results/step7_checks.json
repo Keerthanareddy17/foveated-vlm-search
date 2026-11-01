@@ -1,0 +1,98 @@
+{
+ "val": {
+  "where/all": {
+   "n": 300,
+   "base": 0.4266666666666667,
+   "finetuned": 0.5966666666666667
+  },
+  "where/positives": {
+   "n": 240,
+   "base": 0.42083333333333334,
+   "finetuned": 0.5208333333333334
+  },
+  "where/negatives (absent)": {
+   "n": 60,
+   "base": 0.45,
+   "finetuned": 0.9
+  },
+  "look_again/all": {
+   "n": 300,
+   "base": 0.15,
+   "finetuned": 0.5733333333333334
+  },
+  "look_again/positives": {
+   "n": 255,
+   "base": 0.0,
+   "finetuned": 0.5019607843137255
+  },
+  "look_again/negatives (absent)": {
+   "n": 45,
+   "base": 1.0,
+   "finetuned": 0.9777777777777777
+  },
+  "confirm/all": {
+   "n": 300,
+   "base": 0.9,
+   "finetuned": 0.9333333333333333
+  },
+  "confirm/yes crops": {
+   "n": 147,
+   "base": 0.8435374149659864,
+   "finetuned": 0.9047619047619048
+  },
+  "confirm/no crops": {
+   "n": 153,
+   "base": 0.954248366013072,
+   "finetuned": 0.9607843137254902
+  }
+ },
+ "flags": [],
+ "dev": {
+  "eye search (dev, 50)/base": {
+   "n": 50,
+   "found": 0.725,
+   "fp_rate": 0.0,
+   "accuracy": 0.78,
+   "wrong_location": 0.075,
+   "calls": 2.08,
+   "fixations": 0.86,
+   "searches_with_rejected_crop": 11,
+   "took_second_fixation_after_rejection": 0,
+   "second_fixation_rate": 0.0,
+   "repeats": 0,
+   "max_fixations_used": 1
+  },
+  "eye search (dev, 50)/fine-tuned": {
+   "n": 50,
+   "found": 0.85,
+   "fp_rate": 0.0,
+   "accuracy": 0.88,
+   "wrong_location": 0.05,
+   "calls": 1.82,
+   "fixations": 0.76,
+   "searches_with_rejected_crop": 2,
+   "took_second_fixation_after_rejection": 1,
+   "second_fixation_rate": 0.5,
+   "repeats": 2,
+   "max_fixations_used": 2
+  },
+  "full frame (dev, 50)/base": {
+   "n": 50,
+   "found": 0.925,
+   "fp_rate": 0.3,
+   "accuracy": 0.88,
+   "wrong_location": 0.075,
+   "calls": 1.0,
+   "fixations": 0.0
+  },
+  "full frame (dev, 50)/fine-tuned": {
+   "n": 50,
+   "found": 0.975,
+   "fp_rate": 0.0,
+   "accuracy": 0.98,
+   "wrong_location": 0.025,
+   "calls": 1.0,
+   "fixations": 0.0
+  }
+ }
+}

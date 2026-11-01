@@ -1,0 +1,30 @@
+{
+ "batch_size": 16,
+ "token_lengths": [
+  170,
+  170,
+  170,
+  170,
+  169,
+  169,
+  169,
+  169,
+  169,
+  169,
+  168,
+  168,
+  168,
+  168,
+  168,
+  168
+ ],
+ "padded_length": 170,
+ "vision_tokens_in_batch": 1296,
+ "loss": 0.6103,
+ "peak_allocated_gib": 18.49,
+ "peak_reserved_gib": 19.98,
+ "non_pytorch_overhead_gib": 0.25,
+ "gpu_total_gib": 22.03,
+ "spare_gib": 1.81,
+ "fits_with_1gib_spare": true
+}

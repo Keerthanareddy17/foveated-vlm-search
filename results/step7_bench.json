@@ -1,0 +1,14 @@
+{
+ "bench_steps": 30,
+ "seconds": 111.0,
+ "samples_per_s": 17.3,
+ "tokens_per_s_est": 1645,
+ "peak_mem_allocated_gb": 19.91,
+ "peak_mem_reserved_gb": 21.31,
+ "per_device_batch": 16,
+ "grad_accum": 4,
+ "gradient_checkpointing": false,
+ "epoch_train_min_est": 32.5,
+ "n_evals": 10.0,
+ "trainable_params": 17432576
+}

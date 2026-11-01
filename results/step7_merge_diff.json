@@ -1,0 +1,58 @@
+{
+ "config_diff_as_reserialized_by_transformers_5": {
+  "config.json": [
+   "+ dtype = \"bfloat16\"",
+   "+ text_config.pad_token_id = null",
+   "+ text_config.rope_parameters = {\"mrope_interleaved\": true, \"mrope_section\": [24, 20, 20], \"rope_theta\": 5000000, \"rope_type\": \"default\"}",
+   "- text_config.rope_scaling = {\"mrope_interleaved\": true, \"mrope_section\": [24, 20, 20], \"rope_type\": \"default\"}",
+   "- text_config.rope_theta = 5000000",
+   "~ transformers_version: \"4.57.0.dev0\" -> \"5.17.0\"",
+   "+ vision_config.dtype = \"bfloat16\"",
+   "~ vision_config.model_type: \"qwen3_vl\" -> \"qwen3_vl_vision\"",
+   "+ vision_config.rope_parameters = {\"rope_theta\": 10000.0, \"rope_type\": \"axial\"}"
+  ],
+  "generation_config.json": []
+ },
+ "shipped_config_identical_to_base": true,
+ "copied_files_identical": {
+  "preprocessor_config.json": true,
+  "video_preprocessor_config.json": true,
+  "chat_template.json": true,
+  "tokenizer.json": true,
+  "tokenizer_config.json": true,
+  "vocab.json": true,
+  "merges.txt": true,
+  "generation_config.json": true
+ },
+ "base_files": [
+  "README.md",
+  "chat_template.json",
+  "config.json",
+  "generation_config.json",
+  "merges.txt",
+  "model.safetensors",
+  "preprocessor_config.json",
+  "tokenizer.json",
+  "tokenizer_config.json",
+  "video_preprocessor_config.json",
+  "vocab.json"
+ ],
+ "merged_files": [
+  "chat_template.json",
+  "config.json",
+  "generation_config.json",
+  "merges.txt",
+  "model.safetensors",
+  "preprocessor_config.json",
+  "tokenizer.json",
+  "tokenizer_config.json",
+  "video_preprocessor_config.json",
+  "vocab.json"
+ ],
+ "tensor_keys_identical": true,
+ "vision_tensors": 315,
+ "vision_tensors_identical": 315,
+ "decoder_proj_weights": 196,
+ "decoder_proj_weights_changed": 196,
+ "merged_size_gb": 4.255
+}
