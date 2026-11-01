@@ -25,7 +25,7 @@ import yaml
 from PIL import Image
 
 from foveated_search.config import REPO_ROOT, Config
-from foveated_search.data.fetch_images import eval_image_path
+from foveated_search.eval.frames import load_frame
 from foveated_search.eval.metrics import is_correct, is_found
 from foveated_search.eval.splits import load_split
 from foveated_search.search.base import SEARCH_OVERLAYS, get_strategy, run_strategy, search_config
@@ -61,6 +61,12 @@ def eval_config(overrides: dict | None = None, overlays: list[str] | None = None
     return cfg
 
 
+def run_mode(split: str) -> str:
+    """Every latency* split (latency, latency_fit, latency_m2, ...) is a concurrency-1 latency run; the rest are
+    accuracy runs. (Step 8b: a first version matched only "latency" and ran latency_fit at concurrency 8.)"""
+    return "latency" if split.startswith("latency") else "accuracy"
+
+
 def git_commit() -> str:
     try:
         sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, capture_output=True, text=True).stdout.strip()
@@ -81,7 +87,7 @@ async def run_eval(name: str, strategy: str, split: str, overrides: dict | None 
     cfg = eval_config(overrides, overlays)
     get_strategy(strategy)  # fail fast on unknown names
     h = cfg["harness"]
-    mode = "latency" if split == "latency" else "accuracy"
+    mode = run_mode(split)
     conc = int(concurrency or (h["latency_concurrency"] if mode == "latency" else h["concurrency"]))
     rows = load_split(cfg, split)[: limit or None]
     runs_dir = REPO_ROOT / h["runs_dir"]
@@ -125,7 +131,7 @@ async def run_eval(name: str, strategy: str, split: str, overrides: dict | None 
     async def one(q: dict, record: bool = True) -> None:
         nonlocal n_done
         async with sem:
-            frame = Image.open(eval_image_path(cfg, q["file_name"])).convert("RGB")
+            frame = load_frame(cfg, q)
             tr = await run_strategy(strategy, frame, q["query"], client, cfg)
         tr.meta = {k: q[k] for k in META_KEYS}
         d = tr.to_dict()

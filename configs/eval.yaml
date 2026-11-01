@@ -59,3 +59,11 @@ failure_analysis:
   small_in_thumbnail_px: 8       # largest gt box's longer side in thumbnail pixels below this = "too small in thumbnail"
   crop_contains_frac: 0.5        # a gt box counts as inside a crop if its centre is inside or >= this share of it is
   n_images: 8
+
+mosaic:                      # Step 8b: high-resolution frames from the frozen eval set
+  grids: [2, 3]              # 2x2 = 1280x960, 3x3 = 1920x1440
+  cell_w: 640
+  cell_h: 480                # images that don't fit a cell are never resized: such queries are excluded
+  pad_rgb: [128, 128, 128]   # neutral gray around images smaller than the cell
+  frames_subdir: mosaics     # rendered frames under <paths.data_dir>/mosaics/GxG/ (local disk only)
+  manifest_pattern: results/step8b_mosaic_manifest_{g}x{g}.jsonl

@@ -3,7 +3,7 @@ SHELL := /bin/bash
 SERVE_PY := .venv-serve/bin/python
 TRAIN_PY := .venv-train/bin/python
 
-.PHONY: help setup check storage gpu eval table gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo
+.PHONY: help setup check storage gpu eval table mosaics scaling gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo
 
 help: ## List all targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -61,6 +61,12 @@ gen-data: ## Step 6 end to end: plan -> fetch train2017 subset -> generate -> st
 	source scripts/env.sh && $(SERVE_PY) -m foveated_search.data.train_data all
 	source scripts/env.sh && $(TRAIN_PY) -m foveated_search.train.check_data
 	source scripts/env.sh && $(SERVE_PY) -m foveated_search.data.train_data report
+
+mosaics: ## Step 8b: 2x2 / 3x3 mosaic manifests from the frozen eval set + rendered frames (local) + contact sheet
+	source scripts/env.sh && $(SERVE_PY) -m foveated_search.data.mosaic
+
+scaling: ## Step 8b: downscale budgets, throughput @16, scaling CSV + figure, table (server must be up for budgets/throughput)
+	source scripts/env.sh && $(SERVE_PY) -m foveated_search.eval.scaling report && $(SERVE_PY) scripts/step8b_figure.py && $(MAKE) table
 
 base-on-val: ## Step 6: score the base model on val samples per type (server must be up)
 	source scripts/env.sh && $(SERVE_PY) scripts/step6_base_on_val.py
