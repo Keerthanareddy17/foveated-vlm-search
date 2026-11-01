@@ -32,6 +32,7 @@ So a new Colab session costs ~1.5-2 min of setup. Most of the "skip" and "verify
 - **Step 6:** training data shares code with inference (`search/views.py`, `point_prompt` / `confirm_prompt`, `dump_point` / `dump_confirm`, `encode_png`); confirm labels use mask-based visibility; "food" negatives exclude 13 food-adjacent classes.
 - **Step 7:** LoRA r16 on the decoder only, 1 epoch, effective batch 64 (16 x 4); final adapter used (val loss = best); merged model ships the base config/processor files byte-for-byte; private HF repo `honey613/qwen3-vl-2b-foveated-search`.
 - **Step 8:** prompts and search settings unchanged; R5-R7 differ only in the served model / server flags (overlays). R3-ft budget = R5 mean (50,026 px). Images are encoded off the event loop (`VLMClient.aencode`). W4A16 skipped (reason under Step 8).
+- **Step 8b:** high-resolution mosaics from the frozen eval set (308 queries that fit a 640x480 cell); hi-res server overlay (max pixels 1920x1440, max_model_len 6144); `search.look_again_mask` added (helps, +4.4 pp accuracy; default off to keep R1-R7 reproducible, recommended on from Step 9).
 
 ## Storage policy
 
@@ -414,6 +415,52 @@ Same harness, splits and frozen Step 5 settings (96 px thumbnail, 224 crop, refi
 
 **Headline.** Fine-tuning made eye search significantly better (+6.4 pp accuracy, +7.8 pp found, and false positives at about 1%), and FP8 made it 24% faster at no measurable cost. But on COCO-sized frames the same fine-tuning made plain full-frame inference better still: full frame is more accurate (94.2 vs 85.6%) and serves more searches per L4. Eye search's real advantage is the pixel and vision-token budget (18% of the pixels, 49 vs 272 vision tokens), which matters for bandwidth, and for larger frames where a full frame costs far more tokens. It doesn't win on accuracy or throughput for 640x480 frames on a datacenter GPU.
 
+### Step 8b: frame-size scaling and the look-again mask
+
+**High-resolution benchmark from the frozen eval set** (`foveated_search/data/mosaic.py`; `make mosaics`). The 308 test queries whose image fits a 640x480 cell (images are never resized; the other 142 test queries are portrait or taller and are excluded at every size) become 2x2 (1280x960) and 3x3 (1920x1440) mosaics. The query image goes in a seeded random cell, centred on gray (128); the other cells hold manifest images with no category of the query's supercategory (crowd included; for "food" also none of the 13 food-adjacent classes). Boxes are shifted into mosaic coordinates. Manifests: `results/step8b_mosaic_manifest_2x2.jsonl` (sha256 `71943fd6591f7572561dd6cbd7811184b0d7be72d1e093bed045db0c40162ec5`) and `_3x3.jsonl` (`6006ced82bb0f93fb5cdc079f61f17ec374672bb2ccc6f84dfe356fbf33a3db1`). Regeneration is identical (test). Rendered frames are on the local disk only (2.1 GB, 32 s). Contact sheet: `results/step8b_mosaic_examples.png`. 1x1 numbers below are on the same 308 queries.
+
+**Server:** fine-tuned FP8, prefix caching off, plus `configs/serve_hires.yaml` (image_max_pixels 2,764,800 = exactly 1920x1440, max_model_len 6,144). Verified: the full frame reaches the model at native resolution at every size, and processor tokens == server tokens: 300 / 1,200 / 2,700 (`results/step8b_token_check.json`). 0 parse failures in all 15 accuracy runs.
+
+| frame | strategy | accuracy % [95% CI] | FP % | vision tokens | pixels % | time-to-answer p50 (ms, conc 1) | searches/s @16 |
+|---|---|---|---|---|---|---|---|
+| 1x1 | full frame | 93.5 [90.6, 96.1] | 4.3 | 261 | 100 | 257 | 17.4 |
+| 1x1 | eye search 288 px | **93.5** [90.9, 96.1] | 1.4 | **98** | 39.0 | 515 | 15.8 |
+| 1x1 | eye search 96 px | 87.0 | 1.4 | 48 | 19.1 | 507 | 15.8 |
+| 2x2 | full frame | **89.3** [85.7, 92.9] | 7.1 | 1,200 | 100 | 498 | 4.2 |
+| 2x2 | eye search 288 px | 85.4 [81.5, 89.6] | 1.4 | **110** | 9.2 | 515 | **13.3** |
+| 2x2 | downscale (eye-96 budget) | 74.4 | 5.7 | 54 | 4.5 | 233 | 22.2 |
+| 3x3 | full frame | **88.0** [84.4, 91.6] | 10.0 | 2,700 | 100 | 1,048 | 1.7 |
+| 3x3 | eye search 288 px | 73.4 [68.5, 78.2] | 4.3 | **129** | 4.8 | 515 | **10.0** |
+| 3x3 | eye search 192 px | 59.1 | 5.7 | 88 | 3.2 | 512 | 10.1 |
+| 3x3 | eye search 96 px | 39.9 | 2.9 | 78 | 2.9 | 795 | 8.8 |
+| 3x3 | downscale (eye-96 budget) | 60.1 | 25.7 | 70 | 2.6 | 234 | 14.1 |
+
+(All 15 rows with CIs, latency p95 and accuracy per 1k vision tokens: `results/step8b_scaling.csv`, `results/table.md`, figure `results/step8b_scaling.png`. Downscale budgets = eye-96 mean pixels: 49,261 / 62,002 / 79,702 px.)
+
+**Findings:**
+- **Throughput crossover between 1x1 and 2x2.** Full-frame cost grows with the frame: prefill of 1,200 / 2,700 vision tokens drops it from 17.4 searches/s (1x1) to 4.2 (2x2) and 1.7 (3x3). Eye search's cost is nearly flat (98 -> 129 vision tokens for 288 px), so it serves **3.2x** (2x2) and **5.9x** (3x3) more searches per L4 at concurrency 16. At 1x1 they are roughly even (15.8-16.9 vs 17.4).
+- **Single-search latency** follows the same pattern: at concurrency 1, full frame goes 257 -> 498 -> 1,048 ms while eye search 288 px stays at ~515 ms. They cross at 2x2.
+- **Accuracy: no crossover.** Full frame stays the most accurate at every size (93.5 / 89.3 / 88.0%). Eye search 288 px ties it at 1x1 (93.5% with 37% of the vision tokens), trails by 3.9 pp at 2x2 (CIs overlap) and by 14.6 pp at 3x3 (CIs don't overlap). The eye-search loss at large frames is the glance: a fixed-size thumbnail of a 3x3 mosaic gives each 640x480 cell only ~32 / 64 / 96 px, and accuracy falls with it (96 px: 39.9%, 192 px: 59.1%, 288 px: 73.4%). The confirm step still keeps false positives low (1.4-5.7% vs 10% for full frame at 3x3).
+- **Accuracy per vision token:** eye search is 2.7x (1x1), 10x (2x2) and 17x (3x3) more accuracy-efficient than full frame (9.6 / 7.8 / 5.7 vs 3.6 / 0.74 / 0.33 accuracy points per 1k vision tokens, 288 px).
+- **Downscale at eye search's pixel budget** is the fastest strategy but degrades worst on big frames (3x3: 60.1% accuracy, 25.7% FP): a uniformly shrunk 3x3 mosaic leaves objects a few pixels wide.
+- **Where eye search wins:** large frames where throughput or the token / bandwidth budget matters: at 1280x960 it keeps 96% of full frame's accuracy (85.4 vs 89.3) at 3.2x the throughput and 9% of the pixels. Where accuracy is all that matters, full frame (at native resolution) is still best at every size we tested.
+
+**Measurement trap (fixed):** the runner only switched to latency mode (concurrency 1) for a split named exactly `latency`, so the first `latency_fit` / `latency_m2` / `latency_m3` runs ran at concurrency 8 (61 searches in 5 s gave it away). Fixed with `run_mode()` (any `latency*` split; unit-tested); all 15 latency runs were deleted and re-run at concurrency 1.
+
+**Look-again mask (inference-only fix, 1x1 test, 450 queries, FP8, same server):** on fixations 2+, the checked crop regions are filled gray in the thumbnail, in addition to listing the points in text (`search.look_again_mask`).
+
+| | mask off (same server) | mask on |
+|---|---|---|
+| found % | 81.4 | **86.9** (+5.6 pp [+2.8, +8.3]) |
+| accuracy % | 84.9 | **89.3** (+4.4 pp [+2.2, +6.7]); 24 wrong->right, 4 right->wrong |
+| FP % | 1.1 | 1.1 |
+| repeats | 78 | **21** |
+| searches with a rejected crop -> took a 2nd fixation | 53 -> 19 | 53 -> **44** |
+| found after the 2nd fixation | 7 | **27** |
+| calls / vision tokens per search | 2.07 / 49 | 2.11 / 53 |
+
+Against R6: +4.2 pp accuracy [+2.2, +6.4]. The mask fixes most of the "look again" problem from Step 8 without retraining, for 4 more vision tokens per search. It breaks thumbnail byte-identity, which costs only the 5.6% prefix-cache hit rate measured in Step 8. **Kept** as `search.look_again_mask`. The default stays `false` so R1-R7 remain reproducible from config; recommended `true` for eye search from Step 9 on.
+
 ## Gotchas
 
 - Colab sets `UV_SYSTEM_PYTHON=true` globally. That makes `uv venv` print a `--system has no effect` warning. `setup_colab.sh` unsets it, since we always target explicit venvs.
@@ -433,3 +480,4 @@ Same harness, splits and frozen Step 5 settings (96 px thumbnail, 224 crop, refi
 - transformers 5.17: `TrainingArguments` has no `warmup_ratio` (use a float `warmup_steps`), and Qwen3-VL training needs the processor's `mm_token_type_ids` (multimodal RoPE). See Step 7.
 - Throughput benchmarks: CPU work in the asyncio event loop (PNG-encoding a 640x480 frame, ~90 ms) silently caps concurrency and can flip a comparison. Keep encoding off the loop and sanity-check end-to-end throughput against per-call throughput.
 - Prefix-cache measurements: a run that repeats queries the same server just served measures a hot cache (51% hits vs 5% cold). Restart the server, or use disjoint queries, before measuring.
+- Split-name conventions are code: the runner chose latency mode only for the exact split name `latency`, so new `latency_*` splits silently ran at concurrency 8. Mode detection is now `run_mode()` (any `latency*`), with a unit test.
