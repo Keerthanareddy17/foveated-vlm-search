@@ -1,0 +1,3 @@
+# Overlay (use together with serve_finetuned_fp8.yaml): no CUDA graphs, for the graphs-vs-eager benchmark (Step 8).
+server:
+  enforce_eager: true

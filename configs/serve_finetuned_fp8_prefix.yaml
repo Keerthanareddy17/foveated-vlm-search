@@ -1,0 +1,8 @@
+# Overlay (use together with serve_finetuned_fp8.yaml): R7 = R6 + the caches a real deployment would enable.
+#   --enable-prefix-caching          reuse KV blocks of identical prompt prefixes (thumbnail on fixations 2-3)
+#   --mm-processor-cache-gb 4        reuse preprocessed images (same thumbnail bytes)
+#   --enable-prompt-tokens-details   report cached_tokens per request (for hit-rate accounting only)
+server:
+  enable_prefix_caching: true
+  mm_processor_cache_gb: 4
+  prompt_tokens_details: true

@@ -40,6 +40,8 @@ def vllm_args(cfg: Config) -> list[str]:
         "--generation-config", "vllm",
     ]
     args.append("--enable-prefix-caching" if s["enable_prefix_caching"] else "--no-enable-prefix-caching")
+    if s.get("prompt_tokens_details"):
+        args.append("--enable-prompt-tokens-details")  # per-request cached_tokens (prefix-cache accounting)
     if s["enforce_eager"]:
         args.append("--enforce-eager")
     if s["quantization"]:

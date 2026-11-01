@@ -98,12 +98,57 @@ food can be scored as a miss. Evaluation results: see the project repository.
 """
 
 
+def fp8_card(cfg, repo_id: str, bf16_repo: str, q: dict) -> str:
+    t = cfg["train"]
+    return f"""---
+license: apache-2.0
+base_model: {bf16_repo}
+library_name: transformers
+pipeline_tag: image-text-to-text
+tags:
+- qwen3-vl
+- visual-search
+- fp8
+- compressed-tensors
+---
+
+# {repo_id.split('/')[-1]}
+
+FP8 version of [{bf16_repo}](https://huggingface.co/{bf16_repo}) (Qwen3-VL-2B fine-tuned for low-pixel visual
+search: where to look, look again, confirm). Part of the foveated VLM search project: {t['github_url']}
+
+## Quantization
+
+- Scheme: **FP8_DYNAMIC** (compressed-tensors format, made with llm-compressor): FP8 E4M3 weights with per-channel
+  scales and FP8 activations with dynamic per-token scales. No calibration data.
+- Only the **language-model decoder** linear layers are quantized; the vision tower, the vision-language mergers and
+  `lm_head` stay in BF16 (ignore list: `{q.get('quantized_layers_ignore') or ['lm_head', 're:model.visual.*']}`).
+- Checkpoint size {q.get('safetensors_gb', 'n/a')} GB (BF16: ~4.26 GB).
+- Intended for GPUs with native FP8 matmuls (Ada / Hopper), e.g. the NVIDIA L4 it was measured on; vLLM loads it
+  directly (`CompressedTensorsW8A8Fp8`).
+
+## Use
+
+Same prompts and usage as the BF16 model. Set the image processor's minimum pixels to 1024
+(`size = {{"shortest_edge": 1024, "longest_edge": 1228800}}`) so small thumbnails are not upscaled. Accuracy and
+latency against the BF16 model: see the project repository.
+"""
+
+
 def main() -> None:
+    import argparse
+
     from huggingface_hub import HfApi
 
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model-dir", help="local model folder (default: the merged BF16 model)")
+    ap.add_argument("--repo-name", help="repo name under your user (default: train.hub_repo_name)")
+    ap.add_argument("--kind", choices=["bf16", "fp8"], default="bf16")
+    ap.add_argument("--quant-report", default="results/step8_fp8_quantize.json")
+    a = ap.parse_args()
     cfg = train_config()
     t = cfg["train"]
-    folder = Path(cfg.get_key("paths.models_dir")) / t["merged_name"]
+    folder = Path(a.model_dir) if a.model_dir else Path(cfg.get_key("paths.models_dir")) / t["merged_name"]
     if not (folder / "config.json").exists():
         sys.exit(f"merged model not found at {folder}: run make merge first")
     api = HfApi()
@@ -113,7 +158,7 @@ def main() -> None:
     print(f"[hub] logged in as {user}; token role: {why} (token not shown)")
     if not ok:
         sys.exit("[hub] STOP: the token has no write access to your namespace. Create a write token and log in again.")
-    repo_id = f"{user}/{t['hub_repo_name']}"
+    repo_id = f"{user}/{a.repo_name or t['hub_repo_name']}"
     if api.repo_exists(repo_id):
         if not api.model_info(repo_id).private:
             sys.exit(f"[hub] STOP: {repo_id} already exists and is PUBLIC; not pushing.")
@@ -121,6 +166,11 @@ def main() -> None:
     else:
         api.create_repo(repo_id, private=True, repo_type="model")
         print(f"[hub] created private repo {repo_id}")
+    if a.kind == "fp8":
+        q = json.loads((REPO_ROOT / a.quant_report).read_text())
+        (folder / "README.md").write_text(fp8_card(cfg, repo_id, f"{user}/{t['hub_repo_name']}", q))
+        return _upload(api, folder, repo_id, "Upload FP8_DYNAMIC quantization of the foveated-search model",
+                       "results/step8_hub_push_fp8.json")
     train_meta = json.loads((Path(cfg.get_key("paths.checkpoints_dir")) / t["out_subdir"] / t["run_name"] /
                              "adapter" / "train_meta.json").read_text())
     log = REPO_ROOT / "results/step7_train_log.csv"
@@ -133,15 +183,18 @@ def main() -> None:
     meta = {"train": {"train_samples": train_meta["train_samples"], "val_samples": train_meta["val_samples"],
                       "final_eval_loss": final_eval}}
     (folder / "README.md").write_text(model_card(cfg, repo_id, meta))
-    commit = api.upload_folder(folder_path=str(folder), repo_id=repo_id, repo_type="model",
-                               commit_message="Upload merged Qwen3-VL-2B foveated-search model",
+    _upload(api, folder, repo_id, "Upload merged Qwen3-VL-2B foveated-search model", "results/step7_hub_push.json")
+
+
+def _upload(api, folder: Path, repo_id: str, message: str, report: str) -> None:
+    commit = api.upload_folder(folder_path=str(folder), repo_id=repo_id, repo_type="model", commit_message=message,
                                allow_patterns=["*.json", "*.safetensors", "*.txt", "README.md"],
                                ignore_patterns=["merge_meta.json"])
     mi = api.model_info(repo_id, files_metadata=True)
     files = {s.rfilename: s.size for s in mi.siblings}
     res = {"repo_id": repo_id, "private": mi.private, "commit": getattr(commit, "oid", None), "files": files,
            "total_gb": round(sum(v or 0 for v in files.values()) / 1e9, 3)}
-    (REPO_ROOT / "results/step7_hub_push.json").write_text(json.dumps(res, indent=1) + "\n")
+    (REPO_ROOT / report).write_text(json.dumps(res, indent=1) + "\n")
     print(json.dumps(res, indent=1))
 
 

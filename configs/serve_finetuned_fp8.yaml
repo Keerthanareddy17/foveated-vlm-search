@@ -1,0 +1,4 @@
+# Overlay: serve the FP8_DYNAMIC quantization of the fine-tuned model (Step 8, R6). Same server config as BF16;
+# vLLM reads the compressed-tensors quantization_config from the checkpoint.
+model:
+  id: /content/fvs_local/models/qwen3-vl-2b-foveated-search-fp8

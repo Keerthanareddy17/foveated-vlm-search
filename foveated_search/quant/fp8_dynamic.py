@@ -23,13 +23,14 @@ def main() -> None:
     from llmcompressor.modifiers.quantization import QuantizationModifier
     from transformers import AutoProcessor, Qwen3VLForConditionalGeneration
 
-    from foveated_search.config import load_config
+    from foveated_search.config import REPO_ROOT, load_config
 
     cfg = load_config()
     q = cfg["quant"]
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default=str(cfg.get_key("model.id")))
     ap.add_argument("--out", default=str(Path(cfg.get_key("paths.models_dir")) / q["output_name"]))
+    ap.add_argument("--report", default="results/step2_fp8_offline_quantize.json")
     a = ap.parse_args()
 
     t0 = time.perf_counter()
@@ -48,6 +49,21 @@ def main() -> None:
     model.save_pretrained(out, save_compressed=True)
     processor.save_pretrained(out)
     t_save = time.perf_counter() - t2
+    # keep the processor / tokenizer / chat-template files byte-identical to the source model (as in the merge)
+    import shutil
+
+    from foveated_search.train.merge import COPY_FROM_BASE
+
+    src = Path(a.model)
+    if not src.exists():
+        from huggingface_hub import snapshot_download
+
+        src = Path(snapshot_download(a.model))
+    copied = []
+    for f in COPY_FROM_BASE:
+        if (src / f).exists():
+            shutil.copyfile(src / f, out / f)
+            copied.append(f)
 
     size = sum(f.stat().st_size for f in out.glob("*.safetensors"))
     qc = json.loads((out / "config.json").read_text()).get("quantization_config", {})
@@ -55,9 +71,10 @@ def main() -> None:
         "source": a.model, "out": str(out), "scheme": q["scheme"], "ignore": q["ignore"],
         "safetensors_gb": round(size / 1e9, 3), "load_s": round(t_load, 1), "quantize_s": round(t_quant, 1),
         "save_s": round(t_save, 1), "quant_method": qc.get("quant_method"), "format": qc.get("format"),
+        "files_copied_from_source": copied, "quantized_layers_ignore": qc.get("ignore"),
     }
     print(json.dumps(report, indent=1))
-    (Path(cfg.get_key("paths.results_dir")) / "step2_fp8_offline_quantize.json").write_text(json.dumps(report, indent=1) + "\n")
+    (REPO_ROOT / a.report).write_text(json.dumps(report, indent=1, default=str) + "\n")
 
 
 if __name__ == "__main__":
