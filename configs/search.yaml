@@ -6,6 +6,10 @@ search:
   max_tokens_point: 24         # caps for runaway generations; real answers are much shorter
   max_tokens_confirm: 40
 
+  # Step 8b test: gray out already-checked crop regions in the thumbnail on fixations 2+ (in addition to listing
+  # the points in text). Breaks thumbnail byte-identity across fixations (prefix caching barely mattered, Step 8).
+  look_again_mask: false
+  look_again_mask_rgb: [128, 128, 128]
   retry_prompt: plain         # fixations 2+: plain (point + point_checked_suffix) | encourage (point_retry_encourage)
 
   confirm:

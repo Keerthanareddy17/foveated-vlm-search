@@ -156,6 +156,18 @@ async def sliding_window(frame: Image.Image, query: str, client, cfg: Config) ->
     return tr
 
 
+def masked_thumbnail(thumb: Image.Image, crops: list, frame_size: tuple[int, int], rgb: tuple) -> Image.Image:
+    """Copy of the thumbnail with each checked crop (frame coords) filled with a flat colour."""
+    from PIL import ImageDraw
+
+    out = thumb.copy()
+    d = ImageDraw.Draw(out)
+    sx, sy = thumb.width / frame_size[0], thumb.height / frame_size[1]
+    for x0, y0, x1, y1 in crops:
+        d.rectangle((round(x0 * sx), round(y0 * sy), round(x1 * sx) - 1, round(y1 * sy) - 1), fill=tuple(rgb))
+    return out
+
+
 @register("eye_search")
 async def eye_search(frame: Image.Image, query: str, client, cfg: Config) -> Trace:
     s = _scfg(cfg)
@@ -166,9 +178,11 @@ async def eye_search(frame: Image.Image, query: str, client, cfg: Config) -> Tra
     tr = new_trace("eye_search", frame, query, cfg,
                    {"thumbnail": list(tsize), "fixation_size": F, "max_fixations": int(s["max_fixations"]),
                     "refine_point": bool(c["refine_point"]), "label": bool(c["label"]),
-                    "retry_prompt": str(s["retry_prompt"])})
-    thumb = await client.aencode(make_thumbnail(frame, int(s["thumbnail_long_side"])))  # encoded ONCE: byte-identical
+                    "retry_prompt": str(s["retry_prompt"]), "look_again_mask": bool(s.get("look_again_mask", False))})
+    thumb_img = make_thumbnail(frame, int(s["thumbnail_long_side"]))
+    thumb = await client.aencode(thumb_img)  # encoded ONCE: byte-identical across fixations (unless masking)
     assert (thumb.width, thumb.height) == tsize
+    mask = bool(s.get("look_again_mask", False))
     tr.thumbnail_sha256 = thumb_hash = None
     full = (0, 0, frame.width, frame.height)
     c_schema = confirm_schema(bool(c["refine_point"]), bool(c["label"]), int(c["label_max_chars"]))
@@ -177,12 +191,16 @@ async def eye_search(frame: Image.Image, query: str, client, cfg: Config) -> Tra
 
     for k in range(1, int(s["max_fixations"]) + 1):
         text = point_prompt(cfg, query, checked_model)
-        rec = await call(client, cfg, role="point", fixation=k, image=thumb, region=full, text=text,
+        image = thumb
+        if mask and tr.crops:  # gray out the already-checked crops in the thumbnail (Step 8b option)
+            image = await client.aencode(masked_thumbnail(thumb_img, tr.crops, frame.size, tuple(s["look_again_mask_rgb"])))
+        rec = await call(client, cfg, role="point", fixation=k, image=image, region=full, text=text,
                          schema=point_schema(), max_tokens=int(s["max_tokens_point"]))
         tr.calls.append(rec)
         if thumb_hash is None:
             thumb_hash = tr.thumbnail_sha256 = rec.image_sha256
-        assert rec.image_sha256 == thumb_hash, "thumbnail bytes changed between fixations"
+        if not mask:
+            assert rec.image_sha256 == thumb_hash, "thumbnail bytes changed between fixations"
         p = _parse_point_into(rec)
         if p is None:
             break  # "not visible" (or unparseable): stop, not found

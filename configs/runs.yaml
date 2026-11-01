@@ -56,6 +56,42 @@ runs:
   R7_eye_search:       {strategy: eye_search, split: test, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_finetuned_fp8_prefix.yaml]}
   R7_eye_search_lat:   {strategy: eye_search, split: latency, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_finetuned_fp8_prefix.yaml]}
 
+  # ---- Step 8b: frame-size scaling (fine-tuned FP8, prefix caching off, hi-res server). 1x1 = test queries that
+  # fit a 640x480 cell; 2x2 / 3x3 = the same queries as mosaics. Downscale budget = eye-96 mean pixels at that size.
+  sc1_full:    {strategy: full_frame, split: test_fit, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml]}
+  sc1_full_lat: {strategy: full_frame, split: latency_fit, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml]}
+  sc1_eye96:   {strategy: eye_search, split: test_fit, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 96}}
+  sc1_eye96_lat: {strategy: eye_search, split: latency_fit, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 96}}
+  sc1_eye192:  {strategy: eye_search, split: test_fit, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 192}}
+  sc1_eye192_lat: {strategy: eye_search, split: latency_fit, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 192}}
+  sc1_eye288:  {strategy: eye_search, split: test_fit, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 288}}
+  sc1_eye288_lat: {strategy: eye_search, split: latency_fit, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 288}}
+  sc1_down:    {strategy: downscale, split: test_fit, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.downscale.pixel_budget: 49261}}
+  sc1_down_lat: {strategy: downscale, split: latency_fit, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.downscale.pixel_budget: 49261}}
+  sc2_full:    {strategy: full_frame, split: test_m2, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml]}
+  sc2_full_lat: {strategy: full_frame, split: latency_m2, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml]}
+  sc2_eye96:   {strategy: eye_search, split: test_m2, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 96}}
+  sc2_eye96_lat: {strategy: eye_search, split: latency_m2, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 96}}
+  sc2_eye192:  {strategy: eye_search, split: test_m2, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 192}}
+  sc2_eye192_lat: {strategy: eye_search, split: latency_m2, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 192}}
+  sc2_eye288:  {strategy: eye_search, split: test_m2, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 288}}
+  sc2_eye288_lat: {strategy: eye_search, split: latency_m2, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 288}}
+  sc2_down:    {strategy: downscale, split: test_m2, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.downscale.pixel_budget: 62002}}
+  sc2_down_lat: {strategy: downscale, split: latency_m2, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.downscale.pixel_budget: 62002}}
+  sc3_full:    {strategy: full_frame, split: test_m3, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml]}
+  sc3_full_lat: {strategy: full_frame, split: latency_m3, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml]}
+  sc3_eye96:   {strategy: eye_search, split: test_m3, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 96}}
+  sc3_eye96_lat: {strategy: eye_search, split: latency_m3, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 96}}
+  sc3_eye192:  {strategy: eye_search, split: test_m3, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 192}}
+  sc3_eye192_lat: {strategy: eye_search, split: latency_m3, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 192}}
+  sc3_eye288:  {strategy: eye_search, split: test_m3, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 288}}
+  sc3_eye288_lat: {strategy: eye_search, split: latency_m3, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.thumbnail_long_side: 288}}
+  sc3_down:    {strategy: downscale, split: test_m3, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.downscale.pixel_budget: 79702}}
+  sc3_down_lat: {strategy: downscale, split: latency_m3, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.downscale.pixel_budget: 79702}}
+  # look-again fix test: gray out checked crops in the thumbnail (1x1 test split; compare with R6)
+  mask_eye96:    {strategy: eye_search, split: test, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml], set: {search.look_again_mask: true}}
+  nomask_eye96:  {strategy: eye_search, split: test, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_hires.yaml]}
+
 # R-row -> run names for results/table.md. R5-R7 are filled in Step 8.
 table:
   R1: {label: "base 2B, BF16, full frame", acc: R1_full_frame, lat: R1_full_frame_lat}
@@ -78,8 +114,15 @@ paired:
   - [R1ft_full_frame, R5_eye_search, "eye search vs full frame, both fine-tuned"]
   - [R5_eye_search, R6_eye_search, "FP8 vs BF16 (fine-tuned eye search)"]
   - [R6_eye_search, R7_eye_search, "prefix caching on vs off (FP8)"]
+  - [nomask_eye96, mask_eye96, "look-again mask on vs off (FP8, same server, Step 8b)"]
+  - [R6_eye_search, mask_eye96, "look-again mask vs R6"]
 
-second_fixation: [R4_eye_search, R5_eye_search, R6_eye_search, R7_eye_search]
+second_fixation: [R4_eye_search, R5_eye_search, R6_eye_search, R7_eye_search, nomask_eye96, mask_eye96]
 
 baselines: [R1_full_frame, R2_sliding_window, R3_downscale, R4_eye_search,
             R1_full_frame_lat, R2_sliding_window_lat, R3_downscale_lat, R4_eye_search_lat]
+
+# Step 8b scaling: frame size -> {strategy label: accuracy run, latency run}
+scaling:
+  sizes: {"1x1 (640x480)": 1, "2x2 (1280x960)": 2, "3x3 (1920x1440)": 3}
+  strategies: {"full frame": full, "downscale (eye-96 budget)": down, "eye search 96 px": eye96, "eye search 192 px": eye192, "eye search 288 px": eye288}

@@ -177,6 +177,32 @@ def main() -> None:
                      f"{x['took_second_fixation']} ({x['second_fixation_on_positives']}) | {x['found_after_second_fixation']} | "
                      f"{x['false_positive_after_second_fixation']} | {x['third_fixation']} | {x['repeats']} |")
 
+    # Step 8b: frame-size scaling (fine-tuned FP8; same 308 test queries at every size)
+    try:
+        from foveated_search.eval.scaling import scaling_rows
+
+        sc = scaling_rows()
+    except Exception as e:  # runs missing
+        sc = []
+        print(f"(scaling section skipped: {e})")
+    if sc:
+        L += ["", "## Frame size scaling (Step 8b)", "",
+              "Fine-tuned 2B, FP8, prefix caching off, server max image pixels 1920x1440 (full frames at native "
+              "resolution). The 308 test queries whose image fits a 640x480 cell, as 1x1 frames and as 2x2 / 3x3 "
+              "mosaics with filler images that contain no category of the query's supercategory. Accuracy runs at "
+              "concurrency 8; time-to-answer from the latency subset (61 queries) at concurrency 1; throughput = completed "
+              "searches/s at concurrency 16 over 160 searches.", "",
+              "| frame | strategy | found % [95% CI] | FP % | accuracy % [95% CI] | vision tokens | pixels % | calls | "
+              "time-to-answer p50 / p95 (ms) | searches/s @16 | accuracy per 1k vision tokens |",
+              "|---|---|---|---|---|---|---|---|---|---|---|"]
+        for r in sc:
+            L.append(f"| {r['frame']} | {r['strategy']} | {100 * r['found']:.1f} [{100 * r['found_ci_lo']:.1f}, "
+                     f"{100 * r['found_ci_hi']:.1f}] | {100 * r['fp_rate']:.1f} | {100 * r['accuracy']:.1f} "
+                     f"[{100 * r['accuracy_ci_lo']:.1f}, {100 * r['accuracy_ci_hi']:.1f}] | {r['vision_tokens']:.0f} | "
+                     f"{100 * r['pixels_frac']:.1f} | {r['calls']:.2f} | {r['tta_p50_ms']:.0f} / {r['tta_p95_ms']:.0f} | "
+                     f"{r['searches_per_s_c16'] if r['searches_per_s_c16'] is not None else 'n/a'} | "
+                     f"{r['accuracy_per_1k_vision_tokens']:.1f} |")
+
     # extra comparisons that are runs, not table rows
     extra = [("R4 refined point ON (default)", "R4_eye_search", test_ids),
              ("R4 refined point OFF", "R4_refine_off", test_ids)]

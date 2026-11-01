@@ -1,0 +1,6 @@
+# Overlay (Step 8b): send frames up to 1920x1440 at native resolution (no silent downscaling).
+# 1920x1440 = 2,764,800 px = 60 x 45 merged patches = 2,700 vision tokens; max_model_len raised for headroom
+# (2,700 image + ~60 text + 40 output tokens). Applies to the server AND the client-side token counter.
+server:
+  image_max_pixels: 2764800
+  max_model_len: 6144
