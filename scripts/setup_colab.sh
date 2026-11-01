@@ -56,6 +56,9 @@ export FVS_DATA_DIR="$PROJECT_DRIVE_DIR/data"
 export FVS_CHECKPOINTS_DIR="$PROJECT_DRIVE_DIR/checkpoints"
 export FVS_MODELS_DIR="$PROJECT_DRIVE_DIR/models"
 export HF_HUB_CACHE="$PROJECT_DRIVE_DIR/hf_hub_cache"
+# huggingface_hub>=1.3x "shared blob" store left a 79-byte pointer file instead of a working
+# symlink for model.safetensors on Drive (NOTES.md Gotchas). Classic per-repo blobs work.
+export HF_HUB_DISABLE_SHARED_BLOBS=1
 export FVS_REPO="$REPO"
 export VENV_SERVE="$VENV_SERVE"
 export VENV_TRAIN="$VENV_TRAIN"
