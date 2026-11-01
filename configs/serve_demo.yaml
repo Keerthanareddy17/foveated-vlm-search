@@ -1,0 +1,4 @@
+# Overlay (Step 9 demo): serve the fine-tuned FP8 model straight from the private HF Hub repo (no local copy needed;
+# downloaded into HF_HUB_CACHE on first start). Use with configs/serve_hires.yaml (native-resolution frames).
+model:
+  id: honey613/qwen3-vl-2b-foveated-search-fp8

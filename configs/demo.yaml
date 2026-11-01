@@ -1,0 +1,4 @@
+# Overlay (Step 9 demo): eye-search settings chosen from Step 8b for large webcam frames.
+search:
+  thumbnail_long_side: 288   # 96 px collapses on large frames (Step 8b: 3x3 accuracy 39.9% -> 73.4% at 288 px)
+  look_again_mask: true      # gray out checked crops on fixations 2+ (Step 8b: +4.4 pp accuracy, repeats 78 -> 21)

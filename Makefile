@@ -3,7 +3,7 @@ SHELL := /bin/bash
 SERVE_PY := .venv-serve/bin/python
 TRAIN_PY := .venv-train/bin/python
 
-.PHONY: help setup check storage gpu eval table mosaics scaling gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo
+.PHONY: help setup check storage serve-demo demo-smoke gpu eval table mosaics scaling gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo
 
 help: ## List all targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -29,6 +29,14 @@ clean: ## Remove caches inside the repo (never touches Drive or venvs)
 
 serve: ## Start vLLM in background from configs (FVS_CONFIG_OVERLAYS=... for variants), wait for /health
 	bash scripts/serve.sh start
+
+DEMO_OVERLAYS := configs/serve_demo.yaml,configs/serve_hires.yaml,configs/demo.yaml
+
+serve-demo: ## Demo server: fine-tuned FP8 from the private HF repo, native-resolution frames, demo search settings
+	FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) bash scripts/serve.sh start
+
+demo-smoke: ## One eye-search query against the demo server with the demo settings (make serve-demo first)
+	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) scripts/demo_smoke.py
 
 serve-stop: ## Stop vLLM and confirm GPU memory is freed
 	bash scripts/serve.sh stop
