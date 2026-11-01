@@ -29,6 +29,7 @@ Install times (`make setup`):
 So a new Colab session costs ~1.5-2 min of setup. Most of the "skip" and "verify" time is importing vLLM/torch, not installing.
 - **Step 4:** strategies behind one registry (`search/base.py`); all text in `configs/prompts.yaml` (versioned, stored in every trace), all numbers in `configs/search.yaml`. Images always precede text. Eye search encodes the thumbnail once and asserts its hash is unchanged across fixations.
 - **Step 5:** sliding window uses yes/no per tile (`tile_mode: confirm`); eye search keeps `retry_prompt: plain` and `refine_point: true`; the evidence label is off for evals. Downscale budget = R4's measured mean, 52,966 px. All chosen on dev (see Step 5 findings).
+- **Step 6:** training data shares code with inference (`search/views.py`, `point_prompt` / `confirm_prompt`, `dump_point` / `dump_confirm`, `encode_png`); confirm labels use mask-based visibility; "food" negatives exclude 13 food-adjacent classes.
 
 ## Storage policy
 
@@ -280,6 +281,48 @@ Harness: `foveated_search/eval/` (splits, resumable runner, metrics, generated t
 
 **Where and why the base model fails (input for Step 6).** Half of all eye-search failures (49/94) are the glance itself: from a 96x64 thumbnail the base model points at a different, often similar-looking object (fridge top for microwave, bench for cat), or the target is only a few pixels wide. The second-biggest problem is that the search never recovers. In all 62 searches with a rejected first crop the model said "absent" (or repeated the same point) instead of proposing a second location, so max_fixations=3 is never used. On crops, the confirm call errs both ways: 13 times it rejects a crop that contains a small target, 9+2 times it accepts a crop without one (often colour or shape look-alikes). Once it does confirm, its refined point misses the boxes in 13 cases, most of them on "food", where most of the "misses" are real but unlabeled food. So the training data must teach (1) where-to-look on 64-192 px thumbnails, with similar-object distractors and small targets, (2) a second-best location after a rejected point, and (3) a sharper confirm on near-miss crops, plus a precise point inside the crop.
 
+### Step 6: training data
+
+`make gen-data` (plan -> fetch -> generate -> stats + grid -> `.venv-train` processor check). Config `configs/train_data.yaml`, code `foveated_search/data/{train_data,masks,train_data_report}.py`, `foveated_search/train/{collate,check_data}.py`. Data on the local disk only: `/content/fvs_local/data/train_data/` (2.0 GB, 35,497 PNGs + jsonl + meta.json) and the source images in `/content/fvs_local/data/coco_train/` (1.2 GB). Nothing on Drive or the Hub.
+
+**Frozen dataset** (seed 42, prompts v3; regenerated in fresh processes, byte-identical jsonl and PNGs):
+
+| file | sha256 |
+|---|---|
+| `train.jsonl` (33,721 samples) | `c5d0ae5be1e67245d9e07a0b4505f6d30a64aa4342d9687adc0ef9fd1312b0c7` |
+| `val.jsonl` (1,776 samples) | `01aec5ba7950f6439c6b1ab216bd6874fd1d71a441b298075e76863a0756ad9e` |
+
+**Train/inference consistency (how it is guaranteed, not just checked):**
+- Thumbnails and crops come from `search/views.py` (`make_thumbnail`, `make_crop`), and eye search was refactored to call the same functions. Prompt text comes from `search/base.py` (`point_prompt`, `confirm_prompt`, `checked_text`), which eye search also uses. A test asserts the mock eye search's request texts equal the generator's.
+- Targets come from `schemas.dump_point` / `dump_confirm` (`json.dumps` separators `", "` / `": "` = xgrammar's output under our server setting). Every target in the dataset round-trips through `parse_p` / `parse_confirm` (test).
+- PNG bytes come from the client's own encoder (`serving.images.encode_png`, level 6).
+- `.venv-train` processor with `size = {shortest_edge: 1024, longest_edge: 1228800}` (same as the server): **all 305 checked 96x64 thumbnails = 6 vision tokens**; 0 of 1,200 grid-aligned images resized; 0 of 1,200 trained spans differed from `target + <|im_end|>` (`results/step6_token_stats.json`). The chat template adds no system prompt and no thinking block; the prompt part (`<|im_start|>user ... <|im_start|>assistant\n`) is masked, only the JSON + `<|im_end|>` is trained, and the trailing newline is masked.
+
+**Source images:** 100 images per category from train2017 (seeded) -> 7,768 selected; the final plan uses 7,516 (376 val, split by image). Zero overlap with the eval image ids (asserted while planning and in a test). First fetch: 7,541 images, 1,224 MB, 91 s with 32 workers (~80 img/s), all verified (PIL decode + size). Later plan revisions fetched 177 + 45 more; re-runs verify and skip all of them in ~7 s.
+
+**Samples** (`results/step6_dataset_stats.md`): 35,497 = where 13,999 (25% absent) + look_again 5,816 (15% absent) + confirm 15,682 (51% yes / 49% no); train 33,721 / val 1,776. 503 planned jobs dropped for lack of valid geometry (318 confirm, 184 look_again, 1 where). "food" is 18% of every type; the 80 single categories are balanced by round-robin. Thumbnail long side 64/96/128/160/192 = 14/40/15/15/15%; crops 160/224/288 = 14/70/16%. Positives/yes below the eval's 0.5% minimum area: 18% (Type 1/1b), 5% (confirm). "No" crops: distractor 48%, background 33%, near miss 19%. 870 "yes" crops show part of an object bigger than the crop. Evidence label on: 9.8% of confirm prompts.
+
+**Tokens per sample** (processor in `.venv-train`, 400 per type): where mean 69.9 / p95 84 (11.5 vision, 14.7 trained); look_again 102.6 / 122 (11.7 vision, 15.1 trained); confirm 114.9 / 152 (50.0 vision, 15.0 trained). About **3.2M tokens per epoch** (33.7k train samples). Input for Step 7's time estimate.
+
+**Design fixes made while reviewing the first generations (all on the training data only):**
+- On-object target points: mask centroid if inside the mask, else the pixel farthest from the mask border (erosion). On a donut the point lands on the ring, not in the hole.
+- "Yes" crop visibility is measured on the instance MASK: >= 50% of the mask inside the crop, or the visible part covers >= 25% of the crop. With box-based visibility, objects bigger than the crop could never be a "yes" (many dropped jobs), so the model would never have seen "the crop is all object". The yes point is the on-object point of the visible part.
+- Near-miss "no" crops are planned on images that contain the target (non-food); the first version picked the kind after the image and produced only 0.9% near misses (now 19%).
+- Only the `pos_small` variant may use targets below the eval's 0.5% minimum. The first version applied the 0.1% floor to every positive (35-41% COCO-small).
+- "food": negatives and "no" crops only from images with no food class and none of 13 food-adjacent classes (bowl, cup, dining table, ...). Look-again checked points for "food" also stay outside those classes' boxes, so "no food there" is never said about a bowl or a table. Residual risk: an image with no labelled food or food-adjacent object can still show unlabelled food (seen once in the grid: a baby eating something red).
+
+**"food" scores in the eval understate the model:** Step 5 found 9 of the 12 "food" confirm-yes location misses landed on real food that COCO doesn't label (bread, rice, noodles, stew, ...). The eval keeps COCO's 10 classes as ground truth, so a fine-tuned model that points at unlabelled food will still be scored as a miss.
+
+**Base model on val samples (before training; `results/step6_base_on_val.json`, 300 per type, same parsers, BF16):**
+
+| type | success | positives / yes | negatives / no | notes |
+|---|---|---|---|---|
+| where (Type 1) | 42.7% | 42.1% | 45.0% | points at something on 55% of negatives |
+| look_again (Type 1b) | 15.0% | **0.0%** | 100% | answers `{"absent": true}` on all 255 positives |
+| confirm (Type 2) | 90.0% | 84.4% | 95.4% | near-miss "no": 85.2%; distractor 97.4%; background 97.9% |
+
+The confirm skill is already decent, Type 1 is weak on small thumbnails and negatives, and look-again is entirely missing: the "never recovers" failure from Step 5, measured directly.
+
 ## Gotchas
 
 - Colab sets `UV_SYSTEM_PYTHON=true` globally. That makes `uv venv` print a `--system has no effect` warning. `setup_colab.sh` unsets it, since we always target explicit venvs.
@@ -296,4 +339,3 @@ Harness: `foveated_search/eval/` (splits, resumable runner, metrics, generated t
 - Plain `Image.quantize(256)` on a photo with coloured annotations maps the blue/purple markers to grey. `viz.save_png` reserves palette entries for the annotation colours.
 - A bare `runs/` in `.gitignore` (meant for training-run folders) also ignored `results/runs/`. Anchored to `/runs/`, like `/data/` in Step 3.
 - Markdown tables: labels containing `|` break the columns; row labels use commas.
-
