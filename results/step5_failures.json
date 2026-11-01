@@ -1,0 +1,1372 @@
+{
+ "run": "R4_eye_search",
+ "split": "test",
+ "n_queries": 450,
+ "n_pos": 360,
+ "n_failures": 94,
+ "categories": {
+  "off_target": 44,
+  "in_crop_confirm_no": 13,
+  "yes_point_off_in_crop": 13,
+  "yes_wrong_object": 9,
+  "absent_at_glance": 8,
+  "off_target_small": 5,
+  "false_positive": 2
+ },
+ "gave_up_after_no": 62,
+ "positives_with_a_rejected_crop": 62,
+ "positives_reaching_2nd_crop": 0,
+ "by_category_size": {
+  "off_target": {
+   "medium": 27,
+   "small": 3,
+   "large": 14
+  },
+  "yes_wrong_object": {
+   "medium": 5,
+   "large": 4
+  },
+  "in_crop_confirm_no": {
+   "medium": 4,
+   "large": 8,
+   "small": 1
+  },
+  "absent_at_glance": {
+   "medium": 5,
+   "large": 3
+  },
+  "yes_point_off_in_crop": {
+   "medium": 10,
+   "small": 2,
+   "large": 1
+  },
+  "false_positive": {
+   "null": 2
+  },
+  "off_target_small": {
+   "medium": 5
+  }
+ },
+ "by_category_type": {
+  "off_target": {
+   "category": 43,
+   "supercategory": 1
+  },
+  "yes_wrong_object": {
+   "category": 3,
+   "supercategory": 6
+  },
+  "in_crop_confirm_no": {
+   "category": 13
+  },
+  "absent_at_glance": {
+   "category": 5,
+   "supercategory": 3
+  },
+  "yes_point_off_in_crop": {
+   "supercategory": 6,
+   "category": 7
+  },
+  "false_positive": {
+   "category": 2
+  },
+  "off_target_small": {
+   "category": 5
+  }
+ },
+ "thresholds": {
+  "run": "R4_eye_search",
+  "split": "test",
+  "small_in_thumbnail_px": 8,
+  "crop_contains_frac": 0.5,
+  "n_images": 8
+ },
+ "failures": [
+  {
+   "query_id": "q0000",
+   "query": "cat",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [458, 454]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0009",
+   "query": "cup",
+   "category": "yes_wrong_object",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [757, 156]}",
+    "{\"y\": true, \"point_2d\": [101, 924]}"
+   ]
+  },
+  {
+   "query_id": "q0012",
+   "query": "microwave",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [183, 244]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0011",
+   "query": "spoon",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [755, 755]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0018",
+   "query": "sports ball",
+   "category": "absent_at_glance",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 0,
+   "answers": [
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0027",
+   "query": "vase",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [658, 224]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0029",
+   "query": "food",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [174, 750]}",
+    "{\"y\": true, \"point_2d\": [484, 624]}"
+   ]
+  },
+  {
+   "query_id": "q0037",
+   "query": "skis",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "small",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [224, 759]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0038",
+   "query": "wine glass",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [143, 174]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0042",
+   "query": "spoon",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [250, 444]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0048",
+   "query": "toothbrush",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [204, 250]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0051",
+   "query": "orange",
+   "category": "false_positive",
+   "gave_up_after_no": false,
+   "size_bucket": null,
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [159, 724]}",
+    "{\"y\": true, \"point_2d\": [821, 274]}"
+   ]
+  },
+  {
+   "query_id": "q0056",
+   "query": "clock",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [458, 349]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0063",
+   "query": "scissors",
+   "category": "absent_at_glance",
+   "gave_up_after_no": false,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 0,
+   "answers": [
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0060",
+   "query": "cell phone",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [151, 444]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0061",
+   "query": "cell phone",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [204, 654]}",
+    "{\"y\": true, \"point_2d\": [488, 143]}"
+   ]
+  },
+  {
+   "query_id": "q0081",
+   "query": "tennis racket",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [754, 143]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0084",
+   "query": "banana",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [258, 545]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0111",
+   "query": "skis",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "small",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [407, 548]}",
+    "{\"y\": true, \"point_2d\": [224, 242]}"
+   ]
+  },
+  {
+   "query_id": "q0118",
+   "query": "tv",
+   "category": "off_target_small",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [458, 244]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0120",
+   "query": "wine glass",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "small",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [143, 214]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0122",
+   "query": "food",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [750, 448]}",
+    "{\"y\": true, \"point_2d\": [214, 757]}"
+   ]
+  },
+  {
+   "query_id": "q0130",
+   "query": "sports ball",
+   "category": "off_target_small",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [448, 741]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0134",
+   "query": "book",
+   "category": "absent_at_glance",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 0,
+   "answers": [
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0136",
+   "query": "spoon",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "small",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [107, 448]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0141",
+   "query": "chair",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [724, 874]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0144",
+   "query": "food",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [417, 724]}",
+    "{\"y\": true, \"point_2d\": [500, 545]}"
+   ]
+  },
+  {
+   "query_id": "q0154",
+   "query": "hair drier",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [204, 174]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0156",
+   "query": "bench",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [448, 750]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0159",
+   "query": "couch",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [127, 548]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0162",
+   "query": "baseball bat",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [151, 250]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0163",
+   "query": "parking meter",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [500, 724]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0175",
+   "query": "bus",
+   "category": "absent_at_glance",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 0,
+   "answers": [
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0172",
+   "query": "food",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [458, 556]}",
+    "{\"y\": true, \"point_2d\": [244, 456]}"
+   ]
+  },
+  {
+   "query_id": "q0181",
+   "query": "book",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [775, 571]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0187",
+   "query": "backpack",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [724, 544]}",
+    "{\"y\": true, \"point_2d\": [301, 414]}"
+   ]
+  },
+  {
+   "query_id": "q0202",
+   "query": "toaster",
+   "category": "off_target_small",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [755, 274]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0217",
+   "query": "food",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "large",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [143, 724]}",
+    "{\"y\": true, \"point_2d\": [400, 400]}"
+   ]
+  },
+  {
+   "query_id": "q0219",
+   "query": "chair",
+   "category": "false_positive",
+   "gave_up_after_no": false,
+   "size_bucket": null,
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [654, 452]}",
+    "{\"y\": true, \"point_2d\": [124, 675]}"
+   ]
+  },
+  {
+   "query_id": "q0222",
+   "query": "couch",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [159, 444]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0225",
+   "query": "suitcase",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "small",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [754, 754]}",
+    "{\"y\": true, \"point_2d\": [414, 604]}"
+   ]
+  },
+  {
+   "query_id": "q0230",
+   "query": "backpack",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [755, 644]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0240",
+   "query": "clock",
+   "category": "absent_at_glance",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 0,
+   "answers": [
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0236",
+   "query": "teddy bear",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [159, 274]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0244",
+   "query": "hot dog",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [258, 349]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0243",
+   "query": "food",
+   "category": "yes_wrong_object",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [183, 414]}",
+    "{\"y\": true, \"point_2d\": [756, 784]}"
+   ]
+  },
+  {
+   "query_id": "q0248",
+   "query": "apple",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [400, 204]}",
+    "{\"y\": true, \"point_2d\": [250, 104]}"
+   ]
+  },
+  {
+   "query_id": "q0262",
+   "query": "laptop",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [757, 448]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0270",
+   "query": "potted plant",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [654, 554]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0271",
+   "query": "handbag",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [448, 724]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0301",
+   "query": "food",
+   "category": "yes_wrong_object",
+   "gave_up_after_no": false,
+   "size_bucket": "large",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [458, 458]}",
+    "{\"y\": true, \"point_2d\": [400, 400]}"
+   ]
+  },
+  {
+   "query_id": "q0305",
+   "query": "broccoli",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [724, 444]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0309",
+   "query": "food",
+   "category": "yes_wrong_object",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [443, 756]}",
+    "{\"y\": true, \"point_2d\": [443, 641]}"
+   ]
+  },
+  {
+   "query_id": "q0312",
+   "query": "baseball glove",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [178, 444]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0322",
+   "query": "cup",
+   "category": "off_target_small",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [159, 624]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0331",
+   "query": "baseball bat",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "small",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [604, 551]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0335",
+   "query": "potted plant",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [127, 144]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0341",
+   "query": "bed",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [724, 724]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0343",
+   "query": "chair",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [744, 744]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0355",
+   "query": "food",
+   "category": "absent_at_glance",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "supercategory",
+   "fixations": 0,
+   "answers": [
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0353",
+   "query": "toaster",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [151, 701]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0362",
+   "query": "skis",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [500, 750]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0361",
+   "query": "orange",
+   "category": "yes_wrong_object",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [125, 125]}",
+    "{\"y\": true, \"point_2d\": [124, 874]}"
+   ]
+  },
+  {
+   "query_id": "q0371",
+   "query": "boat",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [750, 724]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0369",
+   "query": "food",
+   "category": "yes_wrong_object",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [143, 548]}",
+    "{\"y\": true, \"point_2d\": [234, 724]}"
+   ]
+  },
+  {
+   "query_id": "q0373",
+   "query": "skateboard",
+   "category": "yes_wrong_object",
+   "gave_up_after_no": false,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [143, 800]}",
+    "{\"y\": true, \"point_2d\": [451, 724]}"
+   ]
+  },
+  {
+   "query_id": "q0377",
+   "query": "sandwich",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [408, 708]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0378",
+   "query": "surfboard",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [224, 204]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0386",
+   "query": "dog",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [559, 809]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0388",
+   "query": "refrigerator",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [654, 545]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0392",
+   "query": "toilet",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [244, 724]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0400",
+   "query": "bowl",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [601, 752]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0398",
+   "query": "dining table",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [458, 244]}",
+    "{\"y\": true, \"point_2d\": [341, 935]}"
+   ]
+  },
+  {
+   "query_id": "q0410",
+   "query": "suitcase",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [159, 444]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0418",
+   "query": "food",
+   "category": "absent_at_glance",
+   "gave_up_after_no": false,
+   "size_bucket": "large",
+   "query_type": "supercategory",
+   "fixations": 0,
+   "answers": [
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0413",
+   "query": "food",
+   "category": "yes_wrong_object",
+   "gave_up_after_no": false,
+   "size_bucket": "large",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [224, 654]}",
+    "{\"y\": true, \"point_2d\": [484, 500]}"
+   ]
+  },
+  {
+   "query_id": "q0424",
+   "query": "knife",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [644, 644]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0427",
+   "query": "couch",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [757, 559]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0431",
+   "query": "fork",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [854, 701]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0434",
+   "query": "handbag",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [124, 444]}",
+    "{\"y\": true, \"point_2d\": [107, 944]}"
+   ]
+  },
+  {
+   "query_id": "q0439",
+   "query": "sheep",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [107, 349]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0438",
+   "query": "food",
+   "category": "yes_point_off_in_crop",
+   "gave_up_after_no": false,
+   "size_bucket": "medium",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [408, 641]}",
+    "{\"y\": true, \"point_2d\": [400, 456]}"
+   ]
+  },
+  {
+   "query_id": "q0444",
+   "query": "sink",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [400, 750]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0450",
+   "query": "fire hydrant",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [188, 250]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0452",
+   "query": "scissors",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [143, 349]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0453",
+   "query": "cow",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [407, 754]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0469",
+   "query": "food",
+   "category": "absent_at_glance",
+   "gave_up_after_no": false,
+   "size_bucket": "large",
+   "query_type": "supercategory",
+   "fixations": 0,
+   "answers": [
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0468",
+   "query": "food",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [244, 500]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0466",
+   "query": "microwave",
+   "category": "off_target_small",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [845, 274]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0470",
+   "query": "food",
+   "category": "yes_wrong_object",
+   "gave_up_after_no": false,
+   "size_bucket": "large",
+   "query_type": "supercategory",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [224, 708]}",
+    "{\"y\": true, \"point_2d\": [484, 500]}"
+   ]
+  },
+  {
+   "query_id": "q0472",
+   "query": "pizza",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [757, 749]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0477",
+   "query": "bowl",
+   "category": "in_crop_confirm_no",
+   "gave_up_after_no": true,
+   "size_bucket": "large",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [624, 500]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0488",
+   "query": "wine glass",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [70, 349]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  },
+  {
+   "query_id": "q0493",
+   "query": "mouse",
+   "category": "off_target",
+   "gave_up_after_no": true,
+   "size_bucket": "medium",
+   "query_type": "category",
+   "fixations": 1,
+   "answers": [
+    "{\"point_2d\": [654, 654]}",
+    "{\"y\": false}",
+    "{\"absent\": true}"
+   ]
+  }
+ ],
+ "images": [
+  "absent_at_glance_q0018.png",
+  "false_positive_q0051.png",
+  "in_crop_confirm_no_q0011.png",
+  "off_target_q0000.png",
+  "off_target_q0012.png",
+  "off_target_small_q0118.png",
+  "yes_point_off_in_crop_q0029.png",
+  "yes_wrong_object_q0009.png"
+ ]
+}
