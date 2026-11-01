@@ -1,0 +1,33 @@
+# Base config. Every script loads this via foveated_search.config.load_config().
+# Paths can be overridden by env vars (see foveated_search/config.py: ENV_OVERRIDES).
+
+seed: 42
+
+paths:
+  drive_project_dir: /content/drive/MyDrive/foveated-vlm-search
+  data_dir: /content/drive/MyDrive/foveated-vlm-search/data
+  checkpoints_dir: /content/drive/MyDrive/foveated-vlm-search/checkpoints
+  hf_hub_cache: /content/drive/MyDrive/foveated-vlm-search/hf_hub_cache
+  models_dir: /content/drive/MyDrive/foveated-vlm-search/models
+  results_dir: results            # relative to repo root; committed
+
+model:
+  id: Qwen/Qwen3-VL-2B-Instruct
+
+server:
+  host: 127.0.0.1
+  port: 8000
+  # Step 2 will measure how the processor resizes images and set these explicitly.
+  image_min_pixels: null
+  image_max_pixels: null
+
+search:
+  thumbnail_long_side: 96   # px, whole frame downscaled
+  fixation_size: 224        # px, square sharp crop from the original frame
+  max_fixations: 3
+
+eval:
+  num_queries: 500
+  negatives_share: 0.2
+  # Step 3 will choose this (minimum gt box area in px^2 to be a fair target).
+  min_box_area: null

@@ -1,0 +1,258 @@
+{
+  "timestamp_utc": "2026-11-01T09:54:16+00:00",
+  "gpu": {
+    "name": "NVIDIA L4",
+    "memory_total": "23034 MiB",
+    "compute_cap": "8.9",
+    "driver": "580.82.07"
+  },
+  "venvs": {
+    "serve": {
+      "python": "3.12.3",
+      "modules": {
+        "vllm": {
+          "ok": true,
+          "version": "0.31.0"
+        },
+        "torch": {
+          "ok": true,
+          "version": "2.13.0+cu130"
+        },
+        "transformers": {
+          "ok": true,
+          "version": "5.17.0"
+        },
+        "openai": {
+          "ok": true,
+          "version": "3.42.0"
+        },
+        "fastapi": {
+          "ok": true,
+          "version": "0.136.3"
+        },
+        "PIL": {
+          "ok": true,
+          "version": "13.0.0"
+        },
+        "pycocotools": {
+          "ok": true,
+          "version": "2.0.11"
+        }
+      },
+      "extra": {},
+      "cuda": {
+        "available": true,
+        "torch_cuda": "13.0",
+        "device": "NVIDIA L4"
+      }
+    },
+    "train": {
+      "python": "3.12.3",
+      "modules": {
+        "torch": {
+          "ok": true,
+          "version": "2.13.0+cu130"
+        },
+        "transformers": {
+          "ok": true,
+          "version": "5.17.0"
+        },
+        "peft": {
+          "ok": true,
+          "version": "0.21.2"
+        },
+        "trl": {
+          "ok": true,
+          "version": "1.17.1"
+        },
+        "datasets": {
+          "ok": true,
+          "version": "5.1.0"
+        },
+        "accelerate": {
+          "ok": true,
+          "version": "1.15.0"
+        }
+      },
+      "extra": {
+        "transformers.Qwen3VLForConditionalGeneration": {
+          "ok": true
+        }
+      },
+      "cuda": {
+        "available": true,
+        "torch_cuda": "13.0",
+        "device": "NVIDIA L4"
+      }
+    },
+    "quant": {
+      "python": "3.12.3",
+      "modules": {
+        "llmcompressor": {
+          "ok": true,
+          "version": "0.14.0"
+        },
+        "compressed_tensors": {
+          "ok": true,
+          "version": "0.19.0"
+        },
+        "torch": {
+          "ok": true,
+          "version": "2.13.0+cu130"
+        },
+        "transformers": {
+          "ok": true,
+          "version": "5.17.0"
+        }
+      },
+      "extra": {},
+      "cuda": {
+        "available": true,
+        "torch_cuda": "13.0",
+        "device": "NVIDIA L4"
+      }
+    }
+  },
+  "drive": {
+    "mounted": true,
+    "writable": true,
+    "project_dir": "/content/drive/MyDrive/foveated-vlm-search"
+  },
+  "hf_token_present": true,
+  "hf_home_set": false,
+  "disk_free_gb_content": 197.6,
+  "checks": [
+    {
+      "name": "GPU is L4, cc 8.9",
+      "pass": true,
+      "detail": "NVIDIA L4, cc 8.9, 23034 MiB, driver 580.82.07"
+    },
+    {
+      "name": "[serve] torch CUDA available",
+      "pass": true,
+      "detail": "cuda 13.0, NVIDIA L4"
+    },
+    {
+      "name": "[serve] import vllm",
+      "pass": true,
+      "detail": "0.31.0"
+    },
+    {
+      "name": "[serve] import torch",
+      "pass": true,
+      "detail": "2.13.0+cu130"
+    },
+    {
+      "name": "[serve] import transformers",
+      "pass": true,
+      "detail": "5.17.0"
+    },
+    {
+      "name": "[serve] import openai",
+      "pass": true,
+      "detail": "3.42.0"
+    },
+    {
+      "name": "[serve] import fastapi",
+      "pass": true,
+      "detail": "0.136.3"
+    },
+    {
+      "name": "[serve] import PIL",
+      "pass": true,
+      "detail": "13.0.0"
+    },
+    {
+      "name": "[serve] import pycocotools",
+      "pass": true,
+      "detail": "2.0.11"
+    },
+    {
+      "name": "[train] torch CUDA available",
+      "pass": true,
+      "detail": "cuda 13.0, NVIDIA L4"
+    },
+    {
+      "name": "[train] import torch",
+      "pass": true,
+      "detail": "2.13.0+cu130"
+    },
+    {
+      "name": "[train] import transformers",
+      "pass": true,
+      "detail": "5.17.0"
+    },
+    {
+      "name": "[train] import peft",
+      "pass": true,
+      "detail": "0.21.2"
+    },
+    {
+      "name": "[train] import trl",
+      "pass": true,
+      "detail": "1.17.1"
+    },
+    {
+      "name": "[train] import datasets",
+      "pass": true,
+      "detail": "5.1.0"
+    },
+    {
+      "name": "[train] import accelerate",
+      "pass": true,
+      "detail": "1.15.0"
+    },
+    {
+      "name": "[train] transformers.Qwen3VLForConditionalGeneration",
+      "pass": true,
+      "detail": "importable"
+    },
+    {
+      "name": "[quant] torch CUDA available",
+      "pass": true,
+      "detail": "cuda 13.0, NVIDIA L4"
+    },
+    {
+      "name": "[quant] import llmcompressor",
+      "pass": true,
+      "detail": "0.14.0"
+    },
+    {
+      "name": "[quant] import compressed_tensors",
+      "pass": true,
+      "detail": "0.19.0"
+    },
+    {
+      "name": "[quant] import torch",
+      "pass": true,
+      "detail": "2.13.0+cu130"
+    },
+    {
+      "name": "[quant] import transformers",
+      "pass": true,
+      "detail": "5.17.0"
+    },
+    {
+      "name": "Drive mounted",
+      "pass": true,
+      "detail": "/content/drive/MyDrive"
+    },
+    {
+      "name": "Drive project dir writable",
+      "pass": true,
+      "detail": "/content/drive/MyDrive/foveated-vlm-search"
+    },
+    {
+      "name": "HF token file present",
+      "pass": true,
+      "detail": "~/.cache/huggingface/token"
+    },
+    {
+      "name": "Free disk on /content >= 30 GB",
+      "pass": true,
+      "detail": "197.6 GB free"
+    }
+  ],
+  "all_pass": true,
+  "duration_s": 21.3
+}
