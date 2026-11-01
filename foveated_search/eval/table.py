@@ -14,7 +14,8 @@ import json
 from pathlib import Path
 
 from foveated_search.config import REPO_ROOT
-from foveated_search.eval.metrics import breakdown, by_query_type, by_size, latency, summarize
+from foveated_search.eval.metrics import (breakdown, by_query_type, by_size, latency, paired_compare, second_fixation,
+                                          summarize)
 from foveated_search.eval.runner import eval_config, run_specs
 from foveated_search.eval.splits import split_ids
 
@@ -95,17 +96,34 @@ def main() -> None:
         lat = load_run(r["lat"]) if "lat" in r else None
         loaded[rid] = (r, acc, lat)
 
+    refs = {rid: (r, load_run(r["acc"]) if "acc" in r else None, load_run(r["lat"]) if "lat" in r else None)
+            for rid, r in (spec.get("reference") or {}).items()}
     for split_name, ids in [("test (450)", test_ids), ("all (500)", all_ids)]:
         L += [f"## Main table, split: {split_name}", ""]
         rows = []
         for rid, (r, acc, lat) in loaded.items():
             a = [t for t in acc[0] if t["meta"]["query_id"] in ids] if acc else None
-            rows.append((rid, r["label"] + (f" ({r['pending']})" if "pending" in r else ""), a, lat[0] if lat else None))
+            if a is not None and len(a) < len(ids):
+                a = None  # run does not cover this split (e.g. a test-only run in the "all" table)
+            rows.append((rid, r["label"] + (f" ({r['pending']})" if "pending" in r else "") +
+                         ("" if a is not None or not acc else " (test split only)"), a, lat[0] if lat else None))
         L += summary_table(rows, cfg) + [""]
+        if refs:
+            L += [f"**Reference rows ({split_name}), NOT part of R1-R7:** the fine-tuned model with the single-call "
+                  "strategies (is eye search still ahead once both use the fine-tuned model?), and the base model's "
+                  "eye search with a 192 px thumbnail from the Step 5 sweep.", ""]
+            rrows = []
+            for rid, (r, acc, lat) in refs.items():
+                a = [t for t in acc[0] if t["meta"]["query_id"] in ids] if acc else None
+                if a is not None and len(a) < len(ids):
+                    a = None
+                rrows.append((f"ref {rid}", r["label"] + ("" if a is not None or not acc else " (test split only)"),
+                              a, lat[0] if lat else None))
+            L += summary_table(rrows, cfg) + [""]
 
     L += ["## Breakdowns (test split)", "", "### found % by target size (COCO buckets) and FP % on negatives", "",
           "| row | small | medium | large | negatives: FP % |", "|---|---|---|---|---|"]
-    for rid, (r, acc, _) in loaded.items():
+    for rid, (r, acc, _) in {**loaded, **{f"ref {k}": v for k, v in refs.items()}}.items():
         if not acc:
             continue
         b = breakdown([t for t in acc[0] if t["meta"]["query_id"] in test_ids], by_size,
@@ -115,13 +133,49 @@ def main() -> None:
                  f"{_pct(b['negative']['fp_rate'])} (n={b['negative']['n_neg']}) |")
     L += ["", "### by query type", "", "| row | food: found % | food: FP % | single category: found % | single category: FP % |",
           "|---|---|---|---|---|"]
-    for rid, (r, acc, _) in loaded.items():
+    for rid, (r, acc, _) in {**loaded, **{f"ref {k}": v for k, v in refs.items()}}.items():
         if not acc:
             continue
         b = breakdown([t for t in acc[0] if t["meta"]["query_id"] in test_ids], by_query_type)
         f, c = b["food"], b["single category"]
         L.append(f"| {rid} | {_pct(f['found'])} (n={f['n_pos']}) | {_pct(f['fp_rate'])} (n={f['n_neg']}) | "
                  f"{_pct(c['found'])} (n={c['n_pos']}) | {_pct(c['fp_rate'])} (n={c['n_neg']}) |")
+
+    # paired comparisons (same test queries) and second-fixation analysis
+    h = cfg["harness"]
+    pairs = spec.get("paired") or []
+    if pairs:
+        L += ["", "## Paired comparisons (test split, same queries; b minus a, paired bootstrap 95% CI)", "",
+              "| comparison | a | b | metric | n | a % | b % | diff (pp) [95% CI] | wrong->right | right->wrong |",
+              "|---|---|---|---|---|---|---|---|---|---|"]
+        for a_run, b_run, label in pairs:
+            ra, rb = load_run(a_run), load_run(b_run)
+            if not (ra and rb):
+                L.append(f"| {label} | {a_run} | {b_run} | pending | | | | | | |")
+                continue
+            ta = [t for t in ra[0] if t["meta"]["query_id"] in test_ids]
+            tb = [t for t in rb[0] if t["meta"]["query_id"] in test_ids]
+            for metric in ["found", "accuracy"]:
+                c = paired_compare(ta, tb, metric, int(h["bootstrap_resamples"]), float(h["ci_level"]), int(cfg["seed"]))
+                lo, hi = c["diff_ci"]
+                L.append(f"| {label} | {a_run} | {b_run} | {metric}{' (positives)' if metric == 'found' else ''} | {c['n']} | "
+                         f"{_pct(c['a'])} | {_pct(c['b'])} | {100 * c['diff']:+.1f} [{100 * lo:+.1f}, {100 * hi:+.1f}] | "
+                         f"{c['wrong_to_right']} | {c['right_to_wrong']} |")
+    sf_runs = spec.get("second_fixation") or []
+    if sf_runs:
+        L += ["", "## Second fixation after a rejected crop (test split)", "",
+              "| run | searches | with a rejected crop (on positives) | took a 2nd fixation (on positives) | "
+              "found after the 2nd fixation | false positive after it | reached a 3rd fixation | repeats |",
+              "|---|---|---|---|---|---|---|---|"]
+        for run in sf_runs:
+            r = load_run(run)
+            if not r:
+                L.append(f"| {run} | pending | | | | | | |")
+                continue
+            x = second_fixation([t for t in r[0] if t["meta"]["query_id"] in test_ids])
+            L.append(f"| {run} | {x['searches']} | {x['with_rejected_crop']} ({x['rejected_on_positives']}) | "
+                     f"{x['took_second_fixation']} ({x['second_fixation_on_positives']}) | {x['found_after_second_fixation']} | "
+                     f"{x['false_positive_after_second_fixation']} | {x['third_fixation']} | {x['repeats']} |")
 
     # extra comparisons that are runs, not table rows
     extra = [("R4 refined point ON (default)", "R4_eye_search", test_ids),

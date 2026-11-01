@@ -37,15 +37,49 @@ runs:
   dev_eye_finetuned:        {strategy: eye_search, split: dev, overlays: [configs/serve_finetuned.yaml]}
   dev_full_frame_finetuned: {strategy: full_frame, split: dev, overlays: [configs/serve_finetuned.yaml]}
 
+  # ---- Step 8: fine-tuned model (BF16), same harness and frozen settings
+  R5_eye_search:       {strategy: eye_search, split: all, overlays: [configs/serve_finetuned.yaml]}
+  R5_eye_search_lat:   {strategy: eye_search, split: latency, overlays: [configs/serve_finetuned.yaml]}
+  # reference rows (not part of R1-R7): fine-tuned model with the single-call strategies
+  R1ft_full_frame:     {strategy: full_frame, split: all, overlays: [configs/serve_finetuned.yaml]}
+  R1ft_full_frame_lat: {strategy: full_frame, split: latency, overlays: [configs/serve_finetuned.yaml]}
+  # R3ft budget = R5's measured mean pixels per query on test: 50025.6 -> 50026 (results/runs/R5_eye_search.jsonl, test ids)
+  R3ft_downscale:      {strategy: downscale, split: all, overlays: [configs/serve_finetuned.yaml], set: {search.downscale.pixel_budget: 50026}}
+  R3ft_downscale_lat:  {strategy: downscale, split: latency, overlays: [configs/serve_finetuned.yaml], set: {search.downscale.pixel_budget: 50026}}
+  # fine-tuned thumbnail sweep (test; 96 px = R5)
+  sweep_ft_thumb64:    {strategy: eye_search, split: test, overlays: [configs/serve_finetuned.yaml], set: {search.thumbnail_long_side: 64}}
+  sweep_ft_thumb128:   {strategy: eye_search, split: test, overlays: [configs/serve_finetuned.yaml], set: {search.thumbnail_long_side: 128}}
+  sweep_ft_thumb192:   {strategy: eye_search, split: test, overlays: [configs/serve_finetuned.yaml], set: {search.thumbnail_long_side: 192}}
+  # FP8 (R6) and FP8 + prefix caching (R7)
+  R6_eye_search:       {strategy: eye_search, split: all, overlays: [configs/serve_finetuned_fp8.yaml]}
+  R6_eye_search_lat:   {strategy: eye_search, split: latency, overlays: [configs/serve_finetuned_fp8.yaml]}
+  R7_eye_search:       {strategy: eye_search, split: test, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_finetuned_fp8_prefix.yaml]}
+  R7_eye_search_lat:   {strategy: eye_search, split: latency, overlays: [configs/serve_finetuned_fp8.yaml, configs/serve_finetuned_fp8_prefix.yaml]}
+
 # R-row -> run names for results/table.md. R5-R7 are filled in Step 8.
 table:
   R1: {label: "base 2B, BF16, full frame", acc: R1_full_frame, lat: R1_full_frame_lat}
   R2: {label: "base 2B, BF16, sliding window", acc: R2_sliding_window, lat: R2_sliding_window_lat}
   R3: {label: "base 2B, BF16, uniform downscale", acc: R3_downscale, lat: R3_downscale_lat}
   R4: {label: "base 2B, BF16, eye search", acc: R4_eye_search, lat: R4_eye_search_lat}
-  R5: {label: "fine-tuned 2B, BF16, eye search", pending: Step 8}
-  R6: {label: "fine-tuned 2B, FP8, eye search", pending: Step 8}
-  R7: {label: "fine-tuned 2B, FP8 + prefix caching, eye search", pending: Step 8}
+  R5: {label: "fine-tuned 2B, BF16, eye search", acc: R5_eye_search, lat: R5_eye_search_lat}
+  R6: {label: "fine-tuned 2B, FP8, eye search", acc: R6_eye_search, lat: R6_eye_search_lat}
+  R7: {label: "fine-tuned 2B, FP8 + prefix caching, eye search", acc: R7_eye_search, lat: R7_eye_search_lat}
+
+# Reference rows (shown in a separate block, not part of R1-R7)
+reference:
+  R1-ft: {label: "fine-tuned 2B, BF16, full frame", acc: R1ft_full_frame, lat: R1ft_full_frame_lat}
+  R3-ft: {label: "fine-tuned 2B, BF16, downscale (budget = R5 mean)", acc: R3ft_downscale, lat: R3ft_downscale_lat}
+  R4-192: {label: "base 2B, BF16, eye search, 192 px thumbnail (Step 5 sweep)", acc: sweep_thumb192}
+
+# Paired comparisons on the same test queries (b minus a)
+paired:
+  - [R4_eye_search, R5_eye_search, "fine-tuning (eye search)"]
+  - [R1ft_full_frame, R5_eye_search, "eye search vs full frame, both fine-tuned"]
+  - [R5_eye_search, R6_eye_search, "FP8 vs BF16 (fine-tuned eye search)"]
+  - [R6_eye_search, R7_eye_search, "prefix caching on vs off (FP8)"]
+
+second_fixation: [R4_eye_search, R5_eye_search, R6_eye_search, R7_eye_search]
 
 baselines: [R1_full_frame, R2_sliding_window, R3_downscale, R4_eye_search,
             R1_full_frame_lat, R2_sliding_window_lat, R3_downscale_lat, R4_eye_search_lat]

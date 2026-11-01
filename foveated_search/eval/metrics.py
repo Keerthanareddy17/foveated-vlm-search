@@ -96,3 +96,41 @@ def by_query_type(t: dict) -> str:
 def by_polarity(t: dict) -> str:
     return "negative" if t["meta"]["is_negative"] else "positive"
 
+
+
+def paired_compare(a: list[dict], b: list[dict], metric: str, resamples: int = 2000, level: float = 0.95,
+                   seed: int = 42) -> dict:
+    """b minus a on the SAME queries (matched by query_id). metric: "found" (positives only) or "accuracy".
+    Paired percentile bootstrap over queries; flip counts wrong->right and right->wrong."""
+    am = {t["meta"]["query_id"]: t for t in a}
+    bm = {t["meta"]["query_id"]: t for t in b}
+    ids = sorted(set(am) & set(bm))
+    if metric == "found":
+        ids = [i for i in ids if not am[i]["meta"]["is_negative"]]
+        fa, fb = [float(is_found(am[i])) for i in ids], [float(is_found(bm[i])) for i in ids]
+    elif metric == "accuracy":
+        fa, fb = [float(is_correct(am[i])) for i in ids], [float(is_correct(bm[i])) for i in ids]
+    else:
+        raise ValueError(metric)
+    xa, xb = np.asarray(fa), np.asarray(fb)
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, len(ids), size=(resamples, len(ids)))
+    diffs = xb[idx].mean(axis=1) - xa[idx].mean(axis=1)
+    lo, hi = np.percentile(diffs, [100 * (1 - level) / 2, 100 * (1 + level) / 2])
+    return {"n": len(ids), "a": float(xa.mean()), "b": float(xb.mean()), "diff": float(xb.mean() - xa.mean()),
+            "diff_ci": (float(lo), float(hi)), "wrong_to_right": int(((xa == 0) & (xb == 1)).sum()),
+            "right_to_wrong": int(((xa == 1) & (xb == 0)).sum())}
+
+
+def second_fixation(traces: list[dict]) -> dict:
+    """Searches with a rejected crop; how many then took another fixation; how many of those found the target."""
+    rej = [t for t in traces if any(c["role"] == "confirm" and c.get("parsed") and not c["parsed"]["y"] for c in t["calls"])]
+    second = [t for t in rej if len(t["fixations"]) >= 2]
+    pos_second = [t for t in second if not t["meta"]["is_negative"]]
+    return {"searches": len(traces), "with_rejected_crop": len(rej),
+            "rejected_on_positives": sum(not t["meta"]["is_negative"] for t in rej),
+            "took_second_fixation": len(second),
+            "second_fixation_on_positives": len(pos_second),
+            "found_after_second_fixation": sum(is_found(t) for t in pos_second),
+            "false_positive_after_second_fixation": sum(t["found"] for t in second if t["meta"]["is_negative"]),
+            "third_fixation": sum(len(t["fixations"]) >= 3 for t in traces), "repeats": sum(t["repeats"] for t in traces)}
