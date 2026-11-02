@@ -1243,6 +1243,86 @@
   "value": "23,034",
   "source": "results/env_report.json"
  },
+ "ex.confirm_answer": {
+  "value": "{\"y\": true, \"point_2d\": [516, 498], \"l\": \"apple\"}",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.crop": {
+  "value": "224x224",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.crop_box": {
+  "value": "(1599, 1210)-(1823, 1434)",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.crop_kb": {
+  "value": "64",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.crop_ms": {
+  "value": "344",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.crop_side": {
+  "value": "224",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.crop_tok": {
+  "value": "49",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.final": {
+  "value": "(1715, 1322)",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.fix": {
+  "value": "(1711, 1322)",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.label": {
+  "value": "apple",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.photo": {
+  "value": "desk, apple near the camera",
+  "source": "configs/demo_queries.yaml photo_names"
+ },
+ "ex.pix": {
+  "value": "5.8",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.pix_round": {
+  "value": "6",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.point_answer": {
+  "value": "{\"point_2d\": [891, 918]}",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.thumb": {
+  "value": "384x288",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.thumb_kb": {
+  "value": "166",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.thumb_ms": {
+  "value": "239",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.thumb_tok": {
+  "value": "108",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.tok": {
+  "value": "157",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
+ "ex.total_s": {
+  "value": "0.58",
+  "source": "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+ },
  "eye_vs_ff.tok_ratio_ft": {
   "value": "5.6",
   "source": "R1ft_full_frame vs R5_eye_search vision tokens (test)"
@@ -1403,6 +1483,10 @@
   "value": "500",
   "source": "results/eval_manifest.jsonl"
  },
+ "manifest.n_categories": {
+  "value": "80",
+  "source": "results/eval_manifest.jsonl"
+ },
  "manifest.neg": {
   "value": "100",
   "source": "results/eval_manifest.jsonl"
@@ -1510,6 +1594,18 @@
  "nomask.second": {
   "value": "19",
   "source": "results/runs/nomask_eye96.jsonl (second-fixation analysis, test)"
+ },
+ "photo.negative": {
+  "value": "desk, no apple",
+  "source": "configs/demo_queries.yaml photo_names"
+ },
+ "photo.positive": {
+  "value": "desk, apple far away",
+  "source": "configs/demo_queries.yaml photo_names"
+ },
+ "photo.positive2": {
+  "value": "desk, apple near the camera",
+  "source": "configs/demo_queries.yaml photo_names"
  },
  "prefix.R6.p50": {
   "value": "507",

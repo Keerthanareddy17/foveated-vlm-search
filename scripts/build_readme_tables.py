@@ -337,10 +337,50 @@ def scaling(F: Facts, T: dict) -> list[dict]:
 
 
 # ---------------------------------------------------------------- Step 9: photo demo + sweep
+def photo_name(spec: dict, image: str) -> str:
+    """Plain photo name from configs/demo_queries.yaml `photo_names` (falls back to the file name)."""
+    return (spec.get("photo_names") or {}).get(Path(image).name, Path(image).name)
+
+
+def example(F: Facts, spec: dict) -> None:
+    """The step-by-step example: the replayed (median-time) eye-search trace of desk/apple-near, "food"."""
+    rec = json.loads((R / "demo" / "positive2__food.json").read_text())
+    src = "results/demo/positive2__food.json (eye-search trace shown in the replay)"
+    tr, sm = rec["traces"]["eye_search"], rec["summary"]["eye_search"]
+    pt = next(c for c in tr["calls"] if c["role"] == "point")
+    cf = next(c for c in tr["calls"] if c["role"] == "confirm")
+    F.add("ex.photo", photo_name(spec, rec["image"]), "configs/demo_queries.yaml photo_names")
+    F.add("ex.thumb", f"{pt['sent_w']}x{pt['sent_h']}", src)
+    F.add("ex.thumb_tok", str(pt["vision_tokens"]), src)
+    F.add("ex.thumb_kb", f"{pt['png_bytes'] / 1e3:.0f}", src)
+    F.add("ex.thumb_ms", f"{1000 * pt['total_s']:.0f}", src)
+    F.add("ex.point_answer", pt["raw_answer"], src)
+    fx, fy = tr["fixations"][0]
+    F.add("ex.fix", f"({fx:.0f}, {fy:.0f})", src)
+    x0, y0, x1, y1 = cf["region"]
+    F.add("ex.crop", f"{cf['sent_w']}x{cf['sent_h']}", src)
+    F.add("ex.crop_box", f"({x0}, {y0})-({x1}, {y1})", src)
+    F.add("ex.crop_tok", str(cf["vision_tokens"]), src)
+    F.add("ex.crop_kb", f"{cf['png_bytes'] / 1e3:.0f}", src)
+    F.add("ex.crop_ms", f"{1000 * cf['total_s']:.0f}", src)
+    F.add("ex.confirm_answer", cf["raw_answer"], src)
+    F.add("ex.label", tr["evidence"], src)
+    fp = tr["final_point"]
+    F.add("ex.final", f"({fp[0]:.0f}, {fp[1]:.0f})", src)
+    F.add("ex.total_s", f"{sm['time_to_answer_s']:.2f}", src)
+    F.add("ex.tok", str(sm["vision_tokens"]), src)
+    F.add("ex.pix", f"{100 * sm['pixels_sent'] / (rec['frame_size'][0] * rec['frame_size'][1]):.1f}", src)
+    F.add("ex.pix_round", f"{100 * sm['pixels_sent'] / (rec['frame_size'][0] * rec['frame_size'][1]):.0f}", src)
+    F.add("ex.crop_side", str(rec["settings"]["fixation_size"]), src)
+
+
 def demo(F: Facts, T: dict) -> None:
     import yaml
     spec = yaml.safe_load((REPO_ROOT / "configs/demo_queries.yaml").read_text())
     from foveated_search.demo.run_demo import answer_note, notes_for
+    example(F, spec)
+    for img, nm in (spec.get("photo_names") or {}).items():
+        F.add(f"photo.{Path(img).stem}", nm, "configs/demo_queries.yaml photo_names")
     trows = []
     for q in spec["runs"]:
         name = Path(q["image"]).stem
@@ -361,7 +401,7 @@ def demo(F: Facts, T: dict) -> None:
             note = answer_note(sm, rec["query"], notes_for(spec, rec["image"]))
             verdict = ("correct" if sm["correct"] else "**wrong**") + (f" ({note})" if note else "")
             looks = "–" if s == "full_frame" else str(sm["fixations"])
-            trows.append([f"{name} · {rec['query']}" if s == "full_frame" else "",
+            trows.append([f"{photo_name(spec, rec['image'])} · \"{rec['query']}\"" if s == "full_frame" else "",
                           ("absent" if rec.get("expect") == "absent" else "present") if s == "full_frame" else "",
                           s.replace("_", " "), sm["status"], verdict, looks, F.v[ks + ".pix"],
                           f"{sm['png_bytes'] / 1e3:,.0f} KB", f"{sm['vision_tokens']:,}",
@@ -403,7 +443,8 @@ def demo(F: Facts, T: dict) -> None:
     trows.append(["full frame (for reference)", f"{sum(r['correct'] == 'True' for r in ff)}/{len(ff)}", "native",
                   f"{min(int(r['vision_tokens']) for r in ff):,}–{max(int(r['vision_tokens']) for r in ff):,}",
                   f"{min(float(r['time_median_s']) for r in ff):.2f}–{max(float(r['time_median_s']) for r in ff):.2f}"])
-    T["sweep"] = md_table(["eye-search thumbnail", "correct", "apple in the thumbnail, positive / positive2 (px)",
+    T["sweep"] = md_table(["eye-search thumbnail", "correct",
+                           f"apple in the thumbnail, {photo_name(spec, 'positive.jpg')} / {photo_name(spec, 'positive2.jpg')} (px)",
                            "vision tokens / search", "time to answer, medians (s)"], trows)
     s3 = {r["thumbnail_long_side"]: r for r in sw if r["strategy"] == "eye_search"}
     F.add("sweep.runs", next(r["repeats"] for r in sw if r["strategy"] == "eye_search"), src)
@@ -428,6 +469,8 @@ def settings(F: Facts) -> None:
     src = "results/eval_manifest.jsonl"
     F.add("manifest.n", str(len(rows)), src)
     F.add("manifest.neg", str(sum(r["is_negative"] for r in rows)), src)
+    cats = {r["query"] for r in rows if r.get("query_type") == "category"}
+    F.add("manifest.n_categories", str(len(cats)), src)
     F.add("manifest.dev", str(sum(1 for _ in (R / "eval_manifest_dev.jsonl").open())), "results/eval_manifest_dev.jsonl")
 
 
