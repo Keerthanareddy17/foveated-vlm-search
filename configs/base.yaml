@@ -4,7 +4,7 @@
 seed: 42
 
 paths:
-  # Storage policy (CLAUDE.md, NOTES.md "Storage policy"):
+  # Storage policy (NOTES.md "Storage policy"):
   #   local disk  = everything re-downloadable / regenerable with the seed (wiped each session)
   #   Drive       = only small irreplaceable files; keep the project under ~500 MB
   #   HF Hub      = merged fine-tuned model + its FP8 version (private repos)

@@ -1,6 +1,6 @@
 """Metrics over traces (one dict per query, as written by the runner).
 
-Definitions (CLAUDE.md): a positive is FOUND when the strategy confirmed it AND its final point lies
+Definitions (README, "Results"): a positive is FOUND when the strategy confirmed it AND its final point lies
 inside any ground-truth box. A negative is correct when the search ends without a confirmed point.
 """
 

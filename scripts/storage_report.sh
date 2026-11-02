@@ -4,7 +4,7 @@ set -uo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 [ -f "$REPO/scripts/env.sh" ] || { echo "scripts/env.sh missing: run 'make setup'" >&2; exit 1; }
 source "$REPO/scripts/env.sh"
-BUDGET_MB=500   # CLAUDE.md storage policy: keep the project's Drive usage under ~500 MB
+BUDGET_MB=500   # storage policy (NOTES.md): keep the project's Drive usage under ~500 MB
 
 echo "== Drive project folder (budget ${BUDGET_MB} MB): $PROJECT_DRIVE_DIR"
 if [ -d "$PROJECT_DRIVE_DIR" ]; then

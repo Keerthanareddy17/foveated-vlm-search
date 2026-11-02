@@ -1,7 +1,7 @@
 """Common interface for search strategies: call records, traces, registry, shared call helper.
 
 Every strategy is `async def run(frame, query, client, cfg) -> Trace`, registered by name.
-Accounting definitions (CLAUDE.md):
+Accounting definitions (README, "Results"):
 - pixels sampled = source pixels of every image sent, summed over calls, / frame pixels.
   An image sent twice (eye search's thumbnail) counts twice; `pixels_unique_frac` counts each
   distinct image once (what an edge device that caches the thumbnail would send).

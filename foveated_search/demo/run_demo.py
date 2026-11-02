@@ -110,7 +110,7 @@ def median_index(times: list[float]) -> int:
 
 
 def score(summary: dict, expect: str | None, gt_boxes: list | None) -> bool | None:
-    """Correct per the CLAUDE.md definition. expect: present | absent | None (unscored).
+    """Correct per the README definition. expect: present | absent | None (unscored).
     present: found AND final point inside any gt box (x0, y0, x1, y1 in clean-image pixels)."""
     if expect is None:
         return None

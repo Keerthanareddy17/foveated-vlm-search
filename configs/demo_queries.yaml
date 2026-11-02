@@ -1,7 +1,7 @@
 # (image, query) pairs for `make demo-batch` (ONLY=<substring> to run one photo). Images are cleaned copies from
 # `make intake` (test_pictures/clean/). Order here = order in the replay page's selector.
 # Queries: any COCO category name, or "food" (COCO's 10 food classes).
-# expect: present | absent (scored per CLAUDE.md: "found" = final point inside a gt box; absent = reports not found).
+# expect: present | absent (scored per the README definitions: "found" = final point inside a gt box; absent = reports not found).
 # gt_boxes: [x0, y0, x1, y1] in clean-image pixels, hand-measured on test_pictures/clean/*.jpg (Step 9).
 #   apple: the only COCO-food object in the positive photos. The red sweet boxes in a basket at the right edge (all
 #   three photos) are packaged food, not one of COCO's 10 food classes, so "food" on negative.jpg is expected absent.
