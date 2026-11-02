@@ -1,0 +1,2134 @@
+{
+ "R1-ft.acc": {
+  "value": "94.2",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.acc_ci": {
+  "value": "[92.0, 96.4]",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.calls": {
+  "value": "1.00",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.fix": {
+  "value": "0.00",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.found": {
+  "value": "93.3",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.found_ci": {
+  "value": "[90.6, 95.8]",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.fp": {
+  "value": "2.2",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.fp_ci": {
+  "value": "[0.0, 5.6]",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.lat_n": {
+  "value": "100",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.n": {
+  "value": "450",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.out_tok": {
+  "value": "15",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.p50": {
+  "value": "332",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.p95": {
+  "value": "346",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.pix": {
+  "value": "100.0",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1-ft.tok": {
+  "value": "272",
+  "source": "results/runs/R1ft_full_frame.jsonl + R1ft_full_frame_lat.jsonl (test split)"
+ },
+ "R1.acc": {
+  "value": "84.0",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.acc_ci": {
+  "value": "[80.7, 87.3]",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.calls": {
+  "value": "1.00",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.fix": {
+  "value": "0.00",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.found": {
+  "value": "91.4",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.found_ci": {
+  "value": "[88.3, 94.2]",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.fp": {
+  "value": "45.6",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.fp_ci": {
+  "value": "[35.6, 55.6]",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.lat_n": {
+  "value": "100",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.n": {
+  "value": "450",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.out_tok": {
+  "value": "16",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.p50": {
+  "value": "332",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.p95": {
+  "value": "352",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.pix": {
+  "value": "100.0",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R1.tok": {
+  "value": "272",
+  "source": "results/runs/R1_full_frame.jsonl + R1_full_frame_lat.jsonl (test split)"
+ },
+ "R2.acc": {
+  "value": "83.8",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.acc_ci": {
+  "value": "[80.4, 87.1]",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.calls": {
+  "value": "5.60",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.fix": {
+  "value": "0.00",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.found": {
+  "value": "81.7",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.found_ci": {
+  "value": "[77.5, 85.8]",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.fp": {
+  "value": "7.8",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.fp_ci": {
+  "value": "[2.2, 14.4]",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.lat_n": {
+  "value": "100",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.n": {
+  "value": "450",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.out_tok": {
+  "value": "42",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.p50": {
+  "value": "648",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.p95": {
+  "value": "1671",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.pix": {
+  "value": "101.7",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R2.tok": {
+  "value": "274",
+  "source": "results/runs/R2_sliding_window.jsonl + R2_sliding_window_lat.jsonl (test split)"
+ },
+ "R3-ft.acc": {
+  "value": "90.4",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.acc_ci": {
+  "value": "[87.8, 93.1]",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.calls": {
+  "value": "1.00",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.fix": {
+  "value": "0.00",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.found": {
+  "value": "89.7",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.found_ci": {
+  "value": "[86.7, 92.8]",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.fp": {
+  "value": "6.7",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.fp_ci": {
+  "value": "[2.2, 12.2]",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.lat_n": {
+  "value": "100",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.n": {
+  "value": "450",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.out_tok": {
+  "value": "15",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.p50": {
+  "value": "301",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.p95": {
+  "value": "305",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.pix": {
+  "value": "18.0",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3-ft.tok": {
+  "value": "47",
+  "source": "results/runs/R3ft_downscale.jsonl + R3ft_downscale_lat.jsonl (test split)"
+ },
+ "R3.acc": {
+  "value": "76.2",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.acc_ci": {
+  "value": "[72.2, 80.0]",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.calls": {
+  "value": "1.00",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.fix": {
+  "value": "0.00",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.found": {
+  "value": "85.3",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.found_ci": {
+  "value": "[81.7, 89.2]",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.fp": {
+  "value": "60.0",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.fp_ci": {
+  "value": "[50.0, 70.0]",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.lat_n": {
+  "value": "100",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.n": {
+  "value": "450",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.out_tok": {
+  "value": "16",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.p50": {
+  "value": "300",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.p95": {
+  "value": "304",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.pix": {
+  "value": "18.3",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R3.tok": {
+  "value": "48",
+  "source": "results/runs/R3_downscale.jsonl + R3_downscale_lat.jsonl (test split)"
+ },
+ "R4-192.acc": {
+  "value": "87.1",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4-192.acc_ci": {
+  "value": "[84.0, 90.0]",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4-192.calls": {
+  "value": "2.08",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4-192.fix": {
+  "value": "0.90",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4-192.found": {
+  "value": "84.2",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4-192.found_ci": {
+  "value": "[80.3, 87.8]",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4-192.fp": {
+  "value": "1.1",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4-192.fp_ci": {
+  "value": "[0.0, 3.3]",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4-192.n": {
+  "value": "450",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4-192.out_tok": {
+  "value": "34",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4-192.pix": {
+  "value": "27.8",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4-192.tok": {
+  "value": "73",
+  "source": "results/runs/sweep_thumb192.jsonl (test split)"
+ },
+ "R4.acc": {
+  "value": "79.1",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.acc_ci": {
+  "value": "[75.3, 82.9]",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.calls": {
+  "value": "2.15",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.fix": {
+  "value": "0.90",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.found": {
+  "value": "74.4",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.found_ci": {
+  "value": "[70.0, 79.2]",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.fp": {
+  "value": "2.2",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.fp_ci": {
+  "value": "[0.0, 5.6]",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.lat_n": {
+  "value": "100",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.n": {
+  "value": "450",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.out_tok": {
+  "value": "33",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.p50": {
+  "value": "665",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.p95": {
+  "value": "671",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.pix": {
+  "value": "19.7",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.tok": {
+  "value": "52",
+  "source": "results/runs/R4_eye_search.jsonl + R4_eye_search_lat.jsonl (test split)"
+ },
+ "R4.wrongloc": {
+  "value": "6.1",
+  "source": "results/runs/R4_eye_search.jsonl (test)"
+ },
+ "R4sf.found_after_second": {
+  "value": "0",
+  "source": "results/runs/R4_eye_search.jsonl (second-fixation analysis, test)"
+ },
+ "R4sf.rejected": {
+  "value": "112",
+  "source": "results/runs/R4_eye_search.jsonl (second-fixation analysis, test)"
+ },
+ "R4sf.repeats": {
+  "value": "0",
+  "source": "results/runs/R4_eye_search.jsonl (second-fixation analysis, test)"
+ },
+ "R4sf.second": {
+  "value": "0",
+  "source": "results/runs/R4_eye_search.jsonl (second-fixation analysis, test)"
+ },
+ "R5.acc": {
+  "value": "85.6",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.acc_ci": {
+  "value": "[82.2, 88.7]",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.calls": {
+  "value": "2.05",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.fix": {
+  "value": "0.85",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.found": {
+  "value": "82.2",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.found_ci": {
+  "value": "[78.3, 86.1]",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.fp": {
+  "value": "1.1",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.fp_ci": {
+  "value": "[0.0, 3.3]",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.lat_n": {
+  "value": "100",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.n": {
+  "value": "450",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.out_tok": {
+  "value": "35",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.p50": {
+  "value": "667",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.p95": {
+  "value": "1021",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.pix": {
+  "value": "18.5",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5.tok": {
+  "value": "49",
+  "source": "results/runs/R5_eye_search.jsonl + R5_eye_search_lat.jsonl (test split)"
+ },
+ "R5sf.found_after_second": {
+  "value": "5",
+  "source": "results/runs/R5_eye_search.jsonl (second-fixation analysis, test)"
+ },
+ "R5sf.rejected": {
+  "value": "49",
+  "source": "results/runs/R5_eye_search.jsonl (second-fixation analysis, test)"
+ },
+ "R5sf.repeats": {
+  "value": "70",
+  "source": "results/runs/R5_eye_search.jsonl (second-fixation analysis, test)"
+ },
+ "R5sf.second": {
+  "value": "19",
+  "source": "results/runs/R5_eye_search.jsonl (second-fixation analysis, test)"
+ },
+ "R6.acc": {
+  "value": "85.1",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.acc_ci": {
+  "value": "[81.8, 88.4]",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.calls": {
+  "value": "2.05",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.fix": {
+  "value": "0.84",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.found": {
+  "value": "81.7",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.found_ci": {
+  "value": "[77.5, 85.8]",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.fp": {
+  "value": "1.1",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.fp_ci": {
+  "value": "[0.0, 3.3]",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.lat_n": {
+  "value": "100",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.n": {
+  "value": "450",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.out_tok": {
+  "value": "35",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.p50": {
+  "value": "507",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.p95": {
+  "value": "797",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.pix": {
+  "value": "18.4",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R6.tok": {
+  "value": "49",
+  "source": "results/runs/R6_eye_search.jsonl + R6_eye_search_lat.jsonl (test split)"
+ },
+ "R7.acc": {
+  "value": "85.1",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.acc_ci": {
+  "value": "[81.8, 88.4]",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.calls": {
+  "value": "2.05",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.fix": {
+  "value": "0.84",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.found": {
+  "value": "81.7",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.found_ci": {
+  "value": "[77.5, 85.8]",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.fp": {
+  "value": "1.1",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.fp_ci": {
+  "value": "[0.0, 3.3]",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.lat_n": {
+  "value": "100",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.n": {
+  "value": "450",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.out_tok": {
+  "value": "35",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.p50": {
+  "value": "508",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.p95": {
+  "value": "748",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.pix": {
+  "value": "18.4",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "R7.tok": {
+  "value": "49",
+  "source": "results/runs/R7_eye_search.jsonl + R7_eye_search_lat.jsonl (test split)"
+ },
+ "bf16.ckpt_gb": {
+  "value": "4.26",
+  "source": "results/step7_hub_push.json"
+ },
+ "bf16.kv_tokens": {
+  "value": "131,696",
+  "source": "results/step8_serving.csv"
+ },
+ "bf16.weights_gib": {
+  "value": "4.24",
+  "source": "results/step8_serving.csv"
+ },
+ "call.bf16.full.p50": {
+  "value": "332",
+  "source": "results/step8_serving.csv"
+ },
+ "call.bf16.thumb.p50": {
+  "value": "294",
+  "source": "results/step8_serving.csv"
+ },
+ "call.fp8.full.p50": {
+  "value": "261",
+  "source": "results/step8_serving.csv"
+ },
+ "call.fp8.thumb.p50": {
+  "value": "224",
+  "source": "results/step8_serving.csv"
+ },
+ "call.fp8.thumb.rps8": {
+  "value": "23.6",
+  "source": "results/step8_serving.csv"
+ },
+ "call.fp8_eager.full.p50": {
+  "value": "825",
+  "source": "results/step8_serving.csv"
+ },
+ "call.fp8_eager.thumb.p50": {
+  "value": "789",
+  "source": "results/step8_serving.csv"
+ },
+ "call.fp8_eager.thumb.rps8": {
+  "value": "8.7",
+  "source": "results/step8_serving.csv"
+ },
+ "cfg.batch": {
+  "value": "64",
+  "source": "configs/train.yaml"
+ },
+ "cfg.crop": {
+  "value": "224",
+  "source": "configs/search.yaml"
+ },
+ "cfg.epochs": {
+  "value": "1",
+  "source": "configs/train.yaml"
+ },
+ "cfg.lora_alpha": {
+  "value": "32",
+  "source": "configs/train.yaml"
+ },
+ "cfg.lora_r": {
+  "value": "16",
+  "source": "configs/train.yaml"
+ },
+ "cfg.max_fix": {
+  "value": "3",
+  "source": "configs/search.yaml"
+ },
+ "cfg.thumb": {
+  "value": "96",
+  "source": "configs/search.yaml"
+ },
+ "data.confirm": {
+  "value": "15,682",
+  "source": "results/step6_dataset_stats.md"
+ },
+ "data.images": {
+  "value": "7,507",
+  "source": "results/step6_dataset_stats.md"
+ },
+ "data.look_again": {
+  "value": "5,816",
+  "source": "results/step6_dataset_stats.md"
+ },
+ "data.samples": {
+  "value": "35,497",
+  "source": "results/step6_dataset_stats.md"
+ },
+ "data.shared": {
+  "value": "0",
+  "source": "results/step6_dataset_stats.md"
+ },
+ "data.train": {
+  "value": "33,721",
+  "source": "results/step6_dataset_stats.md"
+ },
+ "data.val": {
+  "value": "1,776",
+  "source": "results/step6_dataset_stats.md"
+ },
+ "data.where": {
+  "value": "13,999",
+  "source": "results/step6_dataset_stats.md"
+ },
+ "demo.apple_pos.box": {
+  "value": "78x80",
+  "source": "configs/demo_queries.yaml (hand-measured box)"
+ },
+ "demo.apple_pos.share": {
+  "value": "0.25",
+  "source": "configs/demo_queries.yaml box / results/demo/positive__apple.json frame size"
+ },
+ "demo.eye.correct": {
+  "value": "8/8",
+  "source": "results/demo/*.json"
+ },
+ "demo.ff.correct": {
+  "value": "7/8",
+  "source": "results/demo/*.json"
+ },
+ "demo.n_queries": {
+  "value": "8",
+  "source": "configs/demo_queries.yaml"
+ },
+ "demo.negative.apple.bytes_ratio": {
+  "value": "18.0",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.eye.correct": {
+  "value": "5/5",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.eye.kb": {
+  "value": "152",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.eye.pix": {
+  "value": "4.1",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.eye.t": {
+  "value": "0.14",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.eye.tok": {
+  "value": "96",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.ff.correct": {
+  "value": "0/5",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.ff.kb": {
+  "value": "2,733",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.ff.pix": {
+  "value": "100.0",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.ff.t": {
+  "value": "0.91",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.ff.tok": {
+  "value": "2,340",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.frame": {
+  "value": "1920x1244",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.reps": {
+  "value": "5",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.thumb": {
+  "value": "384",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.apple.tok_ratio": {
+  "value": "24.4",
+  "source": "results/demo/negative__apple.json"
+ },
+ "demo.negative.food.bytes_ratio": {
+  "value": "18.0",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.eye.correct": {
+  "value": "5/5",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.eye.kb": {
+  "value": "152",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.eye.pix": {
+  "value": "4.1",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.eye.t": {
+  "value": "0.14",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.eye.tok": {
+  "value": "96",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.ff.correct": {
+  "value": "5/5",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.ff.kb": {
+  "value": "2,733",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.ff.pix": {
+  "value": "100.0",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.ff.t": {
+  "value": "0.79",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.ff.tok": {
+  "value": "2,340",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.frame": {
+  "value": "1920x1244",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.reps": {
+  "value": "5",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.thumb": {
+  "value": "384",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.negative.food.tok_ratio": {
+  "value": "24.4",
+  "source": "results/demo/negative__food.json"
+ },
+ "demo.positive.apple.bytes_ratio": {
+  "value": "13.9",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.eye.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.eye.kb": {
+  "value": "211",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.eye.pix": {
+  "value": "6.0",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.eye.t": {
+  "value": "0.58",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.eye.tok": {
+  "value": "145",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.ff.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.ff.kb": {
+  "value": "2,944",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.ff.pix": {
+  "value": "100.0",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.ff.t": {
+  "value": "0.94",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.ff.tok": {
+  "value": "2,400",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.frame": {
+  "value": "1920x1294",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.reps": {
+  "value": "5",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.thumb": {
+  "value": "384",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.apple.tok_ratio": {
+  "value": "16.6",
+  "source": "results/demo/positive__apple.json"
+ },
+ "demo.positive.food.bytes_ratio": {
+  "value": "13.9",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.eye.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.eye.kb": {
+  "value": "211",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.eye.pix": {
+  "value": "6.0",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.eye.t": {
+  "value": "0.58",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.eye.tok": {
+  "value": "145",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.ff.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.ff.kb": {
+  "value": "2,944",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.ff.pix": {
+  "value": "100.0",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.ff.t": {
+  "value": "0.93",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.ff.tok": {
+  "value": "2,400",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.frame": {
+  "value": "1920x1294",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.reps": {
+  "value": "5",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.thumb": {
+  "value": "384",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.food.tok_ratio": {
+  "value": "16.6",
+  "source": "results/demo/positive__food.json"
+ },
+ "demo.positive.mouse.bytes_ratio": {
+  "value": "13.8",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.eye.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.eye.kb": {
+  "value": "213",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.eye.pix": {
+  "value": "6.0",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.eye.t": {
+  "value": "0.58",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.eye.tok": {
+  "value": "145",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.ff.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.ff.kb": {
+  "value": "2,944",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.ff.pix": {
+  "value": "100.0",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.ff.t": {
+  "value": "0.93",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.ff.tok": {
+  "value": "2,400",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.frame": {
+  "value": "1920x1294",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.reps": {
+  "value": "5",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.thumb": {
+  "value": "384",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive.mouse.tok_ratio": {
+  "value": "16.6",
+  "source": "results/demo/positive__mouse.json"
+ },
+ "demo.positive2.apple.bytes_ratio": {
+  "value": "13.3",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.eye.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.eye.kb": {
+  "value": "230",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.eye.pix": {
+  "value": "5.8",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.eye.t": {
+  "value": "0.58",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.eye.tok": {
+  "value": "157",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.ff.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.ff.kb": {
+  "value": "3,062",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.ff.pix": {
+  "value": "100.0",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.ff.t": {
+  "value": "1.05",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.ff.tok": {
+  "value": "2,700",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.frame": {
+  "value": "1920x1440",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.reps": {
+  "value": "5",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.thumb": {
+  "value": "384",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.apple.tok_ratio": {
+  "value": "17.2",
+  "source": "results/demo/positive2__apple.json"
+ },
+ "demo.positive2.food.bytes_ratio": {
+  "value": "13.3",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.eye.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.eye.kb": {
+  "value": "230",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.eye.pix": {
+  "value": "5.8",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.eye.t": {
+  "value": "0.58",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.eye.tok": {
+  "value": "157",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.ff.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.ff.kb": {
+  "value": "3,062",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.ff.pix": {
+  "value": "100.0",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.ff.t": {
+  "value": "1.05",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.ff.tok": {
+  "value": "2,700",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.frame": {
+  "value": "1920x1440",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.reps": {
+  "value": "5",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.thumb": {
+  "value": "384",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.food.tok_ratio": {
+  "value": "17.2",
+  "source": "results/demo/positive2__food.json"
+ },
+ "demo.positive2.mouse.bytes_ratio": {
+  "value": "14.0",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.eye.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.eye.kb": {
+  "value": "218",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.eye.pix": {
+  "value": "5.8",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.eye.t": {
+  "value": "0.58",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.eye.tok": {
+  "value": "157",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.ff.correct": {
+  "value": "5/5",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.ff.kb": {
+  "value": "3,062",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.ff.pix": {
+  "value": "100.0",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.ff.t": {
+  "value": "1.05",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.ff.tok": {
+  "value": "2,700",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.frame": {
+  "value": "1920x1440",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.reps": {
+  "value": "5",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.thumb": {
+  "value": "384",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "demo.positive2.mouse.tok_ratio": {
+  "value": "17.2",
+  "source": "results/demo/positive2__mouse.json"
+ },
+ "eager.slowdown_full": {
+  "value": "3.2",
+  "source": "results/step8_serving.csv"
+ },
+ "eager.slowdown_thumb": {
+  "value": "3.5",
+  "source": "results/step8_serving.csv"
+ },
+ "env.gpu": {
+  "value": "NVIDIA L4",
+  "source": "results/env_report.json"
+ },
+ "env.gpu_mib": {
+  "value": "23,034",
+  "source": "results/env_report.json"
+ },
+ "eye_vs_ff.tok_ratio_ft": {
+  "value": "5.6",
+  "source": "R1ft_full_frame vs R5_eye_search vision tokens (test)"
+ },
+ "ffvseye_acc.a": {
+  "value": "94.2",
+  "source": "results/runs/R1ft_full_frame.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ffvseye_acc.b": {
+  "value": "85.6",
+  "source": "results/runs/R1ft_full_frame.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ffvseye_acc.ci": {
+  "value": "[-11.8, -5.1]",
+  "source": "results/runs/R1ft_full_frame.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ffvseye_acc.diff": {
+  "value": "-8.7",
+  "source": "results/runs/R1ft_full_frame.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ffvseye_acc.r2w": {
+  "value": "50",
+  "source": "results/runs/R1ft_full_frame.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ffvseye_acc.w2r": {
+  "value": "11",
+  "source": "results/runs/R1ft_full_frame.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "fmt.gain_pp": {
+  "value": "50",
+  "source": "results/step4_point_format.json (dev, 50 queries)"
+ },
+ "fmt.p_hit": {
+  "value": "42.5",
+  "source": "results/step4_point_format.json (dev, 50 queries)"
+ },
+ "fmt.p_slope": {
+  "value": "0.74",
+  "source": "results/step4_point_format.json (dev, 50 queries)"
+ },
+ "fmt.point2d_hit": {
+  "value": "92.5",
+  "source": "results/step4_point_format.json (dev, 50 queries)"
+ },
+ "fmt.point2d_slope": {
+  "value": "0.98",
+  "source": "results/step4_point_format.json (dev, 50 queries)"
+ },
+ "fmt.prompt_parse": {
+  "value": "75",
+  "source": "results/step2_format.json"
+ },
+ "fmt.schema_parse": {
+  "value": "100",
+  "source": "results/step2_format.json"
+ },
+ "fp8.bf16_modules": {
+  "value": "105",
+  "source": "results/step8_fp8_quantize.json"
+ },
+ "fp8.ckpt_gb": {
+  "value": "2.85",
+  "source": "results/step8_fp8_quantize.json"
+ },
+ "fp8.kv_tokens": {
+  "value": "142,656",
+  "source": "results/step8_serving.csv"
+ },
+ "fp8.quant_s": {
+  "value": "11",
+  "source": "results/step8_fp8_quantize.json"
+ },
+ "fp8.speedup_pct": {
+  "value": "24",
+  "source": "R5/R6 latency runs (p50 time to answer)"
+ },
+ "fp8.weights_gib": {
+  "value": "2.93",
+  "source": "results/step8_serving.csv"
+ },
+ "fp8_acc.a": {
+  "value": "85.6",
+  "source": "results/runs/R5_eye_search.jsonl vs R6_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "fp8_acc.b": {
+  "value": "85.1",
+  "source": "results/runs/R5_eye_search.jsonl vs R6_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "fp8_acc.ci": {
+  "value": "[-2.0, +1.1]",
+  "source": "results/runs/R5_eye_search.jsonl vs R6_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "fp8_acc.diff": {
+  "value": "-0.4",
+  "source": "results/runs/R5_eye_search.jsonl vs R6_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "fp8_acc.r2w": {
+  "value": "7",
+  "source": "results/runs/R5_eye_search.jsonl vs R6_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "fp8_acc.w2r": {
+  "value": "5",
+  "source": "results/runs/R5_eye_search.jsonl vs R6_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_acc.a": {
+  "value": "79.1",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_acc.b": {
+  "value": "85.6",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_acc.ci": {
+  "value": "[+3.1, +10.0]",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_acc.diff": {
+  "value": "+6.4",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_acc.r2w": {
+  "value": "13",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_acc.w2r": {
+  "value": "42",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_found.a": {
+  "value": "74.4",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_found.b": {
+  "value": "82.2",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_found.ci": {
+  "value": "[+4.2, +11.7]",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_found.diff": {
+  "value": "+7.8",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_found.r2w": {
+  "value": "12",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "ft_found.w2r": {
+  "value": "40",
+  "source": "results/runs/R4_eye_search.jsonl vs R5_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "manifest.dev": {
+  "value": "50",
+  "source": "results/eval_manifest_dev.jsonl"
+ },
+ "manifest.n": {
+  "value": "500",
+  "source": "results/eval_manifest.jsonl"
+ },
+ "manifest.neg": {
+  "value": "100",
+  "source": "results/eval_manifest.jsonl"
+ },
+ "mask.found_after_second": {
+  "value": "27",
+  "source": "results/runs/mask_eye96.jsonl (second-fixation analysis, test)"
+ },
+ "mask.rejected": {
+  "value": "53",
+  "source": "results/runs/mask_eye96.jsonl (second-fixation analysis, test)"
+ },
+ "mask.repeats": {
+  "value": "21",
+  "source": "results/runs/mask_eye96.jsonl (second-fixation analysis, test)"
+ },
+ "mask.second": {
+  "value": "44",
+  "source": "results/runs/mask_eye96.jsonl (second-fixation analysis, test)"
+ },
+ "mask_acc.a": {
+  "value": "84.9",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "mask_acc.b": {
+  "value": "89.3",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "mask_acc.ci": {
+  "value": "[+2.2, +6.7]",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "mask_acc.diff": {
+  "value": "+4.4",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "mask_acc.r2w": {
+  "value": "4",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "mask_acc.w2r": {
+  "value": "24",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "mask_found.a": {
+  "value": "81.4",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "mask_found.b": {
+  "value": "86.9",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "mask_found.ci": {
+  "value": "[+2.8, +8.3]",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "mask_found.diff": {
+  "value": "+5.6",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "mask_found.r2w": {
+  "value": "4",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "mask_found.w2r": {
+  "value": "24",
+  "source": "results/runs/nomask_eye96.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "maskvsR6_acc.a": {
+  "value": "85.1",
+  "source": "results/runs/R6_eye_search.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "maskvsR6_acc.b": {
+  "value": "89.3",
+  "source": "results/runs/R6_eye_search.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "maskvsR6_acc.ci": {
+  "value": "[+2.2, +6.4]",
+  "source": "results/runs/R6_eye_search.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "maskvsR6_acc.diff": {
+  "value": "+4.2",
+  "source": "results/runs/R6_eye_search.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "maskvsR6_acc.r2w": {
+  "value": "3",
+  "source": "results/runs/R6_eye_search.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "maskvsR6_acc.w2r": {
+  "value": "22",
+  "source": "results/runs/R6_eye_search.jsonl vs mask_eye96.jsonl (paired bootstrap, test)"
+ },
+ "nomask.found_after_second": {
+  "value": "7",
+  "source": "results/runs/nomask_eye96.jsonl (second-fixation analysis, test)"
+ },
+ "nomask.rejected": {
+  "value": "53",
+  "source": "results/runs/nomask_eye96.jsonl (second-fixation analysis, test)"
+ },
+ "nomask.repeats": {
+  "value": "78",
+  "source": "results/runs/nomask_eye96.jsonl (second-fixation analysis, test)"
+ },
+ "nomask.second": {
+  "value": "19",
+  "source": "results/runs/nomask_eye96.jsonl (second-fixation analysis, test)"
+ },
+ "prefix.R6.p50": {
+  "value": "507",
+  "source": "results/step8_prefix_cache.json"
+ },
+ "prefix.R7.p50": {
+  "value": "508",
+  "source": "results/step8_prefix_cache.json"
+ },
+ "prefix.contaminated": {
+  "value": "50.9",
+  "source": "results/step8_prefix_cache.json"
+ },
+ "prefix.fix23_hit": {
+  "value": "48",
+  "source": "results/step8_prefix_cache.json"
+ },
+ "prefix.hit_rate": {
+  "value": "5.6",
+  "source": "results/step8_prefix_cache.json"
+ },
+ "prefix_acc.a": {
+  "value": "85.1",
+  "source": "results/runs/R6_eye_search.jsonl vs R7_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "prefix_acc.b": {
+  "value": "85.1",
+  "source": "results/runs/R6_eye_search.jsonl vs R7_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "prefix_acc.ci": {
+  "value": "[-1.6, +1.6]",
+  "source": "results/runs/R6_eye_search.jsonl vs R7_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "prefix_acc.diff": {
+  "value": "+0.0",
+  "source": "results/runs/R6_eye_search.jsonl vs R7_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "prefix_acc.r2w": {
+  "value": "7",
+  "source": "results/runs/R6_eye_search.jsonl vs R7_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "prefix_acc.w2r": {
+  "value": "7",
+  "source": "results/runs/R6_eye_search.jsonl vs R7_eye_search.jsonl (paired bootstrap, test)"
+ },
+ "refine_off.found": {
+  "value": "50.3",
+  "source": "results/runs/R4_refine_off.jsonl (test)"
+ },
+ "refine_off.wrongloc": {
+  "value": "29.7",
+  "source": "results/runs/R4_refine_off.jsonl (test)"
+ },
+ "sc1.down.acc": {
+  "value": "88.3",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.down.acc_ci": {
+  "value": "[84.7, 91.6]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.down.fp": {
+  "value": "7.1",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.down.p50": {
+  "value": "229",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.down.pix": {
+  "value": "19.0",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.down.tok": {
+  "value": "48",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.down.tput": {
+  "value": "30.3",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye288.acc": {
+  "value": "93.5",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye288.acc_ci": {
+  "value": "[90.9, 96.1]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye288.fp": {
+  "value": "1.4",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye288.p50": {
+  "value": "515",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye288.pix": {
+  "value": "39.0",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye288.tok": {
+  "value": "98",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye288.tput": {
+  "value": "15.8",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye96.acc": {
+  "value": "87.0",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye96.acc_ci": {
+  "value": "[83.1, 90.9]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye96.fp": {
+  "value": "1.4",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye96.p50": {
+  "value": "507",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye96.pix": {
+  "value": "19.1",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye96.tok": {
+  "value": "48",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.eye96.tput": {
+  "value": "15.8",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.frame": {
+  "value": "640x480",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.full.acc": {
+  "value": "93.5",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.full.acc_ci": {
+  "value": "[90.6, 96.1]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.full.fp": {
+  "value": "4.3",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.full.p50": {
+  "value": "257",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.full.pix": {
+  "value": "100.0",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.full.tok": {
+  "value": "261",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.full.tput": {
+  "value": "17.4",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.n": {
+  "value": "308",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc1.tput_ratio": {
+  "value": "0.9",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.down.acc": {
+  "value": "74.4",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.down.acc_ci": {
+  "value": "[69.2, 79.2]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.down.fp": {
+  "value": "5.7",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.down.p50": {
+  "value": "233",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.down.pix": {
+  "value": "4.5",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.down.tok": {
+  "value": "54",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.down.tput": {
+  "value": "22.2",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye288.acc": {
+  "value": "85.4",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye288.acc_ci": {
+  "value": "[81.5, 89.6]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye288.fp": {
+  "value": "1.4",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye288.p50": {
+  "value": "515",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye288.pix": {
+  "value": "9.2",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye288.tok": {
+  "value": "110",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye288.tput": {
+  "value": "13.3",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye96.acc": {
+  "value": "57.1",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye96.acc_ci": {
+  "value": "[51.6, 63.0]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye96.fp": {
+  "value": "1.4",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye96.p50": {
+  "value": "511",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye96.pix": {
+  "value": "5.1",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye96.tok": {
+  "value": "60",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.eye96.tput": {
+  "value": "11.7",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.frame": {
+  "value": "1280x960",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.full.acc": {
+  "value": "89.3",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.full.acc_ci": {
+  "value": "[85.7, 92.9]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.full.fp": {
+  "value": "7.1",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.full.p50": {
+  "value": "498",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.full.pix": {
+  "value": "100.0",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.full.tok": {
+  "value": "1,200",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.full.tput": {
+  "value": "4.2",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.n": {
+  "value": "308",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc2.tput_ratio": {
+  "value": "3.2",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.down.acc": {
+  "value": "60.1",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.down.acc_ci": {
+  "value": "[54.5, 65.6]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.down.fp": {
+  "value": "25.7",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.down.p50": {
+  "value": "234",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.down.pix": {
+  "value": "2.6",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.down.tok": {
+  "value": "70",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.down.tput": {
+  "value": "14.1",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye288.acc": {
+  "value": "73.4",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye288.acc_ci": {
+  "value": "[68.5, 78.2]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye288.fp": {
+  "value": "4.3",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye288.p50": {
+  "value": "514",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye288.pix": {
+  "value": "4.8",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye288.tok": {
+  "value": "129",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye288.tput": {
+  "value": "10.0",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye96.acc": {
+  "value": "39.9",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye96.acc_ci": {
+  "value": "[34.7, 45.1]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye96.fp": {
+  "value": "2.9",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye96.p50": {
+  "value": "795",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye96.pix": {
+  "value": "2.9",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye96.tok": {
+  "value": "78",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.eye96.tput": {
+  "value": "8.8",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.frame": {
+  "value": "1920x1440",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.full.acc": {
+  "value": "88.0",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.full.acc_ci": {
+  "value": "[84.4, 91.6]",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.full.fp": {
+  "value": "10.0",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.full.p50": {
+  "value": "1,048",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.full.pix": {
+  "value": "100.0",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.full.tok": {
+  "value": "2,700",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.full.tput": {
+  "value": "1.7",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.n": {
+  "value": "308",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sc3.tput_ratio": {
+  "value": "5.9",
+  "source": "results/step8b_scaling.csv"
+ },
+ "sw_confirm.found": {
+  "value": "87.5",
+  "source": "results/runs/dev_sw_confirm.jsonl (dev, 50 queries)"
+ },
+ "sw_confirm.fp": {
+  "value": "0",
+  "source": "results/runs/dev_sw_confirm.jsonl (dev, 50 queries)"
+ },
+ "sw_point.found": {
+  "value": "65.0",
+  "source": "results/runs/dev_sw_point.jsonl (dev, 50 queries)"
+ },
+ "sw_point.fp": {
+  "value": "100",
+  "source": "results/runs/dev_sw_point.jsonl (dev, 50 queries)"
+ },
+ "sweep.288.apple_positive": {
+  "value": "12x12",
+  "source": "results/demo/thumbnail_sweep.csv"
+ },
+ "sweep.288.correct": {
+  "value": "5/8",
+  "source": "results/demo/thumbnail_sweep.csv"
+ },
+ "sweep.384.apple_positive": {
+  "value": "16x16",
+  "source": "results/demo/thumbnail_sweep.csv"
+ },
+ "sweep.384.correct": {
+  "value": "8/8",
+  "source": "results/demo/thumbnail_sweep.csv"
+ },
+ "sweep.512.apple_positive": {
+  "value": "21x22",
+  "source": "results/demo/thumbnail_sweep.csv"
+ },
+ "sweep.512.correct": {
+  "value": "8/8",
+  "source": "results/demo/thumbnail_sweep.csv"
+ },
+ "sweep.runs": {
+  "value": "3",
+  "source": "results/demo/thumbnail_sweep.csv"
+ },
+ "test.n": {
+  "value": "450",
+  "source": "results/eval_manifest.jsonl via eval/splits.py"
+ },
+ "test.n_neg": {
+  "value": "90",
+  "source": "test split"
+ },
+ "test.n_pos": {
+  "value": "360",
+  "source": "test split"
+ },
+ "tput.bf16.R1ft.c1": {
+  "value": "2.52",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.bf16.R1ft.c16": {
+  "value": "14.63",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.bf16.R1ft.c4": {
+  "value": "7.46",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.bf16.R1ft.c8": {
+  "value": "11.21",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.bf16.R5.c1": {
+  "value": "1.62",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.bf16.R5.c16": {
+  "value": "13.24",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.bf16.R5.c4": {
+  "value": "4.96",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.bf16.R5.c8": {
+  "value": "8.51",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.conc": {
+  "value": "16",
+  "source": "results/step8b_throughput.csv"
+ },
+ "tput.fp8.R1ft-fp8.c1": {
+  "value": "2.99",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.fp8.R1ft-fp8.c16": {
+  "value": "16.45",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.fp8.R1ft-fp8.c4": {
+  "value": "8.88",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.fp8.R1ft-fp8.c8": {
+  "value": "12.86",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.fp8.R6.c1": {
+  "value": "2.12",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.fp8.R6.c16": {
+  "value": "14.35",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.fp8.R6.c4": {
+  "value": "5.84",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.fp8.R6.c8": {
+  "value": "9.40",
+  "source": "results/step8_serving.csv"
+ },
+ "tput.n": {
+  "value": "160",
+  "source": "results/step8b_throughput.csv"
+ },
+ "train.minutes": {
+  "value": "31.5",
+  "source": "results/step7_train_log.csv"
+ },
+ "train.peak_mem_gb": {
+  "value": "20.1",
+  "source": "results/step7_train_log.csv"
+ },
+ "train.steps": {
+  "value": "527",
+  "source": "results/step7_train_log.csv"
+ },
+ "train.val_loss_final": {
+  "value": "0.540",
+  "source": "results/step7_train_log.csv"
+ },
+ "train.val_loss_first": {
+  "value": "0.562",
+  "source": "results/step7_train_log.csv"
+ },
+ "val.confirm.neg.base": {
+  "value": "95.4",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ },
+ "val.confirm.neg.ft": {
+  "value": "96.1",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ },
+ "val.confirm.pos.base": {
+  "value": "84.4",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ },
+ "val.confirm.pos.ft": {
+  "value": "90.5",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ },
+ "val.look_again.neg.base": {
+  "value": "100.0",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ },
+ "val.look_again.neg.ft": {
+  "value": "97.8",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ },
+ "val.look_again.pos.base": {
+  "value": "0.0",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ },
+ "val.look_again.pos.ft": {
+  "value": "50.2",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ },
+ "val.where.neg.base": {
+  "value": "45.0",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ },
+ "val.where.neg.ft": {
+  "value": "90.0",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ },
+ "val.where.pos.base": {
+  "value": "42.1",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ },
+ "val.where.pos.ft": {
+  "value": "52.1",
+  "source": "results/step7_checks.json (900 val samples, BF16)"
+ }
+}
