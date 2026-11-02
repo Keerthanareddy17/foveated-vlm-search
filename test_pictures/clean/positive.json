@@ -1,0 +1,40 @@
+{
+ "original_size": [
+  5120,
+  3450
+ ],
+ "upright_size": [
+  5120,
+  3450
+ ],
+ "demo_size": [
+  1920,
+  1294
+ ],
+ "orientation_tag": null,
+ "rotated": false,
+ "icc_converted_from": null,
+ "stripped": {
+  "exif_tags": 0,
+  "has_gps": false,
+  "has_xmp": false,
+  "has_icc": false
+ },
+ "source_file": "positive.jpeg",
+ "source_format": "JPEG",
+ "source_bytes": 1547613,
+ "clean_file": "test_pictures/clean/positive.jpg",
+ "clean_bytes": 687414,
+ "clean_sha256": "6c0f1f218f09b58d4fdd6a26e4c450b2bcde07c1d4ce440ba2c4dafd7830df85",
+ "metadata_check": "clean (no EXIF, GPS, XMP, ICC)",
+ "long_side_setting": 1920,
+ "jpeg_quality": 92,
+ "processor": {
+  "resized": [
+   1920,
+   1280
+  ],
+  "vision_tokens": 2400,
+  "max_pixels": 2764800
+ }
+}
