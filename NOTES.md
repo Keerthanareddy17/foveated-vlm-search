@@ -69,7 +69,7 @@ Adopted 2026-11-01 (Step 3, Part A), when the user's Drive reached 14.5 / 15 GB.
 - `HF_HUB_CACHE=/content/fvs_local/hf_hub_cache`. `HF_HOME` is still not set, so the token stays at `~/.cache/huggingface/token`. `HF_HUB_DISABLE_SHARED_BLOBS=1` is kept.
 - **Per-session model re-download, measured:** `hf download Qwen/Qwen3-VL-2B-Instruct` into the empty local cache took **12.9 s** for 4.26 GB (model.safetensors 4,255,140,312 B, sha256 = Hub etag, no pointer files). Cheap enough to repeat every session.
 - Cleanup on 2026-11-01, approved by the user: deleted `hf_hub_cache/` (4.0 GB), `models/qwen3-vl-2b-instruct-fp8-dynamic/` (2.7 GB; regenerate with `python -m foveated_search.quant.fp8_dynamic` in about 21 s), `data/examples/` (174 KB) and the empty `checkpoints/` folder. Project Drive usage went from 6,796 MB to ~0 MB. The user has to empty the Drive trash in the browser before the quota frees up.
-- Never delete from Drive or the HF Hub without asking (CLAUDE.md).
+- Never delete from Drive or the HF Hub without asking (project rule).
 
 ## Decisions
 
@@ -168,7 +168,7 @@ All prompt-mode failures were the model echoing both template options: `{"point"
   - Recipe: `QuantizationModifier(targets=[Linear], scheme=FP8_DYNAMIC, ignore=["lm_head", "re:model.visual.*"])`, which quantizes the 196 language-model Linear layers. Data-free: load 6.7 s, quantize 3.3 s, save 11.3 s. The checkpoint was 2.85 GB on Drive (`models/qwen3-vl-2b-instruct-fp8-dynamic`; deleted in Step 3 under the storage policy, regenerable), format compressed-tensors / float-quantized.
   - vLLM loads it with `CompressedTensorsW8A8Fp8` + CUTLASS (2.93 GiB). So the compressed-tensors 0.19 (writer) vs 0.17 (vLLM) split from Step 1 is **not** a problem for this scheme.
   - Coordinate test: hit rate 72.7%, median error 24 px. But 3/36 prompt-JSON answers did not parse: one duplicate key and two runaway repetitions (`{"point": [...], "points": [{"point": ...`). Structured outputs would prevent both. **Step 8: rerun the format test on FP8.**
-  - Which FP8 to use is decided in Step 8. Offline is faster (217 vs 244 ms per call) and keeps the vision tower in BF16, as CLAUDE.md specifies.
+  - Which FP8 to use is decided in Step 8. Offline is faster (217 vs 244 ms per call) and keeps the vision tower in BF16, as the project plan specifies.
 
 ### Step 3: frozen evaluation set
 
@@ -558,6 +558,15 @@ At 384 px every positive is found on the first look, and both negatives are answ
 
 Replay page: the "FOUND IN" stamp was moved to the top right (it covered the apple at the bottom right of positive2) and is hidden below 560 px width, where the result box under the image says the same.
 
+### Step 10: README, figures, demo recording, GitHub Pages
+
+- **README numbers are generated, never typed.** `make readme-tables` (`scripts/build_readme_tables.py`) computes every number from `results/` (test-split rows recomputed from `results/runs/*.jsonl` with the same summarize / paired-bootstrap / second-fixation code and seed as `results/table.md`; the rest from the step CSV/JSON files and `results/demo/`), records each with its source file in `results/readme_facts.json`, and renders `README.md` from `scripts/readme_template.md` (`{{fact}}` / `{{table:name}}`; an unknown placeholder fails the build). `make readme-tables CHECK=1` lists every digit in the README that did not come from a fact: after the pass, only settings and labels remain (thumbnail/crop sizes, concurrency levels, frame-size labels, row names, version pins, citation years/pages, COCO's 10 food classes). Hand-typed counts found by the first check were turned into facts; "~2 GB of training data" (only in NOTES) was removed.
+- **Figures** (`make figures`, `scripts/make_figures.py`): light and dark variants embedded with `<picture>`; numbers from the same `compute()` as the README. Three hues validated for both themes (all-pairs CVD and contrast; light aqua is below 3:1, so every series is direct-labelled); hue = strategy, filled = fine-tuned, hollow = base.
+- **Demo recording** (`make record-demo`): `.venv-record` (Playwright 1.55.0 + headless Chromium + Pillow). Frames are the replay page's own state at exact times of the measured timeline (scrubber set to t, then a screenshot), 30 fps of measured time, so the video plays at 1x and is reproducible. Two bugs found and fixed: the last frame must be taken at exactly t_end (the 1/30 s grid stopped at 0.900 of 0.906 s, so the hold showed "LOOKING"), and all frames need one clip height (the shorter photo left the previous run's rows at the bottom of the GIF). ffmpeg 6.1 `paletteuse` with a second input failed ("Internal bug, should not have happened"), and its GIF stored every hold frame (16.6 MB); the GIF is written with Pillow instead (15 fps, global 192-colour palette, Floyd-Steinberg, holds as single long frames, changed-region frames): 1.96 MB. MP4 with ffmpeg/libx264: 1.11 MB, 1920 px wide.
+- **GitHub Pages** (`make pages`): `docs/index.html` = the replay page + a header linking to the repo; `docs/.nojekyll`. Settings: Pages from branch `main`, folder `/docs`.
+- **Citations** checked against official sources: CVF open access BibTeX (Gizdov et al., CVPR 2025, pp. 4408-4417), Crossref (COCO, ECCV 2014 LNCS pp. 740-755, 8 authors as in the proceedings; vLLM, SOSP 2023 pp. 611-626), the LoRA authors' repository (ICLR 2022), and the official Qwen3-VL repository's BibTeX (Qwen3-VL Technical Report, arXiv:2511.21631; the model card itself lists the Qwen3 technical report first). DBLP, Springer and OpenReview block automated access.
+- **Cleanups for a public repo:** the Makefile `quantize` target was still a Step 1 stub; it now runs the Step 8 FP8 quantization, plus `push-hub-fp8`. Comments that pointed to the gitignored project-instructions file now point to the README definitions or NOTES.md.
+
 ## Gotchas
 
 - Colab sets `UV_SYSTEM_PYTHON=true` globally. That makes `uv venv` print a `--system has no effect` warning. `setup_colab.sh` unsets it, since we always target explicit venvs.
@@ -579,3 +588,4 @@ Replay page: the "FOUND IN" stamp was moved to the top right (it covered the app
 - Prefix-cache measurements: a run that repeats queries the same server just served measures a hot cache (51% hits vs 5% cold). Restart the server, or use disjoint queries, before measuring.
 - Split-name conventions are code: the runner chose latency mode only for the exact split name `latency`, so new `latency_*` splits silently ran at concurrency 8. Mode detection is now `run_mode()` (any `latency*`), with a unit test.
 - pillow-heif rotates HEIC on open and resets the orientation tag; don't add a second manual rotation from `original_orientation` (Step 9).
+- ffmpeg 6.1 `paletteuse` with a palette as a second input failed on concat input with "Internal bug, should not have happened"; a single `split` graph works but stores every duplicate frame. Write GIFs with Pillow (Step 10).
