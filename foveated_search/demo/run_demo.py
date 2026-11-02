@@ -122,6 +122,27 @@ def score(summary: dict, expect: str | None, gt_boxes: list | None) -> bool | No
     return bool(summary["status"] == "found" and p and any(in_box(p[0], p[1], b) for b in gt_boxes or []))
 
 
+def answer_note(summary: dict, query: str, regions: list[dict] | None) -> str | None:
+    """Note for a WRONG found-answer whose final point lies in a noted region (configs/demo_queries.yaml `notes`)."""
+    p = summary.get("final_point")
+    if summary.get("correct") is not False or not p:
+        return None
+    for r in regions or []:
+        if query in r.get("queries", [query]) and in_box(p[0], p[1], r["box"]):
+            return r["note"]
+    return None
+
+
+def queries_spec(cfg: Config) -> dict:
+    return yaml.safe_load((REPO_ROOT / cfg.get_key("demo.queries_file")).read_text()) or {}
+
+
+def notes_for(spec: dict, image: str) -> list[dict]:
+    """Note regions for an image, matched by repo-relative path or by file name."""
+    notes = spec.get("notes") or {}
+    return notes.get(image) or next((v for k, v in notes.items() if Path(k).name == Path(image).name), [])
+
+
 def table(rows: list[dict]) -> str:
     cols = [("strategy", "strategy", "{}"), ("status", "result", "{}"), ("correct", "correct", "{}"),
             ("fixations", "looks", "{}"), ("n_calls", "calls", "{}"), ("pixels_sampled_pct", "pixels %", "{:.1f}"),
@@ -174,6 +195,7 @@ async def run_image(cfg: Config, image: Path, queries: list[dict], model_root: s
                 sums = [summarize(tr) for tr in trs]
                 for sm, tr in zip(sums, trs):
                     sm["correct"] = score(sm, expect, gt)
+                    sm["note"] = answer_note(sm, q, spec.get("notes"))
                     sm["answers"] = [c.raw_answer for c in tr.calls]
                 times = [sm["time_to_answer_s"] for sm in sums]
                 k = median_index(times)
@@ -217,18 +239,22 @@ async def run_image(cfg: Config, image: Path, queries: list[dict], model_root: s
                 print(table(list(rec["summary"].values())))
                 for sm in rec["summary"].values():
                     same = "identical answers in all runs" if sm["answers_identical"] else "ANSWERS DIFFER between runs"
-                    print(f"  {sm['strategy']}: {sm['evidence']}  [{same}]")
+                    note = f"  NOTE: {sm['note']}" if sm.get("note") else ""
+                    print(f"  {sm['strategy']}: {sm['evidence']}  [{same}]{note}")
     finally:
         await client.close()
     return saved
 
 
-def batch_pairs(cfg: Config) -> dict[Path, list[dict]]:
-    spec = yaml.safe_load((REPO_ROOT / cfg.get_key("demo.queries_file")).read_text()) or {}
+def batch_pairs(cfg: Config, only: str | None = None) -> dict[Path, list[dict]]:
+    spec = queries_spec(cfg)
     pairs: dict[Path, list[dict]] = {}
     for r in spec.get("runs") or []:
+        if only and only not in r["image"]:
+            continue
         pairs.setdefault(REPO_ROOT / r["image"], []).append(
-            {"query": str(r["query"]), "expect": r.get("expect"), "gt_boxes": r.get("gt_boxes")})
+            {"query": str(r["query"]), "expect": r.get("expect"), "gt_boxes": r.get("gt_boxes"),
+             "notes": notes_for(spec, r["image"])})
     return pairs
 
 
@@ -237,6 +263,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--image", type=Path)
     ap.add_argument("--query", action="append", help="repeatable; all queries share one warmup")
     ap.add_argument("--batch", action="store_true", help="run every pair in demo.queries_file")
+    ap.add_argument("--only", help="with --batch: only images whose path contains this text")
     a = ap.parse_args(argv)
     cfg = demo_run_config()
     root = served_model(cfg)
@@ -244,7 +271,7 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(f"server is serving {root}, expected {cfg.get_key('demo.expected_model')}: "
                          "make serve-stop && make serve-demo")
     if a.batch:
-        pairs = batch_pairs(cfg)
+        pairs = batch_pairs(cfg, a.only)
         if not pairs:
             raise SystemExit(f"no runs listed in {cfg.get_key('demo.queries_file')}")
     elif a.image and a.query:

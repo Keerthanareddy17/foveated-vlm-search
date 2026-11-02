@@ -38,7 +38,7 @@ PLACEHOLDER = "/*__REPLAY_DATA__*/null"
 
 def replay_config() -> Config:
     cfg = load_config(overlays=["configs/search.yaml", "configs/prompts.yaml", "configs/demo.yaml"], set_seed=False)
-    for k in ["demo.out_dir", "demo.replay_out", "demo.embed_long_side", "demo.embed_jpeg_quality"]:
+    for k in ["demo.out_dir", "demo.replay_out", "demo.embed_long_side", "demo.embed_jpeg_quality", "demo.queries_file"]:
         cfg.get_key(k)
     return cfg
 
@@ -187,9 +187,20 @@ def render(payload: dict, template: str | None = None) -> str:
     return html.replace(PLACEHOLDER, data)
 
 
-def load_runs(paths: list[Path]) -> list[dict]:
+def load_runs(paths: list[Path], cfg: Config | None = None) -> list[dict]:
+    """Runs in the order of configs/demo_queries.yaml (unlisted runs last, by name), with the answer notes from its
+    `notes` regions attached to each strategy summary (applied at build time, so older runs get them too)."""
+    from foveated_search.demo.run_demo import answer_note, notes_for, queries_spec
+
     runs = [json.loads(p.read_text()) for p in paths]
-    return sorted(runs, key=lambda r: (Path(r["image"]).name, r["query"]))
+    spec = queries_spec(cfg) if cfg is not None else {}
+    order = {(Path(r["image"]).name, str(r["query"])): i for i, r in enumerate(spec.get("runs") or [])}
+    for r in runs:
+        regions = notes_for(spec, r["image"])
+        for sm in r["summary"].values():
+            sm["note"] = answer_note(sm, r["query"], regions)
+    return sorted(runs, key=lambda r: (order.get((Path(r["image"]).name, r["query"]), len(order)),
+                                       Path(r["image"]).name, r["query"]))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -202,7 +213,7 @@ def main(argv: list[str] | None = None) -> int:
     if not paths:
         print(f"no runs in {cfg.get_key('demo.out_dir')}/: run `make demo` first")
         return 1
-    payload = build_payload(load_runs(paths), cfg)
+    payload = build_payload(load_runs(paths, cfg), cfg)
     html = render(payload)
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(html)

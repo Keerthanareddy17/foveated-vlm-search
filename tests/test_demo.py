@@ -290,3 +290,17 @@ def test_score_present_absent_and_unscored():
     assert score({"status": "found", "final_point": [1, 1]}, None, None) is None
     with pytest.raises(ValueError):
         score({"status": "found", "final_point": [1, 1]}, "maybe", box)
+
+
+def test_answer_note_only_for_wrong_answers_in_a_region():
+    from foveated_search.demo.run_demo import answer_note, notes_for
+    regions = [{"box": [0, 0, 10, 10], "queries": ["food"], "note": "packaged sweets"}]
+    wrong = {"final_point": [5, 5], "correct": False}
+    assert answer_note(wrong, "food", regions) == "packaged sweets"
+    assert answer_note(wrong, "mouse", regions) is None                         # other query
+    assert answer_note({"final_point": [50, 5], "correct": False}, "food", regions) is None   # outside the region
+    assert answer_note({"final_point": [5, 5], "correct": True}, "food", regions) is None    # correct: no note
+    assert answer_note({"final_point": None, "correct": False}, "food", regions) is None     # absent: no point
+    spec = {"notes": {"test_pictures/clean/a.jpg": regions}}
+    assert notes_for(spec, "test_pictures/clean/a.jpg") == regions == notes_for(spec, "/elsewhere/a.jpg")
+    assert notes_for(spec, "b.jpg") == []

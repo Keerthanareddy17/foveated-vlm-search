@@ -3,7 +3,7 @@ SHELL := /bin/bash
 SERVE_PY := .venv-serve/bin/python
 TRAIN_PY := .venv-train/bin/python
 
-.PHONY: help setup check storage serve-demo demo-smoke gpu eval table mosaics scaling gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo intake demo-batch replay
+.PHONY: help setup check storage serve-demo demo-smoke gpu eval table mosaics scaling gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo intake demo-batch replay demo-sweep
 
 help: ## List all targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -105,8 +105,11 @@ demo: ## Step 9: make demo IMAGE=test_pictures/clean/x.jpg QUERY="food" -> resul
 	@test -n "$(IMAGE)" -a -n "$(QUERY)" || { echo 'usage: make demo IMAGE=test_pictures/clean/<photo>.jpg QUERY="food"'; exit 1; }
 	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.run_demo --image "$(IMAGE)" --query "$(QUERY)"
 
-demo-batch: ## Step 9: every (image, query) pair in configs/demo_queries.yaml (make serve-demo first)
-	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.run_demo --batch
+demo-batch: ## Step 9: every (image, query) pair in configs/demo_queries.yaml [ONLY=positive2] (make serve-demo first)
+	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.run_demo --batch $(if $(ONLY),--only "$(ONLY)")
+
+demo-sweep: ## Step 9: eye-search thumbnail sweep on the demo photos -> results/demo/thumbnail_sweep.csv (make serve-demo first)
+	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) scripts/demo_thumbnail_sweep.py
 
 replay: ## Step 9: build the self-contained replay page results/demo/replay.html from results/demo/*.json
 	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.replay
