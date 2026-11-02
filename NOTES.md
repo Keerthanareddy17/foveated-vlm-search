@@ -507,6 +507,23 @@ Against R6: +4.2 pp accuracy [+2.2, +6.4]. The mask fixes most of the "look agai
 
 The first 3x3 candidate (umbrella, q0171) took 2 fixations in Step 8b but only 1 with the demo settings, so the truck query was used to exercise the look-again path. In headless Chromium (Playwright, scratch venv on the local disk) the page loaded from `file://` with 0 console errors and 0 network requests at 1440 px and 390 px width (no horizontal scroll), and each replay took as long as the measured time to answer (1.27 s wall for 1.28 s measured).
 
+**The user's photos (desk scene, 2026-11-02).** `positive.jpeg` 5120x3450 and `negative.jpeg` 5120x3316 (the same desk with the apple removed; not pixel-aligned). Neither original had any EXIF, GPS, XMP or ICC data. Clean copies: 1920x1294 and 1920x1244. The processor rounds them to 1920x1280 (2,400 tokens) and 1920x1248 (2,340 tokens): a 14 px rounding down on the first (-1.1%), within one 32-px grid step, so accepted. The apple: hand-measured box (1460, 369)-(1538, 449), 78x80 px = 0.25% of the frame, upper right (78% across, 32% down) on a stack of books. Extra query: "mouse" (COCO class, in both photos), box (893, 895)-(1104, 993). Packaged sweets in red boxes in a basket at the right edge are in both photos; they are not one of COCO's 10 food classes, so "food" on the negative photo is expected absent.
+
+Protocol: 1 warmup round, then 5 measured runs per query and strategy, concurrency 1. Greedy decoding gave **identical answers in all 5 runs for every query and strategy**, and the batch was run three times (code fixes in between) with identical answers. Timings moved by under 10 ms. The replay shows the run closest to the median time.
+
+| photo | query | full frame | eye search |
+|---|---|---|---|
+| positive | food | found, correct (apple), 0.926 s | **wrong**: "cake" on the sweet boxes, 0.577 s |
+| positive | apple | found, correct, 0.928 s | **wrong**: rejected the sweet-box crop, then "absent", 0.490 s |
+| positive | mouse | found, correct, 0.930 s | found, correct (1st look), 0.576 s |
+| negative | food | absent, correct, 0.793 s | **wrong**: "cake" on the sweet boxes (2nd look), 0.934 s |
+| negative | apple | **wrong**: points at the Apple Magic Mouse, 0.905 s | absent, correct (2 crops rejected, then a repeat point ends the search), 0.941 s |
+
+Full frame 4/5, eye search 2/5. Eye search used 4.2-11.1% of the pixels and 9-23x fewer vision tokens (103-260 vs 2,340-2,400).
+
+**Why eye search failed** (`results/demo/traces/*.png`): the glance. In the 288x192 thumbnail the apple is ~12x12 px, and the most "food-like" region is the red/orange patch of sweet boxes at the right edge. Every food/apple search looks there first. The confirm step then works as designed for "apple" (rejects the boxes), but the look-again glance answers "absent" instead of pointing to the small red apple. For "food" the crop really is packaged sweets, and the model says "cake". That is reasonable to a person but wrong under COCO's definition, and not the apple. This is the Step 8b finding on a real photo: on large frames eye search is limited by what a fixed-size thumbnail shows, and a 0.25%-of-frame object is at the edge of it. Full frame sees the apple at 78x80 px and gets it every time.
+**Why full frame failed** on negative/apple: with no apple in view it points at the white Apple Magic Mouse, whose top has the Apple logo: a brand/word association. Eye search's confirm crops never covered the mouse.
+
 ## Gotchas
 
 - Colab sets `UV_SYSTEM_PYTHON=true` globally. That makes `uv venv` print a `--system has no effect` warning. `setup_colab.sh` unsets it, since we always target explicit venvs.
