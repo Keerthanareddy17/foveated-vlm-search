@@ -207,7 +207,7 @@ make intake && make demo-batch && make demo-sweep && make replay
 make readme-tables && make figures && make pages && make record-demo
 ```
 
-Models: the fine-tuned model (`honey613/qwen3-vl-2b-foveated-search`) and its FP8 version (`honey613/qwen3-vl-2b-foveated-search-fp8`) are in private Hugging Face repositories, available on request; `make train`, `make merge` and `make quantize` rebuild them. `NOTES.md` records every measurement, decision and gotcha along the way.
+Models (public on Hugging Face): [honey613/qwen3-vl-2b-foveated-search](https://huggingface.co/honey613/qwen3-vl-2b-foveated-search) (fine-tuned, BF16) and [honey613/qwen3-vl-2b-foveated-search-fp8](https://huggingface.co/honey613/qwen3-vl-2b-foveated-search-fp8) (FP8, used in the photo demo); `make train`, `make merge` and `make quantize` rebuild them. `NOTES.md` records every measurement, decision and gotcha along the way.
 
 ## Repository layout
 
