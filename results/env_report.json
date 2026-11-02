@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-11-01T09:54:16+00:00",
+  "timestamp_utc": "2026-11-02T03:05:40+00:00",
   "gpu": {
     "name": "NVIDIA L4",
     "memory_total": "23034 MiB",
@@ -120,7 +120,7 @@
   },
   "hf_token_present": true,
   "hf_home_set": false,
-  "disk_free_gb_content": 197.6,
+  "disk_free_gb_content": 243.2,
   "checks": [
     {
       "name": "GPU is L4, cc 8.9",
@@ -250,9 +250,9 @@
     {
       "name": "Free disk on /content >= 30 GB",
       "pass": true,
-      "detail": "197.6 GB free"
+      "detail": "243.2 GB free"
     }
   ],
   "all_pass": true,
-  "duration_s": 21.3
+  "duration_s": 22.3
 }

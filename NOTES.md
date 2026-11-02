@@ -19,6 +19,8 @@ Everything needed for Steps 9-10 is in git (code, configs, results), on Drive (e
 
 **Where things live:** results/runs/tables/figures in git; Drive `MyDrive/foveated-vlm-search/` = eval images (79 MB) + LoRA adapter and training log (67 MB) + this session's logs (`logs/2026-11-01/`, 4 MB) = 150 MB of the 500 MB budget; HF Hub (private) = merged BF16 model and its FP8 version.
 
+**Step 9 demo pipeline (after `make serve-demo`):** put the phone photo in `test_pictures/`, then `make intake` (upright, metadata-free 1920 px copy in `test_pictures/clean/`), `make demo IMAGE=test_pictures/clean/<name>.jpg QUERY="food"` (or list pairs in `configs/demo_queries.yaml` and `make demo-batch`), then `make replay` -> `results/demo/replay.html`. Originals in `test_pictures/` are gitignored.
+
 **Demo defaults to remember (from Step 8b):** large frames (720p and up) are where eye search pays off; use the 288 px thumbnail and `search.look_again_mask: true` (both in `configs/demo.yaml`). R1-R7 keep the frozen Step 5 settings (96 px, mask off).
 
 ## Environment
@@ -52,6 +54,7 @@ So a new Colab session costs ~1.5-2 min of setup. Most of the "skip" and "verify
 - **Step 7:** LoRA r16 on the decoder only, 1 epoch, effective batch 64 (16 x 4); final adapter used (val loss = best); merged model ships the base config/processor files byte-for-byte; private HF repo `honey613/qwen3-vl-2b-foveated-search`.
 - **Step 8:** prompts and search settings unchanged; R5-R7 differ only in the served model / server flags (overlays). R3-ft budget = R5 mean (50,026 px). Images are encoded off the event loop (`VLMClient.aencode`). W4A16 skipped (reason under Step 8).
 - **Step 8b:** high-resolution mosaics from the frozen eval set (308 queries that fit a 640x480 cell); hi-res server overlay (max pixels 1920x1440, max_model_len 6144); `search.look_again_mask` added (helps, +4.4 pp accuracy; default off to keep R1-R7 reproducible, recommended on from Step 9).
+- **Step 9:** scope changed by the user: one (maybe two) phone photos with several queries, no desk set, no labeling tool, no live camera. All demo settings in `configs/demo.yaml` (search overlay + `demo:` section). Evidence label turned **on** for the demo only (`search.confirm.label: true`; trained on 9.8% of confirm samples), off for every eval row. Clean copies are baseline JPEG q92 4:4:4 with no metadata (small enough to commit; the model gets a lossless PNG of the decoded pixels either way).
 
 ## Storage policy
 
@@ -480,6 +483,30 @@ Same harness, splits and frozen Step 5 settings (96 px thumbnail, 224 crop, refi
 
 Against R6: +4.2 pp accuracy [+2.2, +6.4]. The mask fixes most of the "look again" problem from Step 8 without retraining, for 4 more vision tokens per search. It breaks thumbnail byte-identity, which costs only the 5.6% prefix-cache hit rate measured in Step 8. **Kept** as `search.look_again_mask`. The default stays `false` so R1-R7 remain reproducible from config; recommended `true` for eye search from Step 9 on.
 
+### Step 9: photo replay demo
+
+**Pipeline** (`foveated_search/demo/`): `intake.py` (photo -> clean copy) -> `run_demo.py` (traces) -> `replay.py` + `web/template.html` (one offline HTML page). Server: `make serve-demo` (fine-tuned FP8 from the private Hub repo, native resolution up to 1920x1440, prefix + mm caches off). `run_demo` reads `/v1/models` and refuses to run unless the server is serving `honey613/qwen3-vl-2b-foveated-search-fp8`.
+
+**Intake, measured:**
+- pillow-heif 1.8.1 (libheif 1.23.6) applies the HEIF rotation when it opens the file, sets the EXIF orientation tag to 1 and keeps the old value in `info["original_orientation"]`. So `ImageOps.exif_transpose` afterwards is a no-op, and a HEIC is rotated exactly once (tested: orientation 6 -> portrait, marker in the right corner, same result as the JPEG path).
+- Stripping is done by rebuilding the image from raw pixels (`Image.frombytes`), not by deleting tags. The output check reads the decoded EXIF (must have 0 tags, no GPS IFD), the `info` dict (no exif / icc / xmp / comment), and walks the JPEG segment headers: only APP0 (JFIF) may come before the image data. A plain byte search for `b"GPS"` was rejected: 3 bytes match random JPEG data by chance about 4% of the time on a 600 KB file.
+- An embedded ICC profile (phones: Display P3) is converted to sRGB before stripping, so colours stay right without the profile.
+- The real processor at the demo server's limits keeps the clean copy at native size: a 4032x3024 photo -> 1920x1440 = 2,700 vision tokens (exactly `image_max_pixels`); 1080 px sides round up to 1088 (grid of 32), which is not a downscale. Intake fails if the processor would shrink the image by more than one grid step.
+
+**Timing protocol:** per image, 1 unrecorded warmup round of both strategies, then full frame and eye search once each, sequentially, at concurrency 1. Time to answer = sum of measured call times (client on the GPU host, localhost). The replay page plays the calls on that same timeline (call k starts when call k-1 ends).
+
+**Replay integrity:** `make replay` re-creates every image the model was sent (thumbnail, masked thumbnails on fixations 2+, crops, full frame) from the clean photo with the search code and checks its sha256 against the trace; any difference fails the build. The page embeds those exact PNGs for eye search; the full frame is embedded as a downsized JPEG for display only.
+
+**Pipeline test before the user's photo** (Step 8b mosaic frames, demo settings, both strategies correct on all three; runs deleted afterwards, copy of the page at `/content/fvs_local/demo_test/replay_test.html`, local disk only):
+
+| frame | query | full frame | eye search |
+|---|---|---|---|
+| 2x2 q0005 (1280x960) | food | found 0.50 s, 1,200 tok, 2.1 MB | found 0.57 s (fixation 1, "cake"), 112 tok, 226 KB, 9.3% px |
+| 3x3 q0313 (1920x1440) | truck | found 1.09 s, 2,700 tok, 4.9 MB | found 1.28 s (fixation 3, 2 crops rejected, mask on), 336 tok, 706 KB, 12.4% px |
+| 3x3 q0021 (1920x1440) | food (negative) | absent 0.98 s | absent 0.14 s (glance only), 63 tok, 126 KB, 2.3% px |
+
+The first 3x3 candidate (umbrella, q0171) took 2 fixations in Step 8b but only 1 with the demo settings, so the truck query was used to exercise the look-again path. In headless Chromium (Playwright, scratch venv on the local disk) the page loaded from `file://` with 0 console errors and 0 network requests at 1440 px and 390 px width (no horizontal scroll), and each replay took as long as the measured time to answer (1.27 s wall for 1.28 s measured).
+
 ## Gotchas
 
 - Colab sets `UV_SYSTEM_PYTHON=true` globally. That makes `uv venv` print a `--system has no effect` warning. `setup_colab.sh` unsets it, since we always target explicit venvs.
@@ -500,3 +527,4 @@ Against R6: +4.2 pp accuracy [+2.2, +6.4]. The mask fixes most of the "look agai
 - Throughput benchmarks: CPU work in the asyncio event loop (PNG-encoding a 640x480 frame, ~90 ms) silently caps concurrency and can flip a comparison. Keep encoding off the loop and sanity-check end-to-end throughput against per-call throughput.
 - Prefix-cache measurements: a run that repeats queries the same server just served measures a hot cache (51% hits vs 5% cold). Restart the server, or use disjoint queries, before measuring.
 - Split-name conventions are code: the runner chose latency mode only for the exact split name `latency`, so new `latency_*` splits silently ran at concurrency 8. Mode detection is now `run_mode()` (any `latency*`), with a unit test.
+- pillow-heif rotates HEIC on open and resets the orientation tag; don't add a second manual rotation from `original_orientation` (Step 9).
