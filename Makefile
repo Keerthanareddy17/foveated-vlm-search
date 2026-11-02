@@ -3,7 +3,7 @@ SHELL := /bin/bash
 SERVE_PY := .venv-serve/bin/python
 TRAIN_PY := .venv-train/bin/python
 
-.PHONY: help setup check storage serve-demo demo-smoke gpu eval table mosaics scaling gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo intake demo-batch replay demo-sweep
+.PHONY: help setup check storage serve-demo demo-smoke gpu eval table mosaics scaling gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize push-hub-fp8 demo intake demo-batch replay demo-sweep readme-tables figures pages record-demo
 
 help: ## List all targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -95,8 +95,16 @@ merge: ## Step 7: merge the LoRA adapter into the BF16 base, save locally, diff 
 push-hub: ## Step 7: push the merged model to a PRIVATE HF repo (checks write access first)
 	source scripts/env.sh && $(TRAIN_PY) -m foveated_search.train.push_hub
 
-quantize: ## FP8 quantization (Step 8)
-	@echo "not implemented yet (Step 8)"
+QUANT_PY := .venv-quant/bin/python
+FT_MODEL := qwen3-vl-2b-foveated-search
+
+quantize: ## Step 8: FP8_DYNAMIC (decoder only) of the merged fine-tuned model with llm-compressor (.venv-quant)
+	source scripts/env.sh && $(QUANT_PY) -m foveated_search.quant.fp8_dynamic --model $$FVS_MODELS_DIR/$(FT_MODEL) \
+	  --out $$FVS_MODELS_DIR/$(FT_MODEL)-fp8 --report results/step8_fp8_quantize.json
+
+push-hub-fp8: ## Step 8: push the FP8 model to a PRIVATE HF repo (<user>/<hub_repo_name>-fp8)
+	source scripts/env.sh && $(TRAIN_PY) -m foveated_search.train.push_hub --kind fp8 \
+	  --model-dir $$FVS_MODELS_DIR/$(FT_MODEL)-fp8 --repo-name $(FT_MODEL)-fp8
 
 intake: ## Step 9: phone photos in test_pictures/ -> upright, metadata-free, 1920 px copies in test_pictures/clean/
 	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.intake
@@ -110,6 +118,18 @@ demo-batch: ## Step 9: every (image, query) pair in configs/demo_queries.yaml [O
 
 demo-sweep: ## Step 9: eye-search thumbnail sweep on the demo photos -> results/demo/thumbnail_sweep.csv (make serve-demo first)
 	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) scripts/demo_thumbnail_sweep.py
+
+readme-tables: ## Step 10: README.md from scripts/readme_template.md + numbers computed from results/ (CHECK=1 lists untraced digits)
+	source scripts/env.sh && $(SERVE_PY) scripts/build_readme_tables.py $(if $(CHECK),--check)
+
+figures: ## Step 10: README figures (light + dark) -> docs/assets/
+	source scripts/env.sh && $(SERVE_PY) scripts/make_figures.py
+
+pages: ## Step 10: GitHub Pages copy of the replay page -> docs/index.html
+	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.replay --pages
+
+record-demo: ## Step 10: record the replay page -> docs/assets/demo.gif + demo.mp4 (Playwright + ffmpeg)
+	bash scripts/record_demo.sh
 
 replay: ## Step 9: build the self-contained replay page results/demo/replay.html from results/demo/*.json
 	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.replay

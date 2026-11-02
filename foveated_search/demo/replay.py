@@ -179,8 +179,20 @@ def build_payload(runs: list[dict], cfg: Config) -> dict:
             "strategies": list(d["strategies"]), "gpu": d.get("gpu_label")}
 
 
-def render(payload: dict, template: str | None = None) -> str:
+PAGES_BANNER = """<div class="pages-banner"><b>foveated-vlm-search</b> &middot; a 2B vision-language model that finds
+  things in high-resolution photos while barely looking: replays of real measured searches &middot;
+  <a href="{repo}">code, write-up and results on GitHub</a></div>"""
+PAGES_CSS = """  .pages-banner { margin: 0 0 12px; padding: 8px 10px; border: 1px solid var(--line2); border-radius: 3px;
+                  color: var(--dim); font-size: 12px; line-height: 1.5; }
+  .pages-banner b { color: #fff; } .pages-banner a { color: var(--ok); }
+</style>"""
+
+
+def render(payload: dict, template: str | None = None, pages_repo: str | None = None) -> str:
     html = template if template is not None else TEMPLATE.read_text()
+    if pages_repo:   # GitHub Pages copy: same page plus a header linking back to the repo
+        html = html.replace("</style>", PAGES_CSS, 1).replace(
+            '<div class="wrap">', '<div class="wrap">\n  ' + PAGES_BANNER.format(repo=pages_repo), 1)
     if PLACEHOLDER not in html:
         raise ValueError(f"template has no {PLACEHOLDER} placeholder")
     data = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")   # safe inside <script>
@@ -208,6 +220,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--runs", nargs="*", type=Path)
     ap.add_argument("--out", type=Path, default=REPO_ROOT / cfg.get_key("demo.replay_out"))
+    ap.add_argument("--pages", action="store_true", help="also write the GitHub Pages copy (demo.pages_out)")
     a = ap.parse_args(argv)
     paths = a.runs or sorted((REPO_ROOT / cfg.get_key("demo.out_dir")).glob("*.json"))
     if not paths:
@@ -217,6 +230,11 @@ def main(argv: list[str] | None = None) -> int:
     html = render(payload)
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(html)
+    if a.pages:
+        pages = REPO_ROOT / cfg.get_key("demo.pages_out")
+        pages.parent.mkdir(parents=True, exist_ok=True)
+        pages.write_text(render(payload, pages_repo=cfg.get_key("demo.repo_url")))
+        print(f"GitHub Pages copy -> {pages.relative_to(REPO_ROOT)} ({pages.stat().st_size / 1e6:.2f} MB)")
     print(f"{len(payload['runs'])} runs, {payload['verified_images']} sent images re-created and verified "
           f"byte-identical (sha256) -> {a.out} ({len(html.encode()) / 1e6:.2f} MB)")
     for r in payload["runs"]:

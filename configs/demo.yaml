@@ -34,6 +34,9 @@ demo:
 
   # --- replay page (foveated_search/demo/replay.py) ---
   replay_out: results/demo/replay.html
+  pages_out: docs/index.html           # `make pages`: same page + a header linking to the repo (GitHub Pages: main, /docs)
+  repo_url: https://github.com/Keerthanareddy17/foveated-vlm-search
+  pages_url: https://keerthanareddy17.github.io/foveated-vlm-search/
   embed_long_side: 1600                # background photo embedded at this long side (crops/thumbnails stay exact)
   embed_jpeg_quality: 85
   gpu_label: one NVIDIA L4 (24 GB)
