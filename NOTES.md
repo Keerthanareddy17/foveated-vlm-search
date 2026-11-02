@@ -21,7 +21,7 @@ Everything needed for Steps 9-10 is in git (code, configs, results), on Drive (e
 
 **Step 9 demo pipeline (after `make serve-demo`):** put the phone photo in `test_pictures/`, then `make intake` (upright, metadata-free 1920 px copy in `test_pictures/clean/`), `make demo IMAGE=test_pictures/clean/<name>.jpg QUERY="food"` (or list pairs in `configs/demo_queries.yaml` and `make demo-batch`), then `make replay` -> `results/demo/replay.html`. Originals in `test_pictures/` are gitignored.
 
-**Demo defaults to remember (from Step 8b):** large frames (720p and up) are where eye search pays off; use the 288 px thumbnail and `search.look_again_mask: true` (both in `configs/demo.yaml`). R1-R7 keep the frozen Step 5 settings (96 px, mask off).
+**Demo defaults to remember (Steps 8b and 9):** large frames (720p and up) are where eye search pays off; use the 384 px thumbnail (Step 9 sweep; Step 8b chose 288) and `search.look_again_mask: true` (both in `configs/demo.yaml`). R1-R7 keep the frozen Step 5 settings (96 px, mask off).
 
 ## Environment
 
@@ -523,6 +523,40 @@ Full frame 4/5, eye search 2/5. Eye search used 4.2-11.1% of the pixels and 9-23
 
 **Why eye search failed** (`results/demo/traces/*.png`): the glance. In the 288x192 thumbnail the apple is ~12x12 px, and the most "food-like" region is the red/orange patch of sweet boxes at the right edge. Every food/apple search looks there first. The confirm step then works as designed for "apple" (rejects the boxes), but the look-again glance answers "absent" instead of pointing to the small red apple. For "food" the crop really is packaged sweets, and the model says "cake". That is reasonable to a person but wrong under COCO's definition, and not the apple. This is the Step 8b finding on a real photo: on large frames eye search is limited by what a fixed-size thumbnail shows, and a 0.25%-of-frame object is at the edge of it. Full frame sees the apple at 78x80 px and gets it every time.
 **Why full frame failed** on negative/apple: with no apple in view it points at the white Apple Magic Mouse, whose top has the Apple logo: a brand/word association. Eye search's confirm crops never covered the mouse.
+
+**Answer notes (user decision, 2026-11-02).** "food" stays scored by COCO's 10 classes and wrong answers stay WRONG. A WRONG answer whose final point lands in a hand-measured region gets an explanatory note (`notes:` in `configs/demo_queries.yaml`, applied by run_demo, the replay page, the trace images and the sweep): the sweet boxes -> "packaged sweets: food to a person, not a COCO food class"; the mouse on negative.jpg for "apple" -> "pointed at the Apple-logo mouse".
+
+**Main demo photo `positive2.jpeg`** (same desk, apple close to the camera). The first upload was a compressed 1599x1018 crop; the user replaced it with the full phone image: 5120x3840, no metadata -> clean copy 1920x1440 = exactly `image_max_pixels`, 2,700 vision tokens at native resolution. It is wider than the crop (also shows a steel bottle, a keyboard and a blue plate). Apple box (1604, 1212)-(1832, 1428): 228x216 px = **1.78% of the frame** (7x its share in positive.jpg); in the thumbnail it is 34x34 px at 288, **46x43 px at 384**, 61x58 px at 512. Mouse (474, 984)-(718, 1093). Sweet-box note region (1640, 845)-(1900, 1045).
+
+**Demo default changed to a 384 px thumbnail** (user decision after the sweep below; comment in `configs/demo.yaml`). R1-R7 keep 96 px.
+
+**Final demo runs (384 px, mask on, 1 warmup + 5 runs per query, concurrency 1, identical answers in every run; `results/demo/*.json`):**
+
+| photo, query | full frame | eye search |
+|---|---|---|
+| positive2, food | found, correct, 1.047 s, 2,700 tok, 3.06 MB | found, correct ("apple", 1st look), 0.583 s, 157 tok, 230 KB, 5.8% px |
+| positive2, apple | found, correct, 1.055 s | found, correct, 0.584 s, 157 tok, 230 KB |
+| positive2, mouse | found, correct, 1.053 s | found, correct, 0.581 s, 157 tok, 218 KB |
+| positive, food | found, correct, 0.930 s, 2,400 tok, 2.94 MB | found, correct ("apple"), 0.579 s, 145 tok, 211 KB, 6.0% px |
+| positive, apple | found, correct, 0.935 s | found, correct, 0.577 s, 145 tok, 211 KB |
+| positive, mouse | found, correct, 0.932 s | found, correct, 0.579 s, 145 tok, 213 KB |
+| negative, food | absent, correct, 0.790 s, 2,340 tok, 2.73 MB | absent, correct (glance only), 0.138 s, 96 tok, 152 KB, 4.1% px |
+| negative, apple | **wrong**: Apple-logo mouse, 0.906 s | absent, correct (glance only), 0.135 s, 96 tok, 152 KB |
+
+Eye search 8/8, full frame 7/8. Eye search answers 0.35-0.77 s sooner, with 4.1-6.0% of the pixels and 16.6-24.4x fewer vision tokens.
+
+**Thumbnail sweep (an illustration on three photos and eight queries, NOT a benchmark result).** `make demo-sweep` -> `results/demo/thumbnail_sweep.csv` (+ every run in `thumbnail_sweep_runs.jsonl`): eye search at 288 / 384 / 512 px, everything else at the demo settings (mask on), 1 warmup + 3 runs per size, concurrency 1; answers identical in every run. Full-frame rows are copied from the 5-run demo files. Re-run after the full-resolution positive2 (the totals did not change).
+
+| thumbnail | correct (of 8) | apple in thumbnail (positive / positive2) | vision tokens per search | time, median range |
+|---|---|---|---|---|
+| 288 px | 5 (wrong: positive food + apple, negative food) | 12x12 / 34x34 px | 103-260 | 0.49-0.95 s |
+| 384 px | **8** | 16x16 / 46x43 px | 96-157 | 0.14-0.58 s |
+| 512 px | 8 | 21x22 / 61x58 px | 160-241 | 0.14-0.60 s |
+| full frame | 7 (wrong: negative apple) | native | 2,340-2,700 | 0.79-1.06 s |
+
+At 384 px every positive is found on the first look, and both negatives are answered "absent" from the thumbnail alone (1 call, 96 tokens, ~0.14 s) instead of being drawn to the sweet boxes. 512 px is also 8/8 but costs 54-67% more vision tokens and 50-62% more bytes per search than 384 px, for no change here. With three photos this only shows the direction (Step 8b found the same on 3x3 mosaics: 96 -> 192 -> 288 px raised accuracy 39.9 -> 59.1 -> 73.4%).
+
+Replay page: the "FOUND IN" stamp was moved to the top right (it covered the apple at the bottom right of positive2) and is hidden below 560 px width, where the result box under the image says the same.
 
 ## Gotchas
 
