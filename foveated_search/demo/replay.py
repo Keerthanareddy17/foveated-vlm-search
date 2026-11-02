@@ -173,7 +173,8 @@ def build_payload(runs: list[dict], cfg: Config) -> dict:
                          "frame": rec["image_sha256"], "frame_size": rec["frame_size"], "model": rec["model"],
                          "precision": rec["precision"], "gpu": rec.get("gpu"), "concurrency": rec["concurrency"],
                          "warmup_rounds": rec["warmup_rounds"], "settings": rec["settings"],
-                         "created": rec["created"], "summary": rec["summary"], "panels": panels})
+                         "created": rec["created"], "summary": rec["summary"], "panels": panels,
+                         "expect": rec.get("expect"), "gt_boxes": rec.get("gt_boxes"), "repeats": rec.get("repeats", 1)})
     return {"runs": out_runs, "frames": frames, "images": images, "verified_images": n_verified,
             "strategies": list(d["strategies"]), "gpu": d.get("gpu_label")}
 

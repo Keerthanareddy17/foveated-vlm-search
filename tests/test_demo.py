@@ -269,3 +269,24 @@ console.log(JSON.stringify(out));"""
     assert r["end"]["tokens"] == sum(x["vision_tokens"] for x in e) and r["end"]["bytes"] == sum(x["bytes"] for x in e)
     assert abs(r["after"]["timer"] - panel["t_end"]) < 1e-9          # timer stops at the measured time to answer
     assert r["thumbStart"] == 0 and r["thumbLate"] == 3 and r["bytes"] == "1.23 MB"
+
+
+# ---------------------------------------------------------------- repeats and scoring (run_demo)
+def test_median_index_picks_the_median_run():
+    from foveated_search.demo.run_demo import median_index
+    assert median_index([0.9, 0.5, 0.7, 0.6, 0.8]) == 2          # odd count: the median run itself
+    assert median_index([0.5, 0.5, 0.5]) == 0                     # ties: first
+    assert median_index([0.4, 0.6, 1.0, 0.5]) in (1, 3)           # even count: one of the two middle runs
+
+
+def test_score_present_absent_and_unscored():
+    from foveated_search.demo.run_demo import score
+    box = [[100, 100, 200, 200]]
+    assert score({"status": "found", "final_point": [150, 150]}, "present", box) is True
+    assert score({"status": "found", "final_point": [250, 150]}, "present", box) is False   # wrong place
+    assert score({"status": "absent", "final_point": None}, "present", box) is False
+    assert score({"status": "absent", "final_point": None}, "absent", None) is True
+    assert score({"status": "found", "final_point": [1, 1]}, "absent", None) is False      # false positive
+    assert score({"status": "found", "final_point": [1, 1]}, None, None) is None
+    with pytest.raises(ValueError):
+        score({"status": "found", "final_point": [1, 1]}, "maybe", box)

@@ -1,7 +1,12 @@
 # (image, query) pairs for `make demo-batch`. Images are cleaned copies from `make intake` (test_pictures/clean/).
 # Queries: any COCO category name, or "food" (COCO's 10 food classes). Include at least one absent target.
-runs: []
-#  - {image: test_pictures/clean/IMG_0001.jpg, query: food}
-#  - {image: test_pictures/clean/IMG_0001.jpg, query: cup}
-#  - {image: test_pictures/clean/IMG_0001.jpg, query: laptop}
-#  - {image: test_pictures/clean/IMG_0001.jpg, query: dog}     # expected absent
+# expect: present | absent (scored per CLAUDE.md: "found" = final point inside a gt box; absent = reports not found).
+# gt_boxes: [x0, y0, x1, y1] in clean-image pixels, hand-measured on test_pictures/clean/*.jpg (Step 9).
+#   apple: the only COCO-food object in positive.jpg. The red sweet boxes in a basket at the right edge (both photos)
+#   are packaged food, not one of COCO's 10 food classes, so "food" on negative.jpg is expected absent.
+runs:
+  - {image: test_pictures/clean/positive.jpg, query: food,  expect: present, gt_boxes: [[1460, 369, 1538, 449]]}
+  - {image: test_pictures/clean/positive.jpg, query: apple, expect: present, gt_boxes: [[1460, 369, 1538, 449]]}
+  - {image: test_pictures/clean/positive.jpg, query: mouse, expect: present, gt_boxes: [[893, 895, 1104, 993]]}
+  - {image: test_pictures/clean/negative.jpg, query: food,  expect: absent}
+  - {image: test_pictures/clean/negative.jpg, query: apple, expect: absent}

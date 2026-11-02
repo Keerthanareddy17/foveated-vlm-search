@@ -18,6 +18,7 @@ demo:
 
   # --- runs (foveated_search/demo/run_demo.py) ---
   strategies: [full_frame, eye_search] # left panel, right panel; run in this order, sequentially, concurrency 1
+  repeats: 5                           # measured rounds per query; report median / min / max, replay the median run
   warmup_rounds: 1                     # unrecorded rounds of every strategy on the same frame before measuring
                                        # (prefix + mm caches are off on the server, so warmup cannot pre-fill them)
   expected_model: honey613/qwen3-vl-2b-foveated-search-fp8   # run_demo refuses any other served checkpoint

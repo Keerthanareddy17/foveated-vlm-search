@@ -9,7 +9,7 @@
   :root {
     --bg: #090c0f; --panel: #0f1418; --line: #1d2830; --line2: #2a3a45;
     --text: #c8d3db; --dim: #6c7c88; --faint: #3c4a55;
-    --ff: #3fb8ff; --eye: #ff4fd8; --ok: #3ee58f; --wait: #ffb000; --no: #8a96a0; --absent: #ffcc66;
+    --ff: #3fb8ff; --eye: #ff4fd8; --ok: #3ee58f; --wait: #ffb000; --no: #8a96a0; --absent: #ffcc66; --bad: #ff5a5a;
     --mono: ui-monospace, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", "Liberation Mono", monospace;
     color-scheme: dark;
   }
@@ -53,7 +53,7 @@
   .stage .stamp { position: absolute; right: 8px; bottom: 8px; line-height: 1.2; font-size: 15px; font-weight: 700;
                   letter-spacing: .1em; padding: 6px 10px; border: 2px solid; border-radius: 3px;
                   background: rgba(0,0,0,.72); pointer-events: none; }
-  .stamp.found { color: var(--ok); } .stamp.absent { color: var(--absent); }
+  .stamp.found { color: var(--ok); } .stamp.absent { color: var(--absent); } .stamp.wrong { color: var(--bad); }
   .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line);
            border: 1px solid var(--line); margin-top: 8px; }
   @media (max-width: 460px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -69,6 +69,9 @@
             letter-spacing: .1em; font-variant-numeric: tabular-nums; }
   .result.run { color: var(--wait); } .result.found { color: var(--ok); border-color: #1f5a3c; }
   .result.absent { color: var(--absent); border-color: #5a4a1f; }
+  .result .verdict { font-size: 12px; margin-left: 10px; letter-spacing: .08em; }
+  .verdict.ok { color: var(--ok); } .verdict.bad { color: var(--bad); }
+  .timing { margin-top: 4px; color: var(--dim); font-size: 11px; }
   .evidence { margin-top: 6px; color: var(--text); min-height: 1.45em; overflow-wrap: anywhere; }
   .evidence .l { color: var(--dim); }
   ol.log { list-style: none; margin: 8px 0 0; padding: 6px 8px; border-top: 1px dashed var(--line2);
@@ -227,16 +230,25 @@ if (typeof module !== 'undefined') module.exports = ReplayLogic;
       sl.style.setProperty('--scan-h', H + 'px');
       v.scan = sg;
     }
+    // hand-measured ground-truth box(es), shown once the search has answered
+    v.gt = el('g', { class: 'hid' }, svg);
+    for (const [x0, y0, x1, y1] of (r.gt_boxes || [])) {
+      el('rect', { x: x0, y: y0, width: x1 - x0, height: y1 - y0, fill: 'none', stroke: '#fff', 'stroke-width': 1.5,
+        'stroke-dasharray': '3 3', 'vector-effect': 'non-scaling-stroke' }, v.gt);
+      const gl = el('text', { x: x0, y: y1 + u * 2.2, 'font-size': u * 1.7, fill: '#fff', class: 'm-num' }, v.gt);
+      gl.textContent = 'GT';
+    }
     // final point
     const fp = P.final_point;
     v.final = el('g', { class: 'hid' }, svg);
+    const okCol = r.summary[name].correct === false ? 'var(--bad)' : 'var(--ok)';
     if (fp) {
       const [x, y] = fp, R = u * 3.2;
-      el('circle', { cx: x, cy: y, r: R, fill: 'none', stroke: 'var(--ok)', 'stroke-width': 3, 'vector-effect': 'non-scaling-stroke' }, v.final);
+      el('circle', { cx: x, cy: y, r: R, fill: 'none', stroke: okCol, 'stroke-width': 3, 'vector-effect': 'non-scaling-stroke' }, v.final);
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]])
         el('line', { x1: x + dx * R * 0.45, y1: y + dy * R * 0.45, x2: x + dx * R * 1.6, y2: y + dy * R * 1.6,
-          stroke: 'var(--ok)', 'stroke-width': 3, 'vector-effect': 'non-scaling-stroke' }, v.final);
-      el('circle', { cx: x, cy: y, r: u * 0.45, fill: 'var(--ok)' }, v.final);
+          stroke: okCol, 'stroke-width': 3, 'vector-effect': 'non-scaling-stroke' }, v.final);
+      el('circle', { cx: x, cy: y, r: u * 0.45, fill: okCol }, v.final);
     }
     // stats
     const st = h('div', 'stats', '', sec);
@@ -249,6 +261,14 @@ if (typeof module !== 'undefined') module.exports = ReplayLogic;
     v.sCalls = cell(name === 'eye_search' ? 'CALLS / FIXATIONS' : 'CALLS');
     v.sTime = cell('TIMER');
     v.result = h('div', 'result', 'READY', sec);
+    const sm = r.summary[name];
+    v.verdict = sm.correct === null || sm.correct === undefined ? null : sm.correct;
+    v.timing = h('div', 'timing', sm.time_median_s !== undefined
+      ? `MEDIAN OF ${sm.repeats} RUNS ${sm.time_median_s.toFixed(3)}s &middot; MIN ${sm.time_min_s.toFixed(3)}s &middot; MAX ${sm.time_max_s.toFixed(3)}s &middot; ` +
+        `replaying run ${sm.rep_shown + 1} (closest to the median)` +
+        (v.verdict !== null ? ` &middot; correct in ${sm.n_correct}/${sm.repeats} runs` : '') +
+        (sm.answers_identical ? ' &middot; identical answers in every run' : ' &middot; answers differed between runs')
+      : '', sec);
     v.evid = h('div', 'evidence', '', sec);
     v.log = h('ol', 'log', '', sec);
     v.logItems = P.events.map((e) => {
@@ -304,8 +324,13 @@ if (typeof module !== 'undefined') module.exports = ReplayLogic;
     else if (P.found) { cls = 'found'; txt = 'FOUND IN ' + L.fmtS(P.t_end); }
     else { cls = 'absent'; txt = 'ABSENT IN ' + L.fmtS(P.t_end); }
     v.result.className = 'result ' + cls; v.result.textContent = txt;
+    if (s.finished && v.verdict !== null) h('span', 'verdict ' + (v.verdict ? 'ok' : 'bad'),
+      v.verdict ? '&#10003; CORRECT' : '&#10007; WRONG (' + (run.expect === 'absent' ? 'target not in photo' : 'missed the target') + ')', v.result);
+    show(v.gt, s.finished);
     v.state.className = 'state ' + cls; v.state.textContent = s.finished ? (P.found ? 'FOUND' : 'ABSENT') : 'RUNNING';
-    show(v.stamp, s.finished); v.stamp.className = 'stamp ' + cls + (s.finished ? '' : ' hid'); v.stamp.textContent = txt;
+    const wrong = s.finished && v.verdict === false;
+    v.stamp.className = 'stamp ' + (wrong ? 'wrong' : cls) + (s.finished ? '' : ' hid');
+    v.stamp.textContent = txt + (wrong ? ' \u2717' : '');
     const ev = run.summary[v.name].evidence || '';
     v.evid.innerHTML = s.finished ? '<span class="l">EVIDENCE &gt; </span>' + esc(ev) : '<span class="l">EVIDENCE &gt; </span>...';
     v.logItems.forEach((li, i) => {
@@ -321,10 +346,10 @@ if (typeof module !== 'undefined') module.exports = ReplayLogic;
     if (t < tMax) { box.innerHTML = '<span style="color:var(--dim)">COMPARISON &gt; appears when both searches finish</span>'; return; }
     const x = (p, q) => (q > 0 ? (p / q) : 0);
     const dt = b.time_to_answer_s - a.time_to_answer_s;
-    box.innerHTML = `COMPARISON &gt; eye search used <b>${b.pixels_sampled_pct.toFixed(1)}%</b> of the frame's pixels, ` +
+    box.innerHTML = `COMPARISON &gt; eye search used <b>${(100 * b.pixels_sent / (run.frame_size[0] * run.frame_size[1])).toFixed(1)}%</b> of the frame's pixels, ` +
       `<b>${x(a.png_bytes, b.png_bytes).toFixed(1)}x</b> less bandwidth and <b>${x(a.vision_tokens, b.vision_tokens).toFixed(1)}x</b> fewer vision tokens, ` +
       `and answered <b>${Math.abs(dt).toFixed(2)}s ${dt <= 0 ? 'sooner' : 'later'}</b> than full frame ` +
-      `(${b.status} vs ${a.status}; ${b.n_calls} call${b.n_calls === 1 ? '' : 's'} vs ${a.n_calls}).`;
+      `(${b.status}${b.correct === false ? ' WRONG' : ''} vs ${a.status}${a.correct === false ? ' WRONG' : ''}; ${b.n_calls} call${b.n_calls === 1 ? '' : 's'} vs ${a.n_calls}).`;
   }
 
   function draw() {
@@ -340,11 +365,13 @@ if (typeof module !== 'undefined') module.exports = ReplayLogic;
     for (const name of D.strategies) if (run.panels[name]) { views[name] = buildPanel(run, name); box.appendChild(views[name].sec); }
     tMax = Math.max(...Object.values(run.panels).map((p) => p.t_end), 0.001);
     const st = run.settings, [W, H] = run.frame_size;
-    $('query').innerHTML = `PHOTO <b>${esc(run.image)}</b> &middot; ${W}x${H} &middot; QUERY <b>"${esc(run.query)}"</b>`;
+    $('query').innerHTML = `PHOTO <b>${esc(run.image)}</b> &middot; ${W}x${H} &middot; QUERY <b>"${esc(run.query)}"</b>` +
+      (run.expect ? ` &middot; TARGET <b>${run.expect === 'absent' ? 'NOT IN PHOTO' : 'IN PHOTO'}</b>` +
+        (run.gt_boxes && run.gt_boxes.length ? ' (GT box hand-measured)' : '') : '');
     $('footer').innerHTML =
       `<div>MODEL <span>${esc(run.model)}</span> (Qwen3-VL-2B, LoRA fine-tuned for low-pixel search) &middot; PRECISION <span>${esc(run.precision)}</span></div>` +
       `<div>FRAME <span>${W}x${H}</span> sent at native resolution &middot; EYE SEARCH <span>thumbnail ${st.thumbnail_long_side}px, crop ${st.fixation_size}px, max ${st.max_fixations} fixations, look-again mask ${st.look_again_mask ? 'on' : 'off'}</span></div>` +
-      `<div>TIMINGS <span>measured server-side on ${esc(run.gpu || 'one GPU')}</span>, concurrency ${run.concurrency}, after ${run.warmup_rounds} warmup round(s); replayed at the real measured call times (speed control slows the clock only)</div>` +
+      `<div>TIMINGS <span>measured server-side on ${esc(run.gpu || 'one GPU')}</span>, concurrency ${run.concurrency}, after ${run.warmup_rounds} warmup round(s), ${run.repeats} measured runs per query; the replay shows the run closest to the median time, at the real measured call times (speed control slows the clock only)</div>` +
       `<div>Eye-search thumbnails and crops are the exact images sent to the model (${D.verified_images} images re-created and sha256-verified at build time); the full frame is shown downsized for this page. Recorded ${esc(run.created)}.</div>`;
     try { history.replaceState(null, '', '#' + run.run_id); } catch (e) {}
     t = 0; draw(); play();
