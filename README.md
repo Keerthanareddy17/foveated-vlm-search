@@ -65,13 +65,6 @@ Eye search sends the whole frame once as a small thumbnail (96 px long side in t
 
 All benchmark rows use one frozen evaluation set: 500 COCO val2017 queries (single categories and the "food" supercategory, 100 of them negatives). A stratified 50-query dev subset was used for every design choice; the **450-query test split** (360 positives, 90 negatives) is reported. **Found** = the final point lies inside a ground-truth box and the model confirmed it. **Accuracy** counts positives found and negatives correctly reported absent. CIs are 95% bootstrap. Accuracy runs use concurrency 8. **Latency comes only from separate single-request runs** (concurrency 1, after warmup) on a 100-query subset, measured server-side on one L4 in Colab. **The benchmark uses a 96 px thumbnail; the photo demo uses 384 px** (chosen with a sweep on the demo photos, see below).
 
-### Headline numbers
-
-- **On a 1920x1440 photo ("desk, apple near the camera"), eye search found the food in 0.58 s vs 1.05 s for full-frame inference**, with 17.2x fewer vision tokens and 13.3x less image data sent. With the apple removed, it answered "absent" in 0.14 s; full frame instead pointed at the Apple-logo mouse. Across the 8 photo queries: eye search 8/8 correct, full frame 7/8 (median of 5 runs each).
-- **On large frames it serves 3.2x (1280x960) to 5.9x (1920x1440) more searches per GPU** than full frame, because its cost stays nearly flat (110-129 vision tokens vs 1,200-2,700).
-- **Fine-tuning made eye search better: +6.4 pp accuracy [+3.1, +10.0]** on the COCO benchmark (paired, 95% CI), with false positives at 1.1%. **FP8 made it 24% faster** at no measurable accuracy cost (-0.4 pp [-2.0, +1.1]).
-- **Honest caveat:** on small 640x480 COCO frames, plain full-frame inference with the same fine-tuned model is more accurate (94.2% vs 85.6%), and it stays more accurate on 1920x1440 mosaics (88.0% vs 73.4%). Eye search wins on cost: pixels, vision tokens, bandwidth, false alarms and throughput on large frames. It does not win on raw accuracy.
-
 ### Main table: R1-R7 (test split)
 
 | row | model | precision | strategy | found % [95% CI] | false positives % [95% CI] | accuracy % [95% CI] | fixations / search | pixels sampled % | vision tokens / search | time to answer p50 / p95 (ms) |

@@ -65,13 +65,6 @@ Eye search sends the whole frame once as a small thumbnail ({{cfg.thumb}} px lon
 
 All benchmark rows use one frozen evaluation set: {{manifest.n}} COCO val2017 queries (single categories and the "food" supercategory, {{manifest.neg}} of them negatives). A stratified {{manifest.dev}}-query dev subset was used for every design choice; the **{{test.n}}-query test split** ({{test.n_pos}} positives, {{test.n_neg}} negatives) is reported. **Found** = the final point lies inside a ground-truth box and the model confirmed it. **Accuracy** counts positives found and negatives correctly reported absent. CIs are 95% bootstrap. Accuracy runs use concurrency 8. **Latency comes only from separate single-request runs** (concurrency 1, after warmup) on a {{R1.lat_n}}-query subset, measured server-side on one L4 in Colab. **The benchmark uses a {{cfg.thumb}} px thumbnail; the photo demo uses {{demo.positive2.food.thumb}} px** (chosen with a sweep on the demo photos, see below).
 
-### Headline numbers
-
-- **On a {{demo.positive2.food.frame}} photo ("{{photo.positive2}}"), eye search found the food in {{demo.positive2.food.eye.t}} s vs {{demo.positive2.food.ff.t}} s for full-frame inference**, with {{demo.positive2.food.tok_ratio}}x fewer vision tokens and {{demo.positive2.food.bytes_ratio}}x less image data sent. With the apple removed, it answered "absent" in {{demo.negative.apple.eye.t}} s; full frame instead pointed at the Apple-logo mouse. Across the {{demo.n_queries}} photo queries: eye search {{demo.eye.correct}} correct, full frame {{demo.ff.correct}} (median of {{demo.positive2.food.reps}} runs each).
-- **On large frames it serves {{sc2.tput_ratio}}x ({{sc2.frame}}) to {{sc3.tput_ratio}}x ({{sc3.frame}}) more searches per GPU** than full frame, because its cost stays nearly flat ({{sc2.eye288.tok}}-{{sc3.eye288.tok}} vision tokens vs {{sc2.full.tok}}-{{sc3.full.tok}}).
-- **Fine-tuning made eye search better: {{ft_acc.diff}} pp accuracy {{ft_acc.ci}}** on the COCO benchmark (paired, 95% CI), with false positives at {{R5.fp}}%. **FP8 made it {{fp8.speedup_pct}}% faster** at no measurable accuracy cost ({{fp8_acc.diff}} pp {{fp8_acc.ci}}).
-- **Honest caveat:** on small 640x480 COCO frames, plain full-frame inference with the same fine-tuned model is more accurate ({{R1-ft.acc}}% vs {{R5.acc}}%), and it stays more accurate on {{sc3.frame}} mosaics ({{sc3.full.acc}}% vs {{sc3.eye288.acc}}%). Eye search wins on cost: pixels, vision tokens, bandwidth, false alarms and throughput on large frames. It does not win on raw accuracy.
-
 ### Main table: R1-R7 (test split)
 
 {{table:main}}
