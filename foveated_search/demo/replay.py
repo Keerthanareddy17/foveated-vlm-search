@@ -170,6 +170,7 @@ def build_payload(runs: list[dict], cfg: Config) -> dict:
                     images.setdefault(sha, b64("image/png", png))
             panels[name] = to_replay(tr, scale)
         out_runs.append({"run_id": rec["run_id"], "image": Path(rec["image"]).name, "query": rec["query"],
+                         "photo": rec.get("photo_name") or Path(rec["image"]).name,
                          "frame": rec["image_sha256"], "frame_size": rec["frame_size"], "model": rec["model"],
                          "precision": rec["precision"], "gpu": rec.get("gpu"), "concurrency": rec["concurrency"],
                          "warmup_rounds": rec["warmup_rounds"], "settings": rec["settings"],
@@ -208,6 +209,7 @@ def load_runs(paths: list[Path], cfg: Config | None = None) -> list[dict]:
     spec = queries_spec(cfg) if cfg is not None else {}
     order = {(Path(r["image"]).name, str(r["query"])): i for i, r in enumerate(spec.get("runs") or [])}
     for r in runs:
+        r["photo_name"] = (spec.get("photo_names") or {}).get(Path(r["image"]).name, Path(r["image"]).name)
         regions = notes_for(spec, r["image"])
         for sm in r["summary"].values():
             sm["note"] = answer_note(sm, r["query"], regions)

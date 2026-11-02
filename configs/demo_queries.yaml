@@ -5,6 +5,12 @@
 # gt_boxes: [x0, y0, x1, y1] in clean-image pixels, hand-measured on test_pictures/clean/*.jpg (Step 9).
 #   apple: the only COCO-food object in the positive photos. The red sweet boxes in a basket at the right edge (all
 #   three photos) are packaged food, not one of COCO's 10 food classes, so "food" on negative.jpg is expected absent.
+# Plain names for the photos (used in the README, the replay page and the GIF; file names stay in source references).
+photo_names:
+  positive2.jpg: "desk, apple near the camera"
+  positive.jpg: "desk, apple far away"
+  negative.jpg: "desk, no apple"
+
 runs:
   - {image: test_pictures/clean/positive2.jpg, query: food,  expect: present, gt_boxes: [[1604, 1212, 1832, 1428]]}
   - {image: test_pictures/clean/positive2.jpg, query: apple, expect: present, gt_boxes: [[1604, 1212, 1832, 1428]]}

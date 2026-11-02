@@ -260,7 +260,9 @@ def trace_fig(F, theme):
         ax.set_yticks([])
         for s in ax.spines.values():
             s.set_color(th["axis"])
-    title(f, th, f"One search, measured: \"{rec['query']}\" on {Path(rec['image']).name}",
+    import yaml
+    names = yaml.safe_load((REPO_ROOT / "configs/demo_queries.yaml").read_text()).get("photo_names") or {}
+    title(f, th, f"One search, measured: \"{rec['query']}\" on the photo \"{names.get(Path(rec['image']).name, Path(rec['image']).name)}\"",
           "Median of 5 runs, concurrency 1, fine-tuned FP8 on one L4. Circles: each strategy's final point.")
     return save(f, "trace_positive2_food", theme)
 

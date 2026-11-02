@@ -33,8 +33,17 @@
   .scrub { display: flex; align-items: center; gap: 10px; margin: 12px 0 4px; }
   .scrub input { flex: 1; accent-color: var(--ok); min-width: 0; }
   .scrub .clock { color: var(--dim); min-width: 11ch; text-align: right; }
-  .query { margin: 10px 0 2px; color: var(--dim); }
-  .query b { color: #fff; font-weight: 600; }
+  .querybar { margin: 12px 0 4px; padding: 10px 14px; border: 2px solid var(--line2); border-left: 6px solid var(--ok);
+              border-radius: 4px; background: var(--panel); color: #fff; font-size: 24px; font-weight: 700;
+              letter-spacing: .03em; line-height: 1.3; }
+  .querybar .k { color: var(--dim); font-size: 15px; font-weight: 600; letter-spacing: .14em; margin-right: 8px; }
+  .querybar .q { color: var(--ok); }
+  .querybar .sep { color: var(--faint); margin: 0 12px; font-weight: 400; }
+  .querybar .sub { display: block; margin-top: 2px; color: var(--dim); font-size: 13px; font-weight: 500;
+                   letter-spacing: .06em; }
+  @media (max-width: 700px) { .querybar { font-size: 18px; } .querybar .k { font-size: 12px; } }
+  .sees { margin: -4px 0 8px; color: var(--text); font-size: 12px; letter-spacing: .04em; }
+  .sees .k { color: var(--dim); letter-spacing: .12em; margin-right: 6px; }
   .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
   @media (max-width: 860px) { .panels { grid-template-columns: 1fr; } }
   .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 10px;
@@ -110,7 +119,7 @@
       <button id="play" class="primary" type="button">&#9654; REPLAY</button>
     </div>
   </header>
-  <div class="query" id="query"></div>
+  <div class="querybar" id="query"></div>
   <div class="scrub"><input id="scrub" type="range" min="0" max="1000" value="0" aria-label="replay time">
     <span class="clock" id="clock">0.000 s</span></div>
   <main class="panels" id="panels"></main>
@@ -180,6 +189,10 @@ if (typeof module !== 'undefined') module.exports = ReplayLogic;
     const ph = h('div', 'ph', '', sec);
     h('span', 'tag', '<i></i>' + TITLES[name], ph);
     const state = h('span', 'state', 'IDLE', ph);
+    const st0 = r.settings;
+    h('div', 'sees', '<span class="k">SEES</span>' + (name === 'eye_search'
+      ? `a ${st0.thumbnail_long_side} px thumbnail of the whole frame, then sharp ${st0.fixation_size} px crops`
+      : `the whole frame at native resolution (${W}x${H})`), sec);
     const stage = h('div', 'stage', '', sec);
     const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: 'xMidYMid meet', role: 'img',
                             'aria-label': name + ' replay' }, stage);
@@ -370,9 +383,11 @@ if (typeof module !== 'undefined') module.exports = ReplayLogic;
     for (const name of D.strategies) if (run.panels[name]) { views[name] = buildPanel(run, name); box.appendChild(views[name].sec); }
     tMax = Math.max(...Object.values(run.panels).map((p) => p.t_end), 0.001);
     const st = run.settings, [W, H] = run.frame_size;
-    $('query').innerHTML = `PHOTO <b>${esc(run.image)}</b> &middot; ${W}x${H} &middot; QUERY <b>"${esc(run.query)}"</b>` +
-      (run.expect ? ` &middot; TARGET <b>${run.expect === 'absent' ? 'NOT IN PHOTO' : 'IN PHOTO'}</b>` +
-        (run.gt_boxes && run.gt_boxes.length ? ' (GT box hand-measured)' : '') : '');
+    $('query').innerHTML = `<span class="k">QUERY</span><span class="q">"${esc(run.query)}"</span>` +
+      `<span class="sep">&middot;</span><span class="k">PHOTO</span>${esc(run.photo)}` +
+      `<span class="sep">&middot;</span>${W}x${H}` +
+      (run.expect ? `<span class="sub">target ${run.expect === 'absent' ? 'NOT in the photo' : 'in the photo'}` +
+        (run.gt_boxes && run.gt_boxes.length ? ' (box measured by hand)' : '') + '</span>' : '');
     $('footer').innerHTML =
       `<div>MODEL <span>${esc(run.model)}</span> (Qwen3-VL-2B, LoRA fine-tuned for low-pixel search) &middot; PRECISION <span>${esc(run.precision)}</span></div>` +
       `<div>FRAME <span>${W}x${H}</span> sent at native resolution &middot; EYE SEARCH <span>thumbnail ${st.thumbnail_long_side}px, crop ${st.fixation_size}px, max ${st.max_fixations} fixations, look-again mask ${st.look_again_mask ? 'on' : 'off'}</span></div>` +
@@ -399,7 +414,7 @@ if (typeof module !== 'undefined') module.exports = ReplayLogic;
   const sel = $('run');
   for (const r of D.runs) {
     const o = document.createElement('option');
-    o.value = r.run_id; o.textContent = `${r.image} · "${r.query}"`;
+    o.value = r.run_id; o.textContent = `"${r.query}" · ${r.photo}`;
     sel.appendChild(o);
   }
   sel.addEventListener('change', () => select(sel.value));
