@@ -1,7 +1,13 @@
 # Overlay (Step 9 demo): eye-search settings chosen from Step 8b for large frames, plus the demo pipeline settings.
 # Used by `make serve-demo` / `make demo*` / `make intake` / `make replay` (Makefile DEMO_OVERLAYS).
 search:
-  thumbnail_long_side: 288   # 96 px collapses on large frames (Step 8b: 3x3 accuracy 39.9% -> 73.4% at 288 px)
+  # 384 px (was 288, chosen in Step 8b). Step 9 thumbnail sweep on the three demo photos (results/demo/thumbnail_sweep.csv;
+  # an illustration on 3 photos / 8 queries, not a benchmark): 288 px got 5/8 right, 384 px 8/8, 512 px 8/8.
+  # 384 is the smallest size that got all 8: the 78x80 px apple in positive.jpg is 12 px wide in a 288 px thumbnail
+  # (eye search looked at the larger sweet boxes instead) and 16 px at 384; both negatives become a one-call "absent".
+  # 512 px costs 54-67% more vision tokens than 384 for no change there. Step 8b: 96 px collapses on large frames
+  # (3x3 accuracy 39.9% at 96 px, 73.4% at 288 px). R1-R7 keep 96 px (configs/search.yaml).
+  thumbnail_long_side: 384
   look_again_mask: true      # gray out checked crops on fixations 2+ (Step 8b: +4.4 pp accuracy, repeats 78 -> 21)
   confirm:
     label: true              # short evidence text on "yes" (trained on 9.8% of confirm samples, Step 6); ~7 extra
@@ -31,3 +37,12 @@ demo:
   embed_long_side: 1600                # background photo embedded at this long side (crops/thumbnails stay exact)
   embed_jpeg_quality: 85
   gpu_label: one NVIDIA L4 (24 GB)
+
+  # --- thumbnail sweep (scripts/demo_thumbnail_sweep.py, `make demo-sweep`): an illustration on the demo photos,
+  # not a benchmark. Eye search only (full frame does not depend on the thumbnail: its saved demo runs are reused).
+  sweep:
+    thumbnail_sizes: [288, 384, 512]
+    repeats: 3
+    warmup_rounds: 1
+    out_csv: results/demo/thumbnail_sweep.csv
+    out_runs: results/demo/thumbnail_sweep_runs.jsonl
