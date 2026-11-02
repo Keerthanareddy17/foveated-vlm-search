@@ -1,4 +1,32 @@
-# Overlay (Step 9 demo): eye-search settings chosen from Step 8b for large webcam frames.
+# Overlay (Step 9 demo): eye-search settings chosen from Step 8b for large frames, plus the demo pipeline settings.
+# Used by `make serve-demo` / `make demo*` / `make intake` / `make replay` (Makefile DEMO_OVERLAYS).
 search:
   thumbnail_long_side: 288   # 96 px collapses on large frames (Step 8b: 3x3 accuracy 39.9% -> 73.4% at 288 px)
   look_again_mask: true      # gray out checked crops on fixations 2+ (Step 8b: +4.4 pp accuracy, repeats 78 -> 21)
+  confirm:
+    label: true              # short evidence text on "yes" (trained on 9.8% of confirm samples, Step 6); ~7 extra
+                             # output tokens on a found search (Step 4: ~100 ms), included in the measured timings
+
+demo:
+  # --- photo intake (foveated_search/demo/intake.py) ---
+  input_dir: test_pictures             # user uploads originals here (gitignored: they carry GPS / device EXIF)
+  clean_dir: test_pictures/clean       # cleaned demo copies + sidecar json (the only photo files committed)
+  extensions: [.jpg, .jpeg, .png, .heic, .heif]
+  long_side: 1920                      # demo copy long side; never upscaled. 1920x1440 = server.image_max_pixels
+  jpeg_quality: 92                     # clean copy format: baseline JPEG, 4:4:4, no metadata
+  to_srgb: true                        # convert an embedded ICC profile (phones: Display P3) to sRGB before stripping
+
+  # --- runs (foveated_search/demo/run_demo.py) ---
+  strategies: [full_frame, eye_search] # left panel, right panel; run in this order, sequentially, concurrency 1
+  warmup_rounds: 1                     # unrecorded rounds of every strategy on the same frame before measuring
+                                       # (prefix + mm caches are off on the server, so warmup cannot pre-fill them)
+  expected_model: honey613/qwen3-vl-2b-foveated-search-fp8   # run_demo refuses any other served checkpoint
+  precision_label: FP8 (W8A8 dynamic, decoder only)
+  out_dir: results/demo                # one <image>__<query>.json per run (committed)
+  queries_file: configs/demo_queries.yaml
+
+  # --- replay page (foveated_search/demo/replay.py) ---
+  replay_out: results/demo/replay.html
+  embed_long_side: 1600                # background photo embedded at this long side (crops/thumbnails stay exact)
+  embed_jpeg_quality: 85
+  gpu_label: one NVIDIA L4 (24 GB)

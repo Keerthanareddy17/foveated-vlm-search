@@ -58,3 +58,8 @@ scripts/env.sh
 
 # --- runtime logs ---
 logs/
+
+# --- Step 9 demo photos: originals carry GPS / device EXIF and are NEVER committed ---
+# Only the cleaned, metadata-free copies made by `make intake` (test_pictures/clean/) are tracked.
+/test_pictures/*
+!/test_pictures/clean/
