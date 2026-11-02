@@ -1,0 +1,7 @@
+# (image, query) pairs for `make demo-batch`. Images are cleaned copies from `make intake` (test_pictures/clean/).
+# Queries: any COCO category name, or "food" (COCO's 10 food classes). Include at least one absent target.
+runs: []
+#  - {image: test_pictures/clean/IMG_0001.jpg, query: food}
+#  - {image: test_pictures/clean/IMG_0001.jpg, query: cup}
+#  - {image: test_pictures/clean/IMG_0001.jpg, query: laptop}
+#  - {image: test_pictures/clean/IMG_0001.jpg, query: dog}     # expected absent

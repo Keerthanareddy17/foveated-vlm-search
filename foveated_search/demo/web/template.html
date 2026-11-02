@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Foveated Search Replay</title>
+<!-- Built by foveated_search/demo/replay.py from results/demo/*.json. Self-contained: no external requests. -->
+<style>
+  :root {
+    --bg: #090c0f; --panel: #0f1418; --line: #1d2830; --line2: #2a3a45;
+    --text: #c8d3db; --dim: #6c7c88; --faint: #3c4a55;
+    --ff: #3fb8ff; --eye: #ff4fd8; --ok: #3ee58f; --wait: #ffb000; --no: #8a96a0; --absent: #ffcc66;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", "Liberation Mono", monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.45 var(--mono); }
+  body { padding: max(14px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom)); }
+  .wrap { max-width: 1480px; margin: 0 auto; }
+  header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding-bottom: 12px;
+           border-bottom: 1px solid var(--line); }
+  h1 { font-size: 13px; font-weight: 600; letter-spacing: .14em; margin: 0; color: #e8eef2; }
+  h1 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ok);
+            margin-right: 8px; box-shadow: 0 0 8px var(--ok); vertical-align: 1px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-left: auto; }
+  label.k { color: var(--dim); font-size: 11px; letter-spacing: .1em; }
+  select, button { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line2);
+                   border-radius: 3px; padding: 6px 10px; min-height: 34px; }
+  select { max-width: 100%; }
+  button { cursor: pointer; letter-spacing: .08em; }
+  button.primary { border-color: var(--ok); color: var(--ok); }
+  button:hover, select:hover { border-color: var(--dim); }
+  .scrub { display: flex; align-items: center; gap: 10px; margin: 12px 0 4px; }
+  .scrub input { flex: 1; accent-color: var(--ok); min-width: 0; }
+  .scrub .clock { color: var(--dim); min-width: 11ch; text-align: right; }
+  .query { margin: 10px 0 2px; color: var(--dim); }
+  .query b { color: #fff; font-weight: 600; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+  @media (max-width: 860px) { .panels { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 10px;
+           min-width: 0; }
+  .ph { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .ph .tag { letter-spacing: .14em; font-size: 11px; }
+  .ph .tag i { font-style: normal; display: inline-block; width: 9px; height: 9px; margin-right: 7px;
+               vertical-align: -1px; }
+  #p-full_frame .tag i { background: var(--ff); } #p-eye_search .tag i { background: var(--eye); }
+  .ph .state { font-size: 11px; letter-spacing: .12em; color: var(--dim); }
+  .ph .state.run { color: var(--wait); } .ph .state.found { color: var(--ok); } .ph .state.absent { color: var(--absent); }
+  .stage { position: relative; background: #000; border: 1px solid var(--line); line-height: 0; }
+  .stage svg { width: 100%; height: auto; display: block; }
+  .stage .corner { position: absolute; left: 6px; top: 6px; line-height: 1.3; font-size: 10px; letter-spacing: .08em;
+                   color: #fff; background: rgba(0,0,0,.62); padding: 3px 6px; border-radius: 2px; pointer-events: none; }
+  .stage .stamp { position: absolute; right: 8px; bottom: 8px; line-height: 1.2; font-size: 15px; font-weight: 700;
+                  letter-spacing: .1em; padding: 6px 10px; border: 2px solid; border-radius: 3px;
+                  background: rgba(0,0,0,.72); pointer-events: none; }
+  .stamp.found { color: var(--ok); } .stamp.absent { color: var(--absent); }
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line);
+           border: 1px solid var(--line); margin-top: 8px; }
+  @media (max-width: 460px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .stat { background: var(--panel); padding: 7px 9px; min-width: 0; }
+  .stat .l { color: var(--dim); font-size: 10px; letter-spacing: .12em; white-space: nowrap; overflow: hidden;
+             text-overflow: ellipsis; }
+  .stat .v { font-size: 17px; color: #eef3f6; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .stat .v small { font-size: 11px; color: var(--dim); }
+  .bar { height: 4px; background: var(--line); margin-top: 5px; }
+  .bar span { display: block; height: 100%; width: 0; }
+  #p-full_frame .bar span { background: var(--ff); } #p-eye_search .bar span { background: var(--eye); }
+  .result { margin-top: 8px; padding: 9px 10px; border: 1px solid var(--line); font-size: 16px; font-weight: 700;
+            letter-spacing: .1em; font-variant-numeric: tabular-nums; }
+  .result.run { color: var(--wait); } .result.found { color: var(--ok); border-color: #1f5a3c; }
+  .result.absent { color: var(--absent); border-color: #5a4a1f; }
+  .evidence { margin-top: 6px; color: var(--text); min-height: 1.45em; overflow-wrap: anywhere; }
+  .evidence .l { color: var(--dim); }
+  ol.log { list-style: none; margin: 8px 0 0; padding: 6px 8px; border-top: 1px dashed var(--line2);
+           font-size: 11px; color: var(--dim); max-height: 11em; overflow: auto; }
+  ol.log li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  ol.log li.pending { color: var(--wait); }
+  ol.log li .a { color: var(--text); }
+  .compare { margin-top: 14px; padding: 10px 12px; border: 1px solid var(--line); background: var(--panel);
+             color: var(--text); }
+  .compare b { color: #fff; }
+  footer { margin-top: 14px; color: var(--dim); font-size: 11px; display: grid; gap: 4px; }
+  footer span { color: var(--text); }
+  /* svg */
+  .hid { display: none; }
+  .m-num { font-family: var(--mono); font-weight: 700; paint-order: stroke; stroke: #000; stroke-width: 3px; }
+  .pending-box { animation: dash 0.6s linear infinite; }
+  @keyframes dash { to { stroke-dashoffset: -16; } }
+  .scanline { animation: scan 0.9s linear infinite; }
+  @keyframes scan { from { transform: translateY(0); } to { transform: translateY(var(--scan-h)); } }
+  @media (prefers-reduced-motion: reduce) { .pending-box, .scanline { animation: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="dot"></span>FOVEATED SEARCH // REPLAY</h1>
+    <div class="controls">
+      <label class="k" for="run">RUN</label><select id="run"></select>
+      <label class="k" for="speed">SPEED</label>
+      <select id="speed">
+        <option value="1">1x real time</option><option value="0.5">0.5x</option>
+        <option value="0.25">0.25x</option><option value="0.1">0.1x</option>
+      </select>
+      <button id="play" class="primary" type="button">&#9654; REPLAY</button>
+    </div>
+  </header>
+  <div class="query" id="query"></div>
+  <div class="scrub"><input id="scrub" type="range" min="0" max="1000" value="0" aria-label="replay time">
+    <span class="clock" id="clock">0.000 s</span></div>
+  <main class="panels" id="panels"></main>
+  <section class="compare" id="compare"></section>
+  <footer id="footer"></footer>
+</div>
+
+<script id="data" type="application/json">/*__REPLAY_DATA__*/null</script>
+
+<script id="logic">
+// Pure timeline logic (no DOM): unit-tested with node (tests/test_demo.py).
+const ReplayLogic = {
+  // State of one panel at real (measured) time t seconds: calls are "sent" at t0 and "done" at t1.
+  stateAt(panel, t) {
+    const s = { sent: [], done: [], pixels: 0, bytes: 0, tokens: 0, calls: 0, finished: t >= panel.t_end,
+                timer: Math.min(Math.max(t, 0), panel.t_end), current: null };
+    for (const e of panel.events) {
+      if (t >= e.t0) { s.sent.push(e.i); s.pixels += e.pixels; s.bytes += e.bytes; s.tokens += e.vision_tokens; s.calls++; }
+      if (t >= e.t1) s.done.push(e.i);
+      else if (t >= e.t0) s.current = e.i;
+    }
+    if (panel.events.length === 0) s.finished = true;
+    return s;
+  },
+  // Index of the point call whose thumbnail is on screen at time t (latest one sent; first one before start).
+  thumbAt(panel, t) {
+    let k = null;
+    for (const e of panel.events) if (e.role === 'point' && (t >= e.t0 || k === null)) k = e.i;
+    return k;
+  },
+  fmtBytes(b) { return b >= 1e6 ? (b / 1e6).toFixed(2) + ' MB' : (b / 1e3).toFixed(0) + ' KB'; },
+  fmtInt(n) { return Math.round(n).toLocaleString('en-US'); },
+  fmtS(t) { return t.toFixed(2) + 's'; },
+};
+if (typeof module !== 'undefined') module.exports = ReplayLogic;
+</script>
+
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const L = ReplayLogic;
+  const NS = 'http://www.w3.org/2000/svg';
+  const TITLES = { full_frame: 'LEFT // FULL FRAME', eye_search: 'RIGHT // EYE SEARCH' };
+  const $ = (id) => document.getElementById(id);
+  let run = null, views = {}, t = 0, playing = false, lastTs = null, tMax = 1, speed = 1;
+
+  function el(tag, attrs, parent) {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function h(tag, cls, html, parent) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html !== undefined) n.innerHTML = html;
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const show = (n, on) => n.classList.toggle('hid', !on);
+
+  // ---------- build one panel (all elements created once, then toggled per frame) ----------
+  function buildPanel(r, name) {
+    const P = r.panels[name], [W, H] = r.frame_size, frame = D.frames[r.frame];
+    const sec = h('section', 'panel'); sec.id = 'p-' + name;
+    const ph = h('div', 'ph', '', sec);
+    h('span', 'tag', '<i></i>' + TITLES[name], ph);
+    const state = h('span', 'state', 'IDLE', ph);
+    const stage = h('div', 'stage', '', sec);
+    const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: 'xMidYMid meet', role: 'img',
+                            'aria-label': name + ' replay' }, stage);
+    el('rect', { x: 0, y: 0, width: W, height: H, fill: '#05070a' }, svg);
+    const u = W / 100;                       // 1% of frame width, for marker sizes
+    const corner = h('div', 'corner', '', stage);
+    const stamp = h('div', 'stamp hid', '', stage);
+    const v = { P, name, sec, state, svg, corner, stamp, thumbs: {}, crops: {}, marks: {}, W, H, u };
+    const col = name === 'eye_search' ? 'var(--eye)' : 'var(--ff)';
+
+    if (name === 'eye_search') {
+      // the low-res thumbnail(s) the model saw, stretched over the frame (pixelated: this is all it had)
+      for (const e of P.events) if (e.role === 'point') {
+        v.thumbs[e.i] = el('image', { href: D.images[e.sha], x: 0, y: 0, width: W, height: H,
+          preserveAspectRatio: 'none', style: 'image-rendering:pixelated;image-rendering:crisp-edges', class: 'hid' }, svg);
+      }
+      // sharp crops, in place on the frame
+      for (const e of P.events) if (e.role === 'confirm') {
+        const [x0, y0, x1, y1] = e.region, g = el('g', { class: 'hid' }, svg);
+        el('image', { href: D.images[e.sha], x: x0, y: y0, width: x1 - x0, height: y1 - y0, preserveAspectRatio: 'none' }, g);
+        const shade = el('rect', { x: x0, y: y0, width: x1 - x0, height: y1 - y0, fill: '#808080', 'fill-opacity': 0.62, class: 'hid' }, g);
+        const box = el('rect', { x: x0, y: y0, width: x1 - x0, height: y1 - y0, fill: 'none', stroke: 'var(--wait)',
+          'stroke-width': 2.5, 'vector-effect': 'non-scaling-stroke', 'stroke-dasharray': '8 8', class: 'pending-box' }, g);
+        const right = x0 > W * 0.6, top = y0 < u * 3;
+        const tag = el('text', { x: right ? x1 - u * 0.4 : x0 + u * 0.4, y: top ? y1 + u * 2.4 : y0 - u * 0.7,
+          'font-size': u * 2.1, fill: 'var(--wait)', 'text-anchor': right ? 'end' : 'start', class: 'm-num' }, g);
+        tag.textContent = '#' + e.fixation;
+        v.crops[e.i] = { g, shade, box, tag, e };
+      }
+      // fixation markers 1 -> 2 -> 3 with connecting lines
+      let prev = null;
+      for (const e of P.events) if (e.role === 'point' && e.point) {
+        const [x, y] = e.point, g = el('g', { class: 'hid' }, svg);
+        if (prev) el('line', { x1: prev[0], y1: prev[1], x2: x, y2: y, stroke: col, 'stroke-width': 2,
+          'vector-effect': 'non-scaling-stroke', 'stroke-dasharray': '5 4', opacity: 0.9 }, g);
+        el('circle', { cx: x, cy: y, r: u * 1.7, fill: e.repeat ? 'none' : col, 'fill-opacity': 0.9, stroke: '#000',
+          'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke' }, g);
+        if (e.repeat) el('circle', { cx: x, cy: y, r: u * 1.7, fill: 'none', stroke: col, 'stroke-width': 2.5,
+          'vector-effect': 'non-scaling-stroke' }, g);
+        const n = el('text', { x: x, y: y + u * 0.75, 'font-size': u * 2.1, 'text-anchor': 'middle', fill: '#fff', class: 'm-num' }, g);
+        n.textContent = e.fixation + (e.repeat ? '↺' : '');
+        v.marks[e.i] = g; prev = e.point;
+      }
+    } else {
+      // full frame: the whole sharp frame is sent at t=0
+      v.full = el('image', { href: frame.uri, x: 0, y: 0, width: W, height: H, preserveAspectRatio: 'none', class: 'hid' }, svg);
+      const sg = el('g', { class: 'hid' }, svg);
+      el('rect', { x: 0, y: 0, width: W, height: H, fill: 'var(--ff)', 'fill-opacity': 0.06 }, sg);
+      const sl = el('rect', { x: 0, y: 0, width: W, height: H * 0.012, fill: 'var(--ff)', 'fill-opacity': 0.75, class: 'scanline' }, sg);
+      sl.style.setProperty('--scan-h', H + 'px');
+      v.scan = sg;
+    }
+    // final point
+    const fp = P.final_point;
+    v.final = el('g', { class: 'hid' }, svg);
+    if (fp) {
+      const [x, y] = fp, R = u * 3.2;
+      el('circle', { cx: x, cy: y, r: R, fill: 'none', stroke: 'var(--ok)', 'stroke-width': 3, 'vector-effect': 'non-scaling-stroke' }, v.final);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]])
+        el('line', { x1: x + dx * R * 0.45, y1: y + dy * R * 0.45, x2: x + dx * R * 1.6, y2: y + dy * R * 1.6,
+          stroke: 'var(--ok)', 'stroke-width': 3, 'vector-effect': 'non-scaling-stroke' }, v.final);
+      el('circle', { cx: x, cy: y, r: u * 0.45, fill: 'var(--ok)' }, v.final);
+    }
+    // stats
+    const st = h('div', 'stats', '', sec);
+    const cell = (label) => { const c = h('div', 'stat', '', st); h('div', 'l', label, c); return h('div', 'v', '-', c); };
+    v.sPix = cell('PIXELS USED');
+    const shareCell = h('div', 'stat', '', st); h('div', 'l', 'SHARE OF FRAME', shareCell);
+    v.sShare = h('div', 'v', '-', shareCell); v.sBar = h('span', '', '', h('div', 'bar', '', shareCell));
+    v.sBytes = cell('BANDWIDTH (PNG SENT)');
+    v.sTok = cell('VISION TOKENS');
+    v.sCalls = cell(name === 'eye_search' ? 'CALLS / FIXATIONS' : 'CALLS');
+    v.sTime = cell('TIMER');
+    v.result = h('div', 'result', 'READY', sec);
+    v.evid = h('div', 'evidence', '', sec);
+    v.log = h('ol', 'log', '', sec);
+    v.logItems = P.events.map((e) => {
+      const what = e.role === 'point' ? (name === 'eye_search' ? 'THUMB' : 'FRAME') : 'CROP ';
+      const li = h('li', 'hid', '', v.log);
+      const head = `${e.fixation ? '#' + e.fixation + ' ' : ''}${e.role.toUpperCase()} ${what} ` +
+        `${e.sent[0]}x${e.sent[1]}${e.masked ? ' (masked)' : ''} &middot; ${e.vision_tokens} tok`;
+      li.dataset.pending = `[${e.t0.toFixed(3)}s] ${head} &rarr; ...`;
+      li.dataset.done = `[${e.t1.toFixed(3)}s] ${head} &middot; ${(1000 * (e.t1 - e.t0)).toFixed(0)} ms &rarr; ` +
+        `<span class="a">${esc(e.answer)}</span>`;
+      return li;
+    });
+    return v;
+  }
+
+  // ---------- draw one panel at time t ----------
+  function drawPanel(v, t) {
+    const P = v.P, s = L.stateAt(P, t), sent = new Set(s.sent), done = new Set(s.done);
+    const frameSize = v.W * v.H;
+    if (v.name === 'eye_search') {
+      const k = L.thumbAt(P, t);
+      for (const i in v.thumbs) show(v.thumbs[i], +i === k);
+      const te = P.events[k];
+      v.corner.textContent = te ? `MODEL VIEW: THUMBNAIL ${te.sent[0]}x${te.sent[1]}${te.masked ? ' + CHECKED MASK' : ''} + ${v.P.params.fixation_size}px CROPS` : '';
+      for (const i in v.crops) {
+        const c = v.crops[i], on = sent.has(+i), fin = done.has(+i);
+        show(c.g, on);
+        show(c.shade, fin && !c.e.yes);
+        c.box.setAttribute('stroke', !fin ? 'var(--wait)' : c.e.yes ? 'var(--ok)' : 'var(--no)');
+        c.box.setAttribute('stroke-dasharray', fin && c.e.yes ? 'none' : '8 8');
+        c.box.classList.toggle('pending-box', !fin);
+        c.tag.setAttribute('fill', !fin ? 'var(--wait)' : c.e.yes ? 'var(--ok)' : '#d0d6da');
+        c.tag.textContent = '#' + c.e.fixation + (!fin ? ' ?' : c.e.yes ? ' \u2713 ' + (c.e.label || 'yes') : ' \u2715');
+      }
+      for (const i in v.marks) show(v.marks[i], done.has(+i));
+    } else {
+      show(v.full, sent.size > 0);
+      show(v.scan, s.current !== null);
+      v.corner.textContent = P.events[0] ? `MODEL VIEW: FULL FRAME ${P.events[0].sent[0]}x${P.events[0].sent[1]} (shown downsized)` : '';
+    }
+    show(v.final, s.finished && P.found);
+    v.sPix.textContent = L.fmtInt(s.pixels);
+    const share = 100 * s.pixels / frameSize;
+    v.sShare.innerHTML = share.toFixed(1) + '<small>%</small>';
+    v.sBar.style.width = Math.min(100, share) + '%';
+    v.sBytes.textContent = L.fmtBytes(s.bytes);
+    v.sTok.textContent = L.fmtInt(s.tokens);
+    const nFix = v.name === 'eye_search' ? P.events.filter((e) => e.role === 'confirm' && sent.has(e.i)).length : null;
+    v.sCalls.textContent = s.calls + (nFix !== null ? ' / ' + nFix : '');
+    v.sTime.innerHTML = s.timer.toFixed(2) + '<small>s</small>';
+    let cls, txt;
+    if (!s.finished) { cls = 'run'; txt = (v.name === 'eye_search' ? 'SEARCHING ' : 'LOOKING ') + L.fmtS(s.timer); }
+    else if (P.found) { cls = 'found'; txt = 'FOUND IN ' + L.fmtS(P.t_end); }
+    else { cls = 'absent'; txt = 'ABSENT IN ' + L.fmtS(P.t_end); }
+    v.result.className = 'result ' + cls; v.result.textContent = txt;
+    v.state.className = 'state ' + cls; v.state.textContent = s.finished ? (P.found ? 'FOUND' : 'ABSENT') : 'RUNNING';
+    show(v.stamp, s.finished); v.stamp.className = 'stamp ' + cls + (s.finished ? '' : ' hid'); v.stamp.textContent = txt;
+    const ev = run.summary[v.name].evidence || '';
+    v.evid.innerHTML = s.finished ? '<span class="l">EVIDENCE &gt; </span>' + esc(ev) : '<span class="l">EVIDENCE &gt; </span>...';
+    v.logItems.forEach((li, i) => {
+      const pend = sent.has(i) && !done.has(i), html = pend ? li.dataset.pending : li.dataset.done;
+      show(li, sent.has(i)); li.classList.toggle('pending', pend);
+      if (li.innerHTML !== html) li.innerHTML = html;
+    });
+  }
+
+  function drawCompare(t) {
+    const S = run.summary, a = S.full_frame, b = S.eye_search, box = $('compare');
+    if (!a || !b) { box.textContent = ''; return; }
+    if (t < tMax) { box.innerHTML = '<span style="color:var(--dim)">COMPARISON &gt; appears when both searches finish</span>'; return; }
+    const x = (p, q) => (q > 0 ? (p / q) : 0);
+    const dt = b.time_to_answer_s - a.time_to_answer_s;
+    box.innerHTML = `COMPARISON &gt; eye search used <b>${b.pixels_sampled_pct.toFixed(1)}%</b> of the frame's pixels, ` +
+      `<b>${x(a.png_bytes, b.png_bytes).toFixed(1)}x</b> less bandwidth and <b>${x(a.vision_tokens, b.vision_tokens).toFixed(1)}x</b> fewer vision tokens, ` +
+      `and answered <b>${Math.abs(dt).toFixed(2)}s ${dt <= 0 ? 'sooner' : 'later'}</b> than full frame ` +
+      `(${b.status} vs ${a.status}; ${b.n_calls} call${b.n_calls === 1 ? '' : 's'} vs ${a.n_calls}).`;
+  }
+
+  function draw() {
+    for (const k in views) drawPanel(views[k], t);
+    drawCompare(t);
+    $('clock').textContent = t.toFixed(3) + ' s';
+    $('scrub').value = String(Math.round(1000 * t / tMax));
+  }
+
+  function select(id) {
+    run = D.runs.find((r) => r.run_id === id) || D.runs[0];
+    const box = $('panels'); box.innerHTML = ''; views = {};
+    for (const name of D.strategies) if (run.panels[name]) { views[name] = buildPanel(run, name); box.appendChild(views[name].sec); }
+    tMax = Math.max(...Object.values(run.panels).map((p) => p.t_end), 0.001);
+    const st = run.settings, [W, H] = run.frame_size;
+    $('query').innerHTML = `PHOTO <b>${esc(run.image)}</b> &middot; ${W}x${H} &middot; QUERY <b>"${esc(run.query)}"</b>`;
+    $('footer').innerHTML =
+      `<div>MODEL <span>${esc(run.model)}</span> (Qwen3-VL-2B, LoRA fine-tuned for low-pixel search) &middot; PRECISION <span>${esc(run.precision)}</span></div>` +
+      `<div>FRAME <span>${W}x${H}</span> sent at native resolution &middot; EYE SEARCH <span>thumbnail ${st.thumbnail_long_side}px, crop ${st.fixation_size}px, max ${st.max_fixations} fixations, look-again mask ${st.look_again_mask ? 'on' : 'off'}</span></div>` +
+      `<div>TIMINGS <span>measured server-side on ${esc(run.gpu || 'one GPU')}</span>, concurrency ${run.concurrency}, after ${run.warmup_rounds} warmup round(s); replayed at the real measured call times (speed control slows the clock only)</div>` +
+      `<div>Eye-search thumbnails and crops are the exact images sent to the model (${D.verified_images} images re-created and sha256-verified at build time); the full frame is shown downsized for this page. Recorded ${esc(run.created)}.</div>`;
+    try { history.replaceState(null, '', '#' + run.run_id); } catch (e) {}
+    t = 0; draw(); play();
+  }
+
+  function frameLoop(ts) {
+    if (!playing) return;
+    if (lastTs !== null) t = Math.min(tMax, t + speed * (ts - lastTs) / 1000);
+    lastTs = ts; draw();
+    if (t >= tMax) { playing = false; $('play').innerHTML = '&#9654; REPLAY'; return; }
+    requestAnimationFrame(frameLoop);
+  }
+  function play() {
+    if (t >= tMax) t = 0;
+    playing = true; lastTs = null; $('play').innerHTML = '&#10073;&#10073; PAUSE';
+    requestAnimationFrame(frameLoop);
+  }
+  function pause() { playing = false; $('play').innerHTML = '&#9654; REPLAY'; }
+
+  const sel = $('run');
+  for (const r of D.runs) {
+    const o = document.createElement('option');
+    o.value = r.run_id; o.textContent = `${r.image} · "${r.query}"`;
+    sel.appendChild(o);
+  }
+  sel.addEventListener('change', () => select(sel.value));
+  $('speed').addEventListener('change', (e) => { speed = parseFloat(e.target.value); });
+  $('play').addEventListener('click', () => { if (playing) pause(); else { if (t >= tMax) t = 0; play(); } });
+  $('scrub').addEventListener('input', (e) => { pause(); t = tMax * (+e.target.value) / 1000; draw(); });
+  window.addEventListener('keydown', (e) => { if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); $('play').click(); } });
+  const want = decodeURIComponent(location.hash.slice(1));
+  sel.value = D.runs.some((r) => r.run_id === want) ? want : D.runs[0].run_id;
+  select(sel.value);
+})();
+</script>
+</body>
+</html>

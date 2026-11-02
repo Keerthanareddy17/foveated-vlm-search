@@ -3,7 +3,7 @@ SHELL := /bin/bash
 SERVE_PY := .venv-serve/bin/python
 TRAIN_PY := .venv-train/bin/python
 
-.PHONY: help setup check storage serve-demo demo-smoke gpu eval table mosaics scaling gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo
+.PHONY: help setup check storage serve-demo demo-smoke gpu eval table mosaics scaling gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize demo intake demo-batch replay
 
 help: ## List all targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -98,5 +98,15 @@ push-hub: ## Step 7: push the merged model to a PRIVATE HF repo (checks write ac
 quantize: ## FP8 quantization (Step 8)
 	@echo "not implemented yet (Step 8)"
 
-demo: ## Live webcam demo server (Step 9)
-	@echo "not implemented yet (Step 9)"
+intake: ## Step 9: phone photos in test_pictures/ -> upright, metadata-free, 1920 px copies in test_pictures/clean/
+	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.intake
+
+demo: ## Step 9: make demo IMAGE=test_pictures/clean/x.jpg QUERY="food" -> results/demo/ (make serve-demo first)
+	@test -n "$(IMAGE)" -a -n "$(QUERY)" || { echo 'usage: make demo IMAGE=test_pictures/clean/<photo>.jpg QUERY="food"'; exit 1; }
+	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.run_demo --image "$(IMAGE)" --query "$(QUERY)"
+
+demo-batch: ## Step 9: every (image, query) pair in configs/demo_queries.yaml (make serve-demo first)
+	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.run_demo --batch
+
+replay: ## Step 9: build the self-contained replay page results/demo/replay.html from results/demo/*.json
+	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.replay
