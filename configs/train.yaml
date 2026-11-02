@@ -32,4 +32,4 @@ train:
   out_subdir: lora                # checkpoints + final adapter under <paths.checkpoints_dir>/<run_name>
   merged_name: qwen3-vl-2b-foveated-search   # merged model under <paths.models_dir>/<merged_name>
   hub_repo_name: qwen3-vl-2b-foveated-search  # <hf user>/<hub_repo_name>, private
-  github_url: "https://github.com/<user>/foveated-vlm-search"   # placeholder for the model card
+  github_url: "https://github.com/Keerthanareddy17/foveated-vlm-search"

@@ -3,7 +3,7 @@ SHELL := /bin/bash
 SERVE_PY := .venv-serve/bin/python
 TRAIN_PY := .venv-train/bin/python
 
-.PHONY: help setup check storage serve-demo demo-smoke gpu eval table mosaics scaling gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize push-hub-fp8 demo intake demo-batch replay demo-sweep readme-tables figures pages record-demo
+.PHONY: help setup check storage serve-demo demo-smoke gpu eval table mosaics scaling gen-data base-on-val train-bench train merge push-hub test clean serve serve-stop serve-status bench-latency step4-check eval-manifest baselines gen-data train quantize push-hub-fp8 demo intake demo-batch replay demo-sweep readme-tables figures pages record-demo model-cards push-model-cards
 
 help: ## List all targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -130,6 +130,13 @@ pages: ## Step 10: GitHub Pages copy of the replay page -> docs/index.html
 
 record-demo: ## Step 10: record the replay page -> docs/assets/demo.gif + demo.mp4 (Playwright + ffmpeg)
 	bash scripts/record_demo.sh
+
+model-cards: ## Step 10: Hugging Face model cards from results/ -> results/model_cards/{bf16,fp8}/README.md
+	source scripts/env.sh && $(SERVE_PY) scripts/build_model_cards.py
+
+push-model-cards: ## Step 10: upload ONLY the two model cards (README.md) to the private HF repos
+	source scripts/env.sh && $(TRAIN_PY) -m foveated_search.train.push_hub --kind bf16 --card-only results/model_cards/bf16/README.md
+	source scripts/env.sh && $(TRAIN_PY) -m foveated_search.train.push_hub --kind fp8 --repo-name $(FT_MODEL)-fp8 --card-only results/model_cards/fp8/README.md
 
 replay: ## Step 9: build the self-contained replay page results/demo/replay.html from results/demo/*.json
 	source scripts/env.sh && FVS_CONFIG_OVERLAYS=$(DEMO_OVERLAYS) $(SERVE_PY) -m foveated_search.demo.replay

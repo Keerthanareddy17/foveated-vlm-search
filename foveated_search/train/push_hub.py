@@ -145,9 +145,23 @@ def main() -> None:
     ap.add_argument("--repo-name", help="repo name under your user (default: train.hub_repo_name)")
     ap.add_argument("--kind", choices=["bf16", "fp8"], default="bf16")
     ap.add_argument("--quant-report", default="results/step8_fp8_quantize.json")
+    ap.add_argument("--card-only", help="upload only this file as README.md to the repo (model card update)")
     a = ap.parse_args()
     cfg = train_config()
     t = cfg["train"]
+    if a.card_only:   # replace only the model card (README.md); never touches weights or other files
+        from huggingface_hub import HfApi as _Api
+        api = _Api()
+        user = api.whoami()["name"]
+        repo_id = f"{user}/{a.repo_name or t['hub_repo_name']}"
+        if not api.repo_exists(repo_id):
+            sys.exit(f"[hub] STOP: {repo_id} does not exist")
+        if not api.model_info(repo_id).private:
+            sys.exit(f"[hub] STOP: {repo_id} is PUBLIC; not changing it from here.")
+        api.upload_file(path_or_fileobj=str(REPO_ROOT / a.card_only), path_in_repo="README.md", repo_id=repo_id,
+                        commit_message="Update model card")
+        print(f"[hub] updated README.md of {repo_id} from {a.card_only}")
+        return
     folder = Path(a.model_dir) if a.model_dir else Path(cfg.get_key("paths.models_dir")) / t["merged_name"]
     if not (folder / "config.json").exists():
         sys.exit(f"merged model not found at {folder}: run make merge first")
